@@ -1,0 +1,118 @@
+{
+  "v": 8,
+  "name": "user",
+  "folders": [],
+  "requests": [
+    {
+      "v": "14",
+      "name": "Get All User",
+      "method": "GET",
+      "endpoint": "http://localhost:8080/api/v1/user",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "bearer",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inl1c3JvbkBleGFtcGxlLmNvbSIsImV4cCI6MTc1MDE0NTg4MywiaWQiOjF9.SNdaymU3UgUQFEywxH7szjj_xagDt4n9APJT51xutRg",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "14",
+      "name": "Get User by Id",
+      "method": "GET",
+      "endpoint": "http://localhost:8080/api/v1/user/1",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "bearer",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inl1c3JvbkBleGFtcGxlLmNvbSIsImV4cCI6MTc1MDE0NTg4MywiaWQiOjF9.SNdaymU3UgUQFEywxH7szjj_xagDt4n9APJT51xutRg",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "14",
+      "name": "Update User",
+      "method": "PUT",
+      "endpoint": "http://localhost:8080/api/v1/user/1",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "bearer",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inl1c3JvbkBleGFtcGxlLmNvbSIsImV4cCI6MTc1MDE0NTg4MywiaWQiOjF9.SNdaymU3UgUQFEywxH7szjj_xagDt4n9APJT51xutRg",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"first_name\": \"Yusron\",\n  \"middle_name\": \"Izza\",\n  \"last_name\": \"Faradisa\",\n  \"role\": \"admin\",\n  \"email\": \"yusron@example.com\"\n}"
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "14",
+      "name": "Delete User",
+      "method": "DELETE",
+      "endpoint": "http://localhost:8080/api/v1/user/1",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "bearer",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inl1c3JvbkBleGFtcGxlLmNvbSIsImV4cCI6MTc1MDE0NTg4MywiaWQiOjF9.SNdaymU3UgUQFEywxH7szjj_xagDt4n9APJT51xutRg",
+        "authActive": true
+      },
+      "body": {
+        "contentType": null,
+        "body": null
+      },
+      "requestVariables": [],
+      "responses": {}
+    },
+    {
+      "v": "14",
+      "name": "Insert User",
+      "method": "POST",
+      "endpoint": "http://localhost:8080/api/v1/user",
+      "params": [],
+      "headers": [],
+      "preRequestScript": "",
+      "testScript": "",
+      "auth": {
+        "authType": "bearer",
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Inl1c3JvbkBleGFtcGxlLmNvbSIsImV4cCI6MTc1MDE0MjUyMywiaWQiOjF9.QZP5XX8z8lzumJ5kcTpqLn8At4TBgupWtbTG-m2cpIc",
+        "authActive": true
+      },
+      "body": {
+        "contentType": "application/json",
+        "body": "{\n  \"first_name\": \"Yusron\",\n  \"middle_name\": \"Izza\",\n  \"last_name\": \"Faradisa\",\n  \"email\": \"yusron@example.co.id\",\n  \"password\": \"yusron123\",\n  \"role\": \"admin\",\n  \"is_active\": true\n}"
+      },
+      "requestVariables": [],
+      "responses": {}
+    }
+  ],
+  "auth": {
+    "authType": "inherit",
+    "authActive": true
+  },
+  "headers": [],
+  "_ref_id": "coll_mbyvb6w9_aad81490-7877-46ff-ace0-5f1936654b82"
+}
