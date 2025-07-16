@@ -24,10 +24,11 @@ func main() {
 	cfg := config.NewConfig()
 
 	// Register DB
-	db := db.NewPostgresDB(*cfg, log)
-	if db == nil {
+	db, err := db.NewPostgresDB(*cfg, log)
+	if err != nil {
 		log.Panic().Msg("Database connection failed")
 		os.Exit(0)
+		return
 	}
 
 	// Register repository
@@ -61,7 +62,7 @@ func main() {
 
 	defer db.Close()
 
-	log.Info().Msg(fmt.Sprintf("starting http server %v:%v", cfg.Host, cfg.Port))
+	log.Printf("starting http server %v:%v", cfg.Host, cfg.Port)
 
 	if err := app.Listen(fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)); err != nil {
 		log.Fatal().Msg(fmt.Sprintf("starting http server: %v", err))

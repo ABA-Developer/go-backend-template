@@ -11,12 +11,10 @@ import (
 	"github.com/rs/zerolog"
 )
 
-var count int64 = 0
-
-func OpenPostgresDB(addr string, maxOpenConns int, maxIdleConns int, maxIdleTime int) (*sql.DB, error) {
-	db, err := sql.Open("postgres", addr)
+func OpenPostgresDB(addr string, maxOpenConns int, maxIdleConns int, maxIdleTime int) (db *sql.DB, err error) {
+	db, err = sql.Open("postgres", addr)
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	db.SetMaxOpenConns(maxOpenConns)
@@ -28,13 +26,13 @@ func OpenPostgresDB(addr string, maxOpenConns int, maxIdleConns int, maxIdleTime
 
 	err = db.PingContext(ctx)
 	if err != nil {
-		return nil, err
+		return
 	}
 
-	return db, nil
+	return
 }
 
-func NewPostgresDB(config config.Config, log zerolog.Logger) *sql.DB {
+func NewPostgresDB(config config.Config, log zerolog.Logger) (db *sql.DB, err error) {
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		config.DB.Host,
 		config.DB.Port,
@@ -44,25 +42,12 @@ func NewPostgresDB(config config.Config, log zerolog.Logger) *sql.DB {
 		config.DB.SSLMode,
 	)
 
-	for {
-		db, err := OpenPostgresDB(dsn, config.DB.MaxOpenConn, config.DB.MaxIdleConn, config.DB.MaxIdleTime)
-		if err != nil {
-			log.Info().Msg("PostgreSQL is not ready yet")
-			count++
-		} else {
-			log.Info().Msg("Connected to PostgreSQL database")
-			log.Info().Msg("Database connection pool established!")
-			return db
-		}
-
-		if count > 10 {
-			log.Info().Msg(err.Error())
-			return nil
-		}
-
-		log.Info().Msg("Waiting for two seconds for reconnecting...")
-		time.Sleep(2 * time.Second)
-
-		continue
+	db, err = OpenPostgresDB(dsn, config.DB.MaxOpenConn, config.DB.MaxIdleConn, config.DB.MaxIdleTime)
+	if err != nil {
+		return
 	}
+
+	log.Printf("Successfully connected to postgresql %s:%s schema: %s", config.DB.Host, config.DB.Port, config.DB.Name)
+
+	return
 }
