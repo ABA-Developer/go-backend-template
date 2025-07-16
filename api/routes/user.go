@@ -9,10 +9,11 @@ import (
 )
 
 func UserRouter(app fiber.Router, service user.Service) {
-	protectedUser := app.Group("/user", middleware.JWTProtected())
-	protectedUser.Get("/", handlers.GetAllUser(service))       // Get all user
-	protectedUser.Post("/", handlers.CreateUser(service))      // Create user
-	protectedUser.Get("/:id", handlers.GetUserById(service))   // Get user by Id
-	protectedUser.Put("/:id", handlers.UpdateUser(service))    // Update user
-	protectedUser.Delete("/:id", handlers.DeleteUser(service)) // Delete user
+	routes := app.Group("/user", middleware.JWTProtected())
+
+	routes.Get("/", handlers.GetAllUser(service))       // Get all user
+	routes.Post("/", handlers.CreateUser(service))      // Create user
+	routes.Get("/:id", handlers.GetUserById(service))   // Get user by Id
+	routes.Put("/:id", handlers.UpdateUser(service))    // Update user
+	routes.Delete("/:id", handlers.DeleteUser(service)) // Delete user
 }
