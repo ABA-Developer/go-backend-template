@@ -1,46 +1,48 @@
 package config
 
 import (
+	"be-dashboard-nba/internal/constant"
 	"be-dashboard-nba/internal/env"
 
 	"github.com/joho/godotenv"
-	"github.com/rs/zerolog"
 )
 
 type Config struct {
-	Addr string
-	Db   DbConfig
+	Name string
+	Host string
+	Port int
+	DB   DBConfig
 }
 
-func NewConfig(log zerolog.Logger) *Config {
+func NewConfig() *Config {
 	err := godotenv.Load()
 	if err != nil {
 		panic(err)
 	}
-	log.Info().Msg("Loading config...")
-	// Db Config load
-	DbConfig := new(DbConfig)
-	DbConfig.Addr = env.GetString("DB_ADDR", "postgres://auth_user:auth_user@localhost:5432/auth_user?sslmode=disable")
-	DbConfig.MigratorDriver = env.GetString("DB_MIGRATOR_DRIVER", "postgres")
-	DbConfig.Username = env.GetString("DB_USERNAME", "auth_user")
-	DbConfig.Password = env.GetString("DB_PASSWORD", "auth_user")
-	DbConfig.Name = env.GetString("DB_NAME", "auth_user")
-	DbConfig.Host = env.GetString("DB_HOST", "localhost")
-	DbConfig.Port = env.GetString("DB_PORT", "5432")
-	DbConfig.SSLMode = env.GetString("DB_SSLMODE", "disable")
-	DbConfig.MaxOpenConn = env.GetInt("DB_MAX_OPEN_CONNS", 30)
-	DbConfig.MaxIdleConn = env.GetInt("DB_MAX_IDLE_CONNS", 30)
-	DbConfig.MaxIdleTime = env.GetInt("DB_MAX_IDLE_TIME", 15)
-	DbConfig.MaxLifetime = env.GetInt("DB_MAX_LIFETIME", 60)
-	DbConfig.MaxConnWaitTime = env.GetInt("DB_MAX_CONN_WAIT_TIME", 1)
-	DbConfig.MaxConnLifetime = env.GetInt("DB_MAX_CONN_LIFETIME", 3600)
-	DbConfig.MaxConnIdleTime = env.GetInt("DB_MAX_CONN_IDLE_TIME", 60)
+
+	// DB Config load
+	DBConfig := new(DBConfig)
+	DBConfig.MigratorDriver = env.MustGetEnv("DB_MIGRATOR_DRIVER")
+	DBConfig.Username = env.MustGetEnv("DB_USERNAME")
+	DBConfig.Password = env.MustGetEnv("DB_PASSWORD")
+	DBConfig.Name = env.MustGetEnv("DB_NAME")
+	DBConfig.Host = env.MustGetEnv("DB_HOST")
+	DBConfig.Port = env.MustGetEnv("DB_PORT")
+	DBConfig.SSLMode = env.GetString("DB_SSLMODE", constant.DefaultDBSSLMode)
+	DBConfig.MaxOpenConn = env.GetInt("DB_MAX_OPEN_CONNS", constant.DefaultDBMaxOpenConns)
+	DBConfig.MaxIdleConn = env.GetInt("DB_MAX_IDLE_CONNS", constant.DefaultDBMaxIdleConns)
+	DBConfig.MaxIdleTime = env.GetInt("DB_MAX_IDLE_TIME", int(constant.DefaultDBMaxIdleTime))
+	DBConfig.MaxLifetime = env.GetInt("DB_MAX_LIFETIME", int(constant.DefaultDBMaxLifetime))
+	DBConfig.MaxConnWaitTime = env.GetInt("DB_MAX_CONN_WAIT_TIME", int(constant.DefaultDBMaxConnWaitTime))
+	DBConfig.MaxConnLifetime = env.GetInt("DB_MAX_CONN_LIFETIME", int(constant.DefaultDBMaxConnLifetime))
+	DBConfig.MaxConnIdleTime = env.GetInt("DB_MAX_CONN_IDLE_TIME", int(constant.DefaultDBMaxConnIdleTime))
 
 	// Application config load
-	config := new(Config)
-	config.Addr = env.GetString("ADDR", ":3000")
-	config.Db = *DbConfig
+	cfg := new(Config)
+	cfg.Name = env.GetString("APP_NAME", constant.DefaultAppName)
+	cfg.Host = env.GetString("APP_HOST", constant.DefaultAppHost)
+	cfg.Port = env.GetInt("APP_PORT", constant.DefaultAppPort)
+	cfg.DB = *DBConfig
 
-	log.Info().Msgf("Config loaded: %+v", config)
-	return config
+	return cfg
 }

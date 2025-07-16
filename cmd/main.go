@@ -7,6 +7,7 @@ import (
 	"be-dashboard-nba/internal/utils"
 	"be-dashboard-nba/pkg/auth"
 	"be-dashboard-nba/pkg/user"
+	"fmt"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,14 +17,14 @@ import (
 
 func main() {
 	// Register logger
-	log := utils.NewLogger("log/app.log")
+	log := utils.NewLogger()
 	log.Info().Msg("Starting application...")
 
 	// Register config
-	config := config.NewConfig(log)
+	cfg := config.NewConfig()
 
 	// Register DB
-	db := db.NewPostgresDB(*config, log)
+	db := db.NewPostgresDB(*cfg, log)
 	if db == nil {
 		log.Panic().Msg("Database connection failed")
 		os.Exit(0)
@@ -38,11 +39,17 @@ func main() {
 	authService := auth.NewService(authRepo)
 
 	// Register fiber
-	app := fiber.New()
+	app := fiber.New(
+		fiber.Config{
+			DisableStartupMessage: true,
+		},
+	)
 	app.Use(cors.New())
 	app.Use(logger.New())
 	app.Get("/", func(ctx *fiber.Ctx) error {
-		return ctx.Send([]byte("Welcome to the go backend nba"))
+		return ctx.JSON(fiber.Map{
+			"message": cfg.Name + " is Running",
+		})
 	})
 
 	// API group
@@ -53,5 +60,10 @@ func main() {
 	routes.AuthRouter(api, authService)
 
 	defer db.Close()
-	log.Fatal().Msg(app.Listen(":8080").Error())
+
+	log.Info().Msg(fmt.Sprintf("starting http server %v:%v", cfg.Host, cfg.Port))
+
+	if err := app.Listen(fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)); err != nil {
+		log.Fatal().Msg(fmt.Sprintf("starting http server: %v", err))
+	}
 }

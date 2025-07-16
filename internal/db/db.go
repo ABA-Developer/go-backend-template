@@ -4,6 +4,7 @@ import (
 	"be-dashboard-nba/internal/config"
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -34,9 +35,17 @@ func OpenPostgresDB(addr string, maxOpenConns int, maxIdleConns int, maxIdleTime
 }
 
 func NewPostgresDB(config config.Config, log zerolog.Logger) *sql.DB {
-	log.Info().Msg("Connecting to database...")
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+		config.DB.Host,
+		config.DB.Port,
+		config.DB.Username,
+		config.DB.Password,
+		config.DB.Name,
+		config.DB.SSLMode,
+	)
+
 	for {
-		db, err := OpenPostgresDB(config.Db.Addr, config.Db.MaxOpenConn, config.Db.MaxIdleConn, config.Db.MaxIdleTime)
+		db, err := OpenPostgresDB(dsn, config.DB.MaxOpenConn, config.DB.MaxIdleConn, config.DB.MaxIdleTime)
 		if err != nil {
 			log.Info().Msg("PostgreSQL is not ready yet")
 			count++
@@ -50,8 +59,10 @@ func NewPostgresDB(config config.Config, log zerolog.Logger) *sql.DB {
 			log.Info().Msg(err.Error())
 			return nil
 		}
+
 		log.Info().Msg("Waiting for two seconds for reconnecting...")
 		time.Sleep(2 * time.Second)
+
 		continue
 	}
 }

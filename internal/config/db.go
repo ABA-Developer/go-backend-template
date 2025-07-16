@@ -1,7 +1,6 @@
 package config
 
-type DbConfig struct {
-	Addr            string
+type DBConfig struct {
 	MigratorDriver  string
 	Username        string
 	Password        string
