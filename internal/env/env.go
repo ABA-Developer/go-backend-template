@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 )
 
 func GetString(key, fallback string) string {
@@ -65,4 +66,18 @@ func MustGetEnv(k string) (v string) {
 	}
 
 	return
+}
+
+func GetDuration(key string, fallback time.Duration) time.Duration {
+	valStr, ok := os.LookupEnv(key)
+	if !ok {
+		return fallback
+	}
+
+	valDuration, err := time.ParseDuration(valStr)
+	if err != nil || valDuration <= 0 {
+		return fallback
+	}
+
+	return valDuration
 }

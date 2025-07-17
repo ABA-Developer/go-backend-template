@@ -24,9 +24,9 @@ func main() {
 	cfg := config.NewConfig()
 
 	// Register DB
-	db, err := db.NewPostgresDB(*cfg, log)
+	db, err := db.NewDatabase(cfg)
 	if err != nil {
-		log.Panic().Msg("Database connection failed")
+		log.Panic().Msg(fmt.Sprintf("Database connection failed, %v", err))
 		os.Exit(0)
 		return
 	}

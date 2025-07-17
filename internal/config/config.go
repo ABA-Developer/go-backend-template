@@ -36,6 +36,7 @@ func NewConfig() *Config {
 	DBConfig.MaxConnWaitTime = env.GetInt("DB_MAX_CONN_WAIT_TIME", int(constant.DefaultDBMaxConnWaitTime))
 	DBConfig.MaxConnLifetime = env.GetInt("DB_MAX_CONN_LIFETIME", int(constant.DefaultDBMaxConnLifetime))
 	DBConfig.MaxConnIdleTime = env.GetInt("DB_MAX_CONN_IDLE_TIME", int(constant.DefaultDBMaxConnIdleTime))
+	DBConfig.KeepAliveInterval = env.GetDuration("DB_KEEP_ALIVE_INTERVAL_CONN", constant.DefaultDBKeepAliveInterval)
 
 	// Application config load
 	cfg := new(Config)
