@@ -1,6 +1,7 @@
 package jwt
 
 import (
+	"errors"
 	"os"
 	"time"
 
@@ -49,9 +50,15 @@ func ClaimsAccessToken(token string) (response AccessTokenPayload, err error) {
 		return
 	}
 
+	userIDFloat, ok := claims["uri"].(float64)
+	if !ok {
+		err = errors.New("invalid user id type in token claims")
+		return
+	}
+
 	response = AccessTokenPayload{
 		GUID:   claims["jti"].(string),
-		UserID: claims["uri"].(int64),
+		UserID: int64(userIDFloat),
 		Role:   claims["role"].(string),
 	}
 

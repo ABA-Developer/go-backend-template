@@ -22,7 +22,7 @@ func (s *Service) LoginService(
 ) (data entities.Session, user entities.User, err error) {
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
-		log.WithContext(ctx).Error(err, "failed to begin transaction")
+		log.WithContext(ctx).Error(err, "error to begin transaction")
 		err = errors.WithStack(constant.ErrUnknownSource)
 		return
 	}
@@ -30,7 +30,7 @@ func (s *Service) LoginService(
 	defer func() {
 		if err != nil {
 			if errRollback := tx.Rollback(); errRollback != nil {
-				log.WithContext(ctx).Error(errRollback, "failed to rollback transaction", "original_error", err)
+				log.WithContext(ctx).Error(errRollback, "error to rollback transaction", "original_error", err)
 				err = errors.WithStack(constant.ErrUnknownSource)
 				return
 			}
@@ -46,7 +46,7 @@ func (s *Service) LoginService(
 			return
 		}
 
-		log.WithContext(ctx).Error(err, "failed to read user by email", "email", request.Email)
+		log.WithContext(ctx).Error(err, "error to read user by email", "email", request.Email)
 		return
 	}
 
@@ -59,7 +59,7 @@ func (s *Service) LoginService(
 
 	data, err = helper.GenerateSessionModel(ctx, sessionPayload)
 	if err != nil {
-		log.WithContext(ctx).Error(err, "failed to generate session model", "payload", sessionPayload)
+		log.WithContext(ctx).Error(err, "error to generate session model", "payload", sessionPayload)
 		return
 	}
 
@@ -74,12 +74,12 @@ func (s *Service) LoginService(
 		UserAgent:             data.UserAgent,
 	})
 	if err != nil {
-		log.WithContext(ctx).Error(err, "failed to create session", "session", data)
+		log.WithContext(ctx).Error(err, "error to create session", "session", data)
 		return
 	}
 
 	if err = tx.Commit(); err != nil {
-		log.WithContext(ctx).Error(err, "failed to commit transaction")
+		log.WithContext(ctx).Error(err, "error to commit transaction")
 		err = errors.WithStack(constant.ErrUnknownSource)
 	}
 

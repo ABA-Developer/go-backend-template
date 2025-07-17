@@ -36,4 +36,8 @@ var (
 	ErrPasswordIncorrect  = errors.New("password incorrect")
 	ErrAccountNotFound    = errors.New("account not found")
 	ErrEmailAlreadyExists = errors.New("email already exists")
+
+	// 403.
+	ErrForbiddenRole       = errors.New("your role is not allowed to access this resource")
+	ErrForbiddenPermission = errors.New("your permission is not allowed to access this resource")
 )
