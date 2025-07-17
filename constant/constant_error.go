@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
-
 )
 
 // error.
@@ -36,6 +35,7 @@ var (
 	ErrPasswordIncorrect  = errors.New("password incorrect")
 	ErrAccountNotFound    = errors.New("account not found")
 	ErrEmailAlreadyExists = errors.New("email already exists")
+	ErrIDNull             = errors.New("ID cannot be null")
 
 	// 403.
 	ErrForbiddenRole       = errors.New("your role is not allowed to access this resource")

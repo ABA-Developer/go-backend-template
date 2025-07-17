@@ -7,9 +7,9 @@ import (
 
 type User struct {
 	ID         int64         `json:"id"`
-	FirstName  string        `json:"first_name,omitempty"`
-	MiddleName string        `json:"middle_name,omitempty"`
-	LastName   string        `json:"last_name,omitempty"`
+	FirstName  string        `json:"first_name"`
+	MiddleName string        `json:"middle_name"`
+	LastName   string        `json:"last_name"`
 	Email      string        `json:"email"`
 	Password   string        `json:"password"`
 	Role       string        `json:"role"`
@@ -21,9 +21,9 @@ type User struct {
 }
 
 type UserUpdate struct {
-	FirstName  string    `json:"first_name,omitempty"`
-	MiddleName string    `json:"middle_name,omitempty"`
-	LastName   string    `json:"last_name,omitempty"`
+	FirstName  string    `json:"first_name"`
+	MiddleName string    `json:"middle_name"`
+	LastName   string    `json:"last_name"`
 	Email      string    `json:"email"`
 	Password   string    `json:"password"`
 	Role       string    `json:"role"`

@@ -11,7 +11,6 @@ import (
 	"be-dashboard-nba/internal/config"
 	"be-dashboard-nba/internal/utils"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/user"
 )
 
 func StartHTTPServer(cfg *config.Config, database *sql.DB) {
@@ -35,13 +34,10 @@ func StartHTTPServer(cfg *config.Config, database *sql.DB) {
 		})
 	})
 
-	// Setup dependencies
-	userRepo := user.NewRepo(database)
-	userService := user.NewService(userRepo)
 	validate := validator.NewValidator()
 
 	api := app.Group("/api").Group("/v1")
-	routes.UserRouter(api, userService)
+	routes.UserRouter(api, database, validate)
 	routes.AuthRouter(api, database, validate)
 
 	log.Printf("starting http server %v:%v", cfg.Host, cfg.Port)

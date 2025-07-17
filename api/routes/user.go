@@ -1,19 +1,15 @@
 package routes
 
 import (
-	"be-dashboard-nba/api/handlers"
-	"be-dashboard-nba/api/middleware"
-	"be-dashboard-nba/pkg/user"
-
 	"github.com/gofiber/fiber/v2"
+
+	userRoute "be-dashboard-nba/api/handlers/user/app"
+	"be-dashboard-nba/internal/db"
+	"be-dashboard-nba/internal/validator"
 )
 
-func UserRouter(app fiber.Router, service user.Service) {
-	routes := app.Group("/user", middleware.JWTProtected())
+func UserRouter(app fiber.Router, db db.DB, validate *validator.Validator) {
+	group := app.Group("/user")
 
-	routes.Get("/", handlers.GetAllUser(service))       // Get all user
-	routes.Post("/", handlers.CreateUser(service))      // Create user
-	routes.Get("/:id", handlers.GetUserById(service))   // Get user by Id
-	routes.Put("/:id", handlers.UpdateUser(service))    // Update user
-	routes.Delete("/:id", handlers.DeleteUser(service)) // Delete user
+	userRoute.UserRouter(group, db, validate)
 }
