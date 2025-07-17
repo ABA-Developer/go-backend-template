@@ -1,14 +1,16 @@
 package handlers
 
 import (
-	"be-dashboard-nba/api/presenter"
-	"be-dashboard-nba/pkg/entities"
-	"be-dashboard-nba/pkg/user"
 	"net/http"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
+
+	"be-dashboard-nba/api/presenter"
+	"be-dashboard-nba/pkg/entities"
+	"be-dashboard-nba/pkg/user"
+
 )
 
 func CreateUser(service user.Service) fiber.Handler {
@@ -80,7 +82,7 @@ func DeleteUser(service user.Service) fiber.Handler {
 		}
 
 		result := &entities.User{
-			ID: id,
+			ID: int64(id),
 		}
 		return c.JSON(presenter.UserSuccessResponse(result))
 	}
@@ -101,7 +103,7 @@ func UpdateUser(service user.Service) fiber.Handler {
 			return c.JSON(presenter.UserErrorResponse(err))
 		}
 
-		requestBody.ID = id
+		requestBody.ID = int64(id)
 
 		result, err := service.UpdateUser(&requestBody)
 		if err != nil {

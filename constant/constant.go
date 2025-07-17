@@ -30,3 +30,10 @@ const (
 	DefaultDBMaxConnIdleTime   = 60 * time.Second
 	DefaultDBKeepAliveInterval = 3 * time.Minute
 )
+
+// pagination.
+const (
+	DefaultOrder = "created_at DESC"
+	DefaultPage  = 1
+	DefaultLimit = 10
+)

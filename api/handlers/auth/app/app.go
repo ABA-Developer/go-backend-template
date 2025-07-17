@@ -1,15 +1,15 @@
-package routes
+package app
 
 import (
 	"github.com/gofiber/fiber/v2"
 
-	authRoute "be-dashboard-nba/api/handlers/auth/app"
 	"be-dashboard-nba/internal/db"
 	"be-dashboard-nba/internal/validator"
+	"be-dashboard-nba/pkg/auth/service"
 )
 
 func AuthRouter(app fiber.Router, db db.DB, validate *validator.Validator) {
-	group := app.Group("/auth")
+	svc := service.NewService(db)
 
-	authRoute.AuthRouter(group, db, validate)
+	app.Post("/login", loginApp(svc, validate))
 }

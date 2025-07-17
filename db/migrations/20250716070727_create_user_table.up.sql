@@ -9,6 +9,14 @@ CREATE TABLE IF NOT EXISTS "users" (
     "is_active" BOOLEAN DEFAULT true,
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     "created_by" INTEGER,
-    "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP WITH TIME ZONE,
     "updated_by" INTEGER
 );
+
+INSERT INTO 
+    users (first_name, middle_name, last_name, email, password, role)
+VALUES 
+    (
+        'Nusapala', 'Berkah', 'Autonomous', 'user@gmail.com', '$2a$12$LQi1CpKB/dUNMKko2sHd/.umM9hdOYSoMRF7b8JbgiV3ZvSWIEqQC', 'user'
+    )
+ON CONFLICT DO NOTHING;

@@ -11,7 +11,7 @@ import (
 	"be-dashboard-nba/internal/config"
 	"be-dashboard-nba/internal/db"
 	"be-dashboard-nba/internal/utils"
-	"be-dashboard-nba/pkg/auth"
+	"be-dashboard-nba/internal/validator"
 	"be-dashboard-nba/pkg/user"
 )
 
@@ -53,18 +53,18 @@ func main() {
 
 	// Register repository
 	userRepo := user.NewRepo(db)
-	authRepo := auth.NewRepo(db)
 
 	// Register service
 	userService := user.NewService(userRepo)
-	authService := auth.NewService(authRepo)
 
 	// API group
 	api := app.Group("/api").Group("/v1")
 
+	validate := validator.NewValidator()
+
 	// Register router
 	routes.UserRouter(api, userService)
-	routes.AuthRouter(api, authService)
+	routes.AuthRouter(api, db, validate)
 
 	defer db.Close()
 

@@ -1,14 +1,14 @@
 package presenter
 
 import (
-	"be-dashboard-nba/pkg/entities"
-
 	"github.com/gofiber/fiber/v2"
+
+	"be-dashboard-nba/pkg/entities"
 )
 
 // Book is the presenter object which will be passed in the response by Handler
 type User struct {
-	ID         int    `json:"id"`
+	ID         int64  `json:"id"`
 	FirstName  string `json:"first_name"`
 	MiddleName string `json:"middle_name"`
 	LastName   string `json:"last_name"`
