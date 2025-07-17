@@ -1,18 +1,18 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
+	"github.com/gofiber/fiber/v2"
+
+	"be-dashboard-nba/api/middleware"
 	"be-dashboard-nba/api/routes"
 	"be-dashboard-nba/internal/config"
 	"be-dashboard-nba/internal/db"
 	"be-dashboard-nba/internal/utils"
 	"be-dashboard-nba/pkg/auth"
 	"be-dashboard-nba/pkg/user"
-	"fmt"
-	"os"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 func main() {
@@ -31,6 +31,26 @@ func main() {
 		return
 	}
 
+	// Register fiber
+	app := fiber.New(
+		fiber.Config{
+			DisableStartupMessage: true,
+		},
+	)
+
+	// Register middlewares
+	middleware.TimeoutMiddleware(app)
+	middleware.CorsMiddleware(app)
+	middleware.RecoverMiddleware(app)
+	middleware.RateLimiterMiddleware(app)
+	middleware.LoggerMiddleware(app)
+
+	app.Get("/", func(ctx *fiber.Ctx) error {
+		return ctx.JSON(fiber.Map{
+			"message": cfg.Name + " is Running",
+		})
+	})
+
 	// Register repository
 	userRepo := user.NewRepo(db)
 	authRepo := auth.NewRepo(db)
@@ -38,20 +58,6 @@ func main() {
 	// Register service
 	userService := user.NewService(userRepo)
 	authService := auth.NewService(authRepo)
-
-	// Register fiber
-	app := fiber.New(
-		fiber.Config{
-			DisableStartupMessage: true,
-		},
-	)
-	app.Use(cors.New())
-	app.Use(logger.New())
-	app.Get("/", func(ctx *fiber.Ctx) error {
-		return ctx.JSON(fiber.Map{
-			"message": cfg.Name + " is Running",
-		})
-	})
 
 	// API group
 	api := app.Group("/api").Group("/v1")

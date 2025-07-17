@@ -1,10 +1,10 @@
 package config
 
 import (
-	"be-dashboard-nba/internal/constant"
-	"be-dashboard-nba/internal/env"
-
 	"github.com/joho/godotenv"
+
+	"be-dashboard-nba/constant"
+	"be-dashboard-nba/internal/env"
 )
 
 type Config struct {

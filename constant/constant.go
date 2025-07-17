@@ -2,6 +2,15 @@ package constant
 
 import "time"
 
+// middleware.
+const (
+	DefaultMdwHeaderToken         = "Authorization"
+	DefaultMdwHeaderBearer        = "Bearer"
+	DefaultMdwRateLimiter         = 20
+	DefaultMdwRateLimiterDuration = time.Minute
+	DefaultMdwTimeout             = 10 * time.Second
+)
+
 // runtime.
 const (
 	DefaultAppName = "GO Backend Template API"
