@@ -1,13 +1,16 @@
 package server
 
 import (
-	"be-dashboard-nba/constant"
 	"database/sql"
 	"errors"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 
 	"github.com/gofiber/fiber/v2"
+
+	"be-dashboard-nba/constant"
 )
 
 func errorHandler() fiber.ErrorHandler {
@@ -54,9 +57,12 @@ func mapErrorCode(err error) int {
 }
 
 func mapErrorMessage(err error, code int) string {
+	appDebug, _ := strconv.ParseBool(os.Getenv("APP_DEBUG"))
 	message := err.Error()
-	if code == http.StatusInternalServerError {
+
+	if !appDebug && code == http.StatusInternalServerError {
 		message = constant.ErrUnknownSource.Error()
 	}
+
 	return message
 }
