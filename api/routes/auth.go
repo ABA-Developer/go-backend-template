@@ -1,14 +1,15 @@
 package routes
 
 import (
-	"be-dashboard-nba/api/handlers"
-	"be-dashboard-nba/pkg/auth"
-
 	"github.com/gofiber/fiber/v2"
+
+	authRoute "be-dashboard-nba/api/handlers/auth/app"
+	"be-dashboard-nba/internal/db"
+	"be-dashboard-nba/internal/validator"
 )
 
-func AuthRouter(app fiber.Router, service auth.Service) {
-	// app.Post("/auth/register", handlers.RegisterUser(service))
-	app.Post("/auth/login", handlers.LoginUser(service))
-	// app.Post("/auth/logout", handlers.LogoutUser(service))
+func AuthRouter(app fiber.Router, db db.DB, validate *validator.Validator) {
+	group := app.Group("/auth")
+
+	authRoute.AuthRouter(group, db, validate)
 }

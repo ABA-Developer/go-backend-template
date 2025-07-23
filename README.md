@@ -41,7 +41,6 @@ This project provides a starting point for building a web application with a cle
 2. Set the environment variables in a `.env` file:
 
    ```env
-    ADDR=":8080"
     DB_MIGRATOR_DRIVER="postgres"
     DB_USERNAME="auth_user"
     DB_PASSWORD="auth_user"

@@ -53,7 +53,7 @@ stop-db:
 # Migrations
 .PHONY: migrate-create
 migrate-create:
-	@migrate create -seq -ext sql -dir $(MIGRATION_PATH) $(filter-out $@,$(MAKECMDGOALS))
+	@migrate create -ext sql -dir $(MIGRATION_PATH) $(filter-out $@,$(MAKECMDGOALS))
 
 .PHONY: migrate-up
 migrate-up:
@@ -62,6 +62,10 @@ migrate-up:
 .PHONY: migrate-down
 migrate-down:
 	@migrate -path=$(MIGRATION_PATH) -database=$(DB_ADDR) down $(filter-out $@,$(MAKECMDGOALS))
+
+.PHONY: migrate-fix
+migrate-fix:
+	@migrate -path=$(MIGRATION_PATH) -database=$(DB_ADDR) force $(filter-out $@,$(MAKECMDGOALS))
 
 # This avoids "No rule to make target" error for extra args
 %:
