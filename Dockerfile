@@ -4,7 +4,7 @@ RUN apk update && apk add --no-cache git
 
 WORKDIR /app
 
-COPY go.mod go.sum
+COPY go.mod go.sum ./
 
 RUN go mod download
 
@@ -12,6 +12,14 @@ COPY . .
 
 RUN go mod tidy
 
-RUN go build -o go-backend-nba
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /app/go-backend-nba ./cmd/main.go
 
-ENTRYPOINT [ "app/go-backend-nba" ]
+FROM alpine:latest
+
+WORKDIR /app
+
+COPY --from=builder /app/go-backend-nba ./
+
+COPY --from=builder /app/.env .env
+
+ENTRYPOINT [ "./go-backend-nba" ]
