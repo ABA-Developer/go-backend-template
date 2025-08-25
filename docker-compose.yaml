@@ -1,0 +1,43 @@
+services:
+  db:
+    image: postgres:15
+    container_name: db-auth-user
+    volumes:
+      - db-auth-user:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - go-backend-nba-network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: go-backend-nba
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: go-backend-nba-app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - go-backend-nba-network
+    environment:
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: go-backend-nba
+      DB_HOST: db 
+      DB_PORT: "5432"
+      DB_SSLMODE: disable
+      DB_ADDR: postgres://postgres:300805@db:5432/go-backend-nba?sslmode=disable
+
+volumes:
+  db-auth-user:
+
+networks:
+  go-backend-nba-network:
+    name: go-backend-nba-network
