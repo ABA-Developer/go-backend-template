@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS app_login (
 	access_token text NULL,
 	status varchar(10) NULL,
 	ip_address varchar(100) NULL,
-	"date" timestamp NULL,
+	created_at timestamp DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	"type" varchar(10) DEFAULT 'web'::character varying NULL,
 	CONSTRAINT app_login_pkey PRIMARY KEY (id),
 	CONSTRAINT app_login_status_check CHECK (((status)::text = ANY ((ARRAY['login'::character varying, 'logout'::character varying])::text[]))),
