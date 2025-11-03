@@ -32,10 +32,14 @@ const (
 // error form field.
 var (
 	// 400.
-	ErrPasswordIncorrect  = errors.New("password incorrect")
-	ErrAccountNotFound    = errors.New("account not found")
-	ErrEmailAlreadyExists = errors.New("email already exists")
-	ErrIDNull             = errors.New("ID cannot be null")
+	ErrPasswordIncorrect    = errors.New("password incorrect")
+	ErrAccountNotFound      = errors.New("account not found")
+	ErrEmailAlreadyExists   = errors.New("email already exists")
+	ErrIDNull               = errors.New("ID cannot be null")
+	ErrWrongEmailOrPassword = errors.New("wrong email or password")
+
+	// 401
+	ErrUserIdNotFound = errors.New("user Id not found")
 
 	// 403.
 	ErrForbiddenRole       = errors.New("your role is not allowed to access this resource")

@@ -1,4 +1,4 @@
-package server
+package app
 
 import (
 	"database/sql"
@@ -12,6 +12,23 @@ import (
 
 	"be-dashboard-nba/constant"
 )
+
+var errorCodeMap = map[error]int{
+	constant.ErrFailedParseRequest:  http.StatusBadRequest,
+	constant.ErrHeaderTokenNotFound: http.StatusUnauthorized,
+	constant.ErrHeaderTokenInvalid:  http.StatusUnauthorized,
+	constant.ErrTokenUnauthorized:   http.StatusUnauthorized,
+	constant.ErrTokenInvalid:        http.StatusUnauthorized,
+	constant.ErrTokenExpired:        http.StatusUnauthorized,
+	constant.ErrForbiddenRole:       http.StatusForbidden,
+	constant.ErrForbiddenPermission: http.StatusForbidden,
+	constant.ErrDataNotFound:        http.StatusNotFound,
+
+	constant.ErrAccountNotFound:      http.StatusUnauthorized,
+	constant.ErrPasswordIncorrect:    http.StatusUnauthorized,
+	constant.ErrWrongEmailOrPassword: http.StatusBadRequest,
+	constant.ErrUserIdNotFound:       http.StatusNotFound,
+}
 
 func errorHandler() fiber.ErrorHandler {
 	return func(c *fiber.Ctx, err error) error {
@@ -37,23 +54,12 @@ func errorHandler() fiber.ErrorHandler {
 }
 
 func mapErrorCode(err error) int {
-	switch {
-	case errors.Is(err, constant.ErrFailedParseRequest):
-		return http.StatusBadRequest
-	case errors.Is(err, constant.ErrHeaderTokenNotFound),
-		errors.Is(err, constant.ErrHeaderTokenInvalid),
-		errors.Is(err, constant.ErrTokenUnauthorized),
-		errors.Is(err, constant.ErrTokenInvalid),
-		errors.Is(err, constant.ErrTokenExpired):
-		return http.StatusUnauthorized
-	case errors.Is(err, constant.ErrForbiddenRole),
-		errors.Is(err, constant.ErrForbiddenPermission):
-		return http.StatusForbidden
-	case errors.Is(err, constant.ErrDataNotFound):
-		return http.StatusNotFound
-	default:
-		return http.StatusInternalServerError
+	for sentinel, code := range errorCodeMap {
+		if errors.Is(err, sentinel) {
+			return code
+		}
 	}
+	return http.StatusInternalServerError
 }
 
 func mapErrorMessage(err error, code int) string {

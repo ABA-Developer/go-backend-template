@@ -8,6 +8,7 @@ import (
 )
 
 type responseDataPayload struct {
+	Code 	  int  		  `json:"code"`
 	Data      interface{} `json:"data"`
 	Message   string      `json:"message"`
 	TotalData *int64      `json:"total_data,omitempty"`
@@ -28,6 +29,7 @@ type paginatePayload struct {
 
 func ResponseData(c *fiber.Ctx, res ResponsePayload) error {
 	return c.Status(res.Code).JSON(responseDataPayload{
+		Code: res.Code,
 		Data:    res.Data,
 		Message: res.Message,
 	})

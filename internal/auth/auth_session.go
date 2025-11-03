@@ -11,11 +11,11 @@ import (
 )
 
 func (a *Auth) ValidateSession(ctx context.Context) (err error) {
-	q := repository.NewQuery(a.db)
+	r := repository.NewRepo(a.db)
 
-	session, err := q.ReadDetailSessionQuery(ctx, a.claims.GUID)
+	session, err := r.ReadDetailSessionQuery(ctx, a.claims.SessionID)
 	if err != nil {
-		log.WithContext(ctx).Error(err, "error read session by guid : "+a.claims.GUID)
+		log.WithContext(ctx).Error(err, "error read session by id : "+a.claims.SessionID)
 		return
 	}
 
