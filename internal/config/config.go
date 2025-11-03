@@ -2,19 +2,27 @@ package config
 
 import (
 	"github.com/joho/godotenv"
+	"github.com/rs/zerolog"
 
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/env"
 )
+
+type Swagger struct {
+	Host      string
+	BasePath  string
+	IsEnabled bool
+}
 
 type Config struct {
 	Name string
 	Host string
 	Port int
 	DB   DBConfig
+    Swagger Swagger
 }
 
-func NewConfig() *Config {
+func NewConfig(log *zerolog.Logger) *Config {
 	err := godotenv.Load()
 	if err != nil {
 		panic(err)
@@ -38,12 +46,22 @@ func NewConfig() *Config {
 	DBConfig.MaxConnIdleTime = env.GetInt("DB_MAX_CONN_IDLE_TIME", int(constant.DefaultDBMaxConnIdleTime))
 	DBConfig.KeepAliveInterval = env.GetDuration("DB_KEEP_ALIVE_INTERVAL_CONN", constant.DefaultDBKeepAliveInterval)
 
+	// swagger
+	swagger := Swagger{
+		Host:      env.GetString("SWAGGER_HOST", ""),
+		BasePath:  env.GetString("SWAGGER_BASE_PATH", ""),
+		IsEnabled: env.GetBool("SWAGGER_ENABLED", false),
+	}
+
 	// Application config load
 	cfg := new(Config)
 	cfg.Name = env.GetString("APP_NAME", constant.DefaultAppName)
 	cfg.Host = env.GetString("APP_HOST", constant.DefaultAppHost)
 	cfg.Port = env.GetInt("APP_PORT", constant.DefaultAppPort)
 	cfg.DB = *DBConfig
+	cfg.Swagger = swagger
+
+	log.Info().Msgf("Config loaded: %+v", cfg)
 
 	return cfg
 }

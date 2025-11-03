@@ -1,0 +1,320 @@
+basePath: /api/v1
+definitions:
+  presenter.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  presenter.ReadUserResponse:
+    properties:
+      active:
+        type: boolean
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      img_name:
+        type: string
+      img_path:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  presenter.ResponsePayload:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+    type: object
+  presenter.SessionResponse:
+    properties:
+      access_token:
+        type: string
+      refresh_token:
+        type: string
+      user:
+        $ref: '#/definitions/presenter.UserResponse'
+    type: object
+  presenter.UpdateUserRequest:
+    properties:
+      active:
+        type: boolean
+      email:
+        type: string
+      full_name:
+        type: string
+      img_name:
+        type: string
+      img_path:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    type: object
+  presenter.UserResponse:
+    properties:
+      active:
+        type: boolean
+      email:
+        type: string
+      full_name:
+        type: string
+      id:
+        type: string
+      img_name:
+        type: string
+      img_path:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  presenter.responseErrorPayload:
+    properties:
+      code:
+        type: integer
+      error: {}
+      message:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact: {}
+  description: Template API for Golang project
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Base APP Go
+  version: "1.0"
+paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user with email and password, returning tokens and
+        user data. This endpoint uses a centralized error handler.
+      parameters:
+      - description: Login credentials
+        in: body
+        name: auth
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful login
+          schema:
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayload'
+            - properties:
+                data:
+                  $ref: '#/definitions/presenter.SessionResponse'
+              type: object
+        "400":
+          description: Bad Request (e.g., Validation Error, Invalid JSON)
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "401":
+          description: Unauthorized (e.g., Wrong email or password)
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "500":
+          description: Internal Server Error (e.g., Database connection issue)
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+      summary: User Login
+      tags:
+      - Authentication
+  /auth/logout:
+    post:
+      description: Logs out the current user by invalidating their session/token.
+        Requires Bearer token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully logged out
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayload'
+        "400":
+          description: Bad Request (e.g., Validation Error, Invalid JSON)
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "500":
+          description: Internal Server Error (e.g., Database connection issue)
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+      security:
+      - BearerAuth: []
+      summary: User Logout
+      tags:
+      - Authentication
+  /auth/me:
+    get:
+      description: Fetches the profile details of the currently authenticated user.
+        Requires Bearer token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved user profile
+          schema:
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayload'
+            - properties:
+                data:
+                  $ref: '#/definitions/presenter.UserResponse'
+              type: object
+        "401":
+          description: Unauthorized (Invalid or missing token)
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "404":
+          description: User profile not found
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+      security:
+      - BearerAuth: []
+      summary: Get Current User Profile
+      tags:
+      - Authentication
+  /users/{id}:
+    put:
+      consumes:
+      - application/json
+      description: Updates a user's profile details by their ID. Requires Bearer token.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User data to update
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update user
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayload'
+        "400":
+          description: Bad Request (Invalid ID, Invalid JSON, or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+      security:
+      - BearerAuth: []
+      summary: Update User
+      tags:
+      - User Profile
+  /users/me:
+    get:
+      description: Fetches the profile details of the currently authenticated user.
+        Requires Bearer token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved user profile
+          schema:
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayload'
+            - properties:
+                data:
+                  $ref: '#/definitions/presenter.ReadUserResponse'
+              type: object
+        "401":
+          description: Unauthorized (Invalid or missing token)
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "404":
+          description: User profile not found
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+      security:
+      - BearerAuth: []
+      summary: Get Current User Profile
+      tags:
+      - User Profile
+    put:
+      consumes:
+      - application/json
+      description: Updates a user's profile details by their ID. Requires Bearer token.
+      parameters:
+      - description: User data to update
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update user
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayload'
+        "400":
+          description: Bad Request (Invalid ID, Invalid JSON, or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.responseErrorPayload'
+      security:
+      - BearerAuth: []
+      summary: Update User
+      tags:
+      - User Profile
+schemes:
+- http
+- https
+securityDefinitions:
+  BearerAuth:
+    description: Type "Bearer {your token}" into the field below.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

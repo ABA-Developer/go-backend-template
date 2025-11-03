@@ -6,8 +6,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func NewLogger() (logger zerolog.Logger) {
-	logger = zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "2006-01-02/15:04:05(Z07:00)"}).
+func NewLogger() *zerolog.Logger {
+	logger := zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: "2006-01-02/15:04:05(Z07:00)"}).
 		Level(zerolog.TraceLevel).
 		With().
 		Timestamp().
@@ -15,5 +15,5 @@ func NewLogger() (logger zerolog.Logger) {
 		Int("pid", os.Getpid()).
 		Logger()
 
-	return
+	return &logger
 }

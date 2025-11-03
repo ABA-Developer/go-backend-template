@@ -12,14 +12,16 @@ import (
 )
 
 type responseErrorPayload struct {
+	Code    int32 `json:"code"`
 	Error   interface{} `json:"error,omitempty"`
 	Message string      `json:"message"`
 }
 
 func ResponseErrorValidate(c *fiber.Ctx, err error) error {
 	return c.Status(http.StatusBadRequest).JSON(responseErrorPayload{
-		Error:   validator.ValidationErrors(err),
+		Code: http.StatusBadRequest,
 		Message: constant.ErrMsgValidate,
+		Error:   validator.ValidationErrors(err),
 	})
 }
 

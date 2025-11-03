@@ -1,15 +1,21 @@
 package routes
 
 import (
-	"github.com/gofiber/fiber/v2"
+	"be-dashboard-nba/api/app"
+	"be-dashboard-nba/api/handlers"
+	"be-dashboard-nba/api/middleware"
+	"be-dashboard-nba/pkg/auth/service"
 
-	authRoute "be-dashboard-nba/api/handlers/auth/app"
-	"be-dashboard-nba/internal/db"
-	"be-dashboard-nba/internal/validator"
+	"github.com/gofiber/fiber/v2"
 )
 
-func AuthRouter(app fiber.Router, db db.DB, validate *validator.Validator) {
-	group := app.Group("/auth")
+func AuthRouter(http fiber.Router, application *app.Application) {
+	svc := service.NewService(application.DB, application.Log)
+	mdw := middleware.NewEnsureToken(application.DB)
 
-	authRoute.AuthRouter(group, db, validate)
+	routes := http.Group("/auth")
+
+	routes.Post("/login", handlers.Login(svc, application.Validator))
+	routes.Post("/logout", mdw.ValidateToken(), handlers.Logout(svc))
+	routes.Get("/me", mdw.ValidateToken(), handlers.AuthMe(svc))
 }

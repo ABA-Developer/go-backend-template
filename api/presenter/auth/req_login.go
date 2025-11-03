@@ -1,4 +1,4 @@
-package payload
+package presenter
 
 import "be-dashboard-nba/internal/utils"
 
@@ -7,16 +7,14 @@ type LoginRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
-func (request *LoginRequest) ToSessionPayload(userID int64, role, userAgent, iPAddress string) (
+func (request *LoginRequest) ToSessionPayload(userID string, userAgent, iPAddress string) (
 	params SessionPayload,
 ) {
 	params = SessionPayload{
-		SessionGUID: utils.GenerateUUID(),
-		UserID:      userID,
-		Role:        role,
-		UserAgent:   userAgent,
-		IPAddress:   iPAddress,
+		SessionID: utils.GenerateUUID(), 
+		UserID:    userID,             
+		UserAgent: userAgent,
+		IPAddress: iPAddress,
 	}
-
 	return
 }

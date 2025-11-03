@@ -3,13 +3,21 @@ package routes
 import (
 	"github.com/gofiber/fiber/v2"
 
-	userRoute "be-dashboard-nba/api/handlers/user/app"
-	"be-dashboard-nba/internal/db"
-	"be-dashboard-nba/internal/validator"
+	"be-dashboard-nba/api/app"
+	"be-dashboard-nba/api/handlers"
+	"be-dashboard-nba/api/middleware"
+	"be-dashboard-nba/pkg/user/service"
 )
 
-func UserRouter(app fiber.Router, db db.DB, validate *validator.Validator) {
-	group := app.Group("/user")
+func UserRouter(http fiber.Router, application *app.Application) {
 
-	userRoute.UserRouter(group, db, validate)
+	svc := service.NewService(application.DB, application.Log)
+	mdw := middleware.NewEnsureToken(application.DB)
+
+	routes := http.Group("/users")
+	routes.Put("/me", mdw.ValidateToken(), handlers.UpdateProfileApp(svc, application.Validator))
+	routes.Get("/me", mdw.ValidateToken(), handlers.ReadProfileApp(svc))
+
+	routes.Put("/:id", mdw.ValidateToken(), handlers.UpdateUserApp(svc, application.Validator))
+
 }
