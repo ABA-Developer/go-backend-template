@@ -2,44 +2,48 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 )
 
 type CreateUserParams struct {
-	FirstName  string
-	MiddleName string
-	LastName   string
-	Email      string
-	Password   string
-	Role       string
-	IsActive   bool
-	CreatedBy  int64
+	Name      string
+	FullName  string
+	Email     string
+	Password  string
+	Active    bool
+	Phone     sql.NullString
+	ImgPath   sql.NullString
+	ImgName   sql.NullString
+	CreatedBy string
 }
 
-func (q *Query) CreateUserQuery(
+func (r *repository) CreateUserQuery(
 	ctx context.Context,
 	args CreateUserParams,
 ) (err error) {
 	const statement = `
-		INSERT INTO users (
-			first_name, middle_name, last_name, 
-			email, password, role, is_active,
+		INSERT INTO app_user (
+			name, full_name, email, password, active,
+			phone, img_path, img_name,
 			created_by, created_at
 		)
 		VALUES (
-			$1, $2, $3, 
-			$4, $5, $6, $7,
-			$8, (now() at time zone 'UTC')::TIMESTAMP
+			$1, $2, $3, $4, $5,
+			$6, $7, $8,
+			$9, (now() at time zone 'UTC')::TIMESTAMP
 		)
 	`
 
-	_, err = q.db.ExecContext(ctx, statement,
-		args.FirstName,
-		args.MiddleName,
-		args.LastName,
+	// DIUBAH: Urutan argumen
+	_, err = r.db.ExecContext(ctx, statement,
+		args.Name,
+		args.FullName,
 		args.Email,
 		args.Password,
-		args.Role,
-		args.IsActive,
+		args.Active,
+		args.Phone,
+		args.ImgPath,
+		args.ImgName,
 		args.CreatedBy,
 	)
 
@@ -47,64 +51,67 @@ func (q *Query) CreateUserQuery(
 }
 
 type UpdateUserParams struct {
-	ID         int64
-	FirstName  string
-	MiddleName string
-	LastName   string
-	Email      string
-	Password   string
-	Role       string
-	IsActive   bool
-	UpdatedBy  int64
+	ID        string
+	Name      string
+	FullName  string
+	Email     string
+	Password  string
+	Phone     string
+	Active    bool
+	ImgPath   string
+	ImgName   string
+	UpdatedBy string
 }
 
-func (q *Query) UpdateUserQuery(
+func (r *repository) UpdateUserQuery(
 	ctx context.Context,
 	args UpdateUserParams,
 ) (err error) {
 	const statement = `
 		UPDATE
-			users
+			app_user
 		SET
-			first_name = CASE WHEN $2 <> '' THEN $2 ELSE first_name END,
-			middle_name = CASE WHEN $3 <> '' THEN $3 ELSE middle_name END,
-			last_name = CASE WHEN $4 <> '' THEN $4 ELSE last_name END,
-			email = CASE WHEN $5 <> '' THEN $5 ELSE email END,
-			password = CASE WHEN $6 <> '' THEN $6 ELSE password END,
-			role = CASE WHEN $7 <> '' THEN $7 ELSE role END,
-			is_active = $8,
-			updated_by = $9,
+			name = CASE WHEN $2 <> '' THEN $2 ELSE name END,
+			full_name = CASE WHEN $3 <> '' THEN $3 ELSE full_name END,
+			email = CASE WHEN $4 <> '' THEN $4 ELSE email END,
+			password = CASE WHEN $5 <> '' THEN $5 ELSE password END,
+			phone = CASE WHEN $6 <> '' THEN $6 ELSE phone END,
+			active = $7,
+			img_path = CASE WHEN $8 <> '' THEN $8 ELSE img_path END,
+			img_name = CASE WHEN $9 <> '' THEN $9 ELSE img_name END,
+			updated_by = $10,
 			updated_at = (now() at time zone 'UTC')::TIMESTAMP
 		WHERE
 			id = $1
 	`
 
-	_, err = q.db.ExecContext(ctx, statement,
+	_, err = r.db.ExecContext(ctx, statement,
 		args.ID,
-		args.FirstName,
-		args.MiddleName,
-		args.LastName,
+		args.Name,
+		args.FullName,
 		args.Email,
 		args.Password,
-		args.Role,
-		args.IsActive,
+		args.Phone,
+		args.Active,
+		args.ImgPath,
+		args.ImgName,
 		args.UpdatedBy,
 	)
 
 	return
 }
 
-func (q *Query) DeleteUserQuery(
+func (r *repository) DeleteUserQuery(
 	ctx context.Context,
-	id int64,
+	id string,
 ) (err error) {
 	const statement = `
-		DELETE FROM users
+		DELETE FROM app_user
 		WHERE
 			id = $1
 	`
 
-	_, err = q.db.ExecContext(ctx, statement, id)
+	_, err = r.db.ExecContext(ctx, statement, id)
 
 	return
 }
