@@ -1,4 +1,4 @@
-package presenter
+package payload
 
 import (
 	"be-dashboard-nba/internal/utils"
