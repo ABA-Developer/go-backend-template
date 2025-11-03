@@ -14,38 +14,33 @@ type ReadListUserParams struct {
 	Offset    int
 }
 
-func (q *Query) ReadListUserQuery(
+func (r *repository) ReadListUserQuery(
 	ctx context.Context,
 	args ReadListUserParams,
 ) (data []entities.User, err error) {
 	const stmt = `
 		SELECT
-			id, first_name, middle_name, last_name, 
-			email, role, is_active,
+			id, name, full_name, email, password, active,
+			phone, img_path, img_name,
 			created_at, created_by, updated_at, updated_by
 		FROM
-			users
+			app_user
 		WHERE
 			(CASE WHEN $1::bool THEN(
 				email ILIKE $2
-				OR first_name ILIKE $2
-				OR middle_name ILIKE $2
-				OR last_name ILIKE $2
-				OR role ILIKE $2
+				OR name ILIKE $2
+				OR full_name ILIKE $2
+				OR phone ILIKE $2
 			) ELSE TRUE END)
 		ORDER BY
-			(CASE WHEN $3 = 'first_name ASC' THEN first_name END) ASC,
-			(CASE WHEN $3 = 'first_name DESC' THEN first_name END) DESC,
-			(CASE WHEN $3 = 'middle_name ASC' THEN middle_name END) ASC,
-			(CASE WHEN $3 = 'middle_name DESC' THEN middle_name END) DESC,
-			(CASE WHEN $3 = 'last_name ASC' THEN last_name END) ASC,
-			(CASE WHEN $3 = 'last_name DESC' THEN last_name END) DESC,
+			(CASE WHEN $3 = 'name ASC' THEN name END) ASC,
+			(CASE WHEN $3 = 'name DESC' THEN name END) DESC,
+			(CASE WHEN $3 = 'full_name ASC' THEN full_name END) ASC,
+			(CASE WHEN $3 = 'full_name DESC' THEN full_name END) DESC,
 			(CASE WHEN $3 = 'email ASC' THEN email END) ASC,
 			(CASE WHEN $3 = 'email DESC' THEN email END) DESC,
-			(CASE WHEN $3 = 'role ASC' THEN role END) ASC,
-			(CASE WHEN $3 = 'role DESC' THEN role END) DESC,
-			(CASE WHEN $3 = 'is_active ASC' THEN is_active END) ASC,
-			(CASE WHEN $3 = 'is_active DESC' THEN is_active END) DESC,
+			(CASE WHEN $3 = 'active ASC' THEN active END) ASC,
+			(CASE WHEN $3 = 'active DESC' THEN active END) DESC,
 			(CASE WHEN $3 = 'created_at ASC' THEN created_at END) ASC,
 			(CASE WHEN $3 = 'created_at DESC' THEN created_at END) DESC,
 			(CASE WHEN $3 = 'updated_at ASC' THEN updated_at END) ASC,
@@ -54,7 +49,7 @@ func (q *Query) ReadListUserQuery(
 		OFFSET $5
 	`
 
-	rows, err := q.db.QueryContext(ctx, stmt,
+	rows, err := r.db.QueryContext(ctx, stmt,
 		args.SetSearch,
 		args.Search,
 		args.Order,
@@ -71,12 +66,14 @@ func (q *Query) ReadListUserQuery(
 
 		if err = rows.Scan(
 			&u.ID,
-			&u.FirstName,
-			&u.MiddleName,
-			&u.LastName,
+			&u.Name,
+			&u.FullName,
 			&u.Email,
-			&u.Role,
-			&u.IsActive,
+			&u.Password,
+			&u.Active,
+			&u.Phone,
+			&u.ImgPath,
+			&u.ImgName,
 			&u.CreatedAt,
 			&u.CreatedBy,
 			&u.UpdatedAt,
@@ -91,7 +88,7 @@ func (q *Query) ReadListUserQuery(
 	return
 }
 
-func (q *Query) GetCountUserQuery(
+func (r *repository) GetCountUserQuery(
 	ctx context.Context,
 	args ReadListUserParams,
 ) (count int64, err error) {
@@ -99,18 +96,17 @@ func (q *Query) GetCountUserQuery(
 		SELECT
 			COUNT(*)
 		FROM
-			users
+			app_user
 		WHERE
 			(CASE WHEN $1::bool THEN(
 				email ILIKE $2
-				OR first_name ILIKE $2
-				OR middle_name ILIKE $2
-				OR last_name ILIKE $2
-				OR role ILIKE $2
+				OR name ILIKE $2
+				OR full_name ILIKE $2
+				OR phone ILIKE $2
 			) ELSE TRUE END)
 	`
 
-	err = q.db.QueryRowContext(ctx, stmt,
+	err = r.db.QueryRowContext(ctx, stmt,
 		args.SetSearch,
 		args.Search,
 	).Scan(&count)
@@ -118,39 +114,35 @@ func (q *Query) GetCountUserQuery(
 	return
 }
 
-func (q *Query) ReadDetailUserQuery(
+func (r *repository) ReadDetailUserQuery(
 	ctx context.Context,
-	id int64,
+	id string,
 ) (data entities.User, err error) {
 	const statement = `
-		SELECT	
-			id, first_name, middle_name, last_name, 
-			email, role, is_active,
-			created_at, created_by, updated_at, updated_by
+		SELECT 	
+			id, name, full_name, email, active,
+			phone, img_path, img_name
 		FROM
-			users
+			app_user
 		WHERE
 			id = $1
 	`
 
-	err = q.db.QueryRowContext(ctx, statement, id).Scan(
+	err = r.db.QueryRowContext(ctx, statement, id).Scan(
 		&data.ID,
-		&data.FirstName,
-		&data.MiddleName,
-		&data.LastName,
+		&data.Name,
+		&data.FullName,
 		&data.Email,
-		&data.Role,
-		&data.IsActive,
-		&data.CreatedAt,
-		&data.CreatedBy,
-		&data.UpdatedAt,
-		&data.UpdatedBy,
+		&data.Active,
+		&data.Phone,
+		&data.ImgPath,
+		&data.ImgName,
 	)
 
 	return
 }
 
-func (q *Query) IsUserEmailExistsQuery(
+func (r *repository) IsUserEmailExistsQuery(
 	ctx context.Context,
 	email string,
 ) (exists bool, err error) {
@@ -159,18 +151,18 @@ func (q *Query) IsUserEmailExistsQuery(
 			SELECT
 				1
 			FROM
-				users
+				app_user
 			WHERE
 				email = $1
 		)
 	`
 
-	err = q.db.QueryRowContext(ctx, statement, email).Scan(&exists)
+	err = r.db.QueryRowContext(ctx, statement, email).Scan(&exists)
 
 	return
 }
 
-func (q *Query) IsUpdateUserEmailExistsQuery(
+func (r *repository) IsUpdateUserEmailExistsQuery(
 	ctx context.Context,
 	email, id string,
 ) (exists bool, err error) {
@@ -179,14 +171,14 @@ func (q *Query) IsUpdateUserEmailExistsQuery(
 			SELECT
 				1
 			FROM
-				users
+				app_user
 			WHERE
 				email = $1
 				AND id != $2
 		)
 	`
 
-	err = q.db.QueryRowContext(ctx, statement, email, id).Scan(&exists)
+	err = r.db.QueryRowContext(ctx, statement, email, id).Scan(&exists)
 
 	return
 }
