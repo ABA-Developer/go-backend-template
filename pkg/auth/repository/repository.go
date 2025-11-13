@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/db"
 	"be-dashboard-nba/pkg/entities"
 	"context"
@@ -14,6 +15,7 @@ type Repository interface {
 	ReadDetailUserByEmailQuery(ctx context.Context, email string) (data entities.User, err error)
 	CreateLoginAttemp(ctx context.Context, args LoginAttempParams) (err error)
 	CreateLoginRecord(ctx context.Context, args LoginRecord) (err error)
+	CheckPermissionQuery(ctx context.Context, menuURL constant.MenuKey, userID string, permissionCode []string) (bool, error)
 	ReadDetailUserByIdQuery(ctx context.Context, id string) (data entities.User, err error)
 }
 
