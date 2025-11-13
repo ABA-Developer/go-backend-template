@@ -18,7 +18,10 @@ var (
 	ErrTokenExpired        = fiber.NewError(http.StatusUnauthorized, "expired token")
 	ErrTokenUnauthorized   = fiber.NewError(http.StatusUnauthorized, "unauthorized token")
 
-	ErrDataNotFound = fiber.NewError(http.StatusNotFound, "data not found")
+	ErrDataNotFound             = fiber.NewError(http.StatusNotFound, "data not found")
+	ErrMenuIdNotFound           = fiber.NewError(http.StatusNotFound, "menu not found")
+	ErrMenuPermissionIdNotFound = fiber.NewError(http.StatusNotFound, "menu permission not found")
+	ErrRoleIdNotFound           = fiber.NewError(http.StatusNotFound, "role not found")
 
 	ErrUnknownSource = fiber.NewError(http.StatusInternalServerError, "an error occurred, please try again later")
 )

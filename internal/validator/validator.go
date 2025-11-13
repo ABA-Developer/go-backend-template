@@ -13,7 +13,6 @@ func NewValidator() *Validator {
 	return &Validator{Validator: validator.New()}
 }
 
-// Validator wrapper.
 type Validator struct {
 	Validator *validator.Validate
 }
@@ -33,19 +32,39 @@ func ValidationErrors(err error) (message map[string]interface{}) {
 	message = make(map[string]interface{})
 
 	for _, e := range ve {
+		jsonKey := strings.ToLower(convertCase(e.Field(), '_'))
+		fieldName := convertCase(e.Field(), ' ')
+
 		switch e.Tag() {
 		case "datetime":
-			message[strings.ToLower(convertCase(e.Field(), '_'))] = fmt.Sprintf("Field %s must be date & time", convertCase(e.Field(), ' '))
+			message[jsonKey] = fmt.Sprintf("Field %s harus berupa tanggal & waktu", fieldName)
 		case "email":
-			message[strings.ToLower(convertCase(e.Field(), '_'))] = "Input must be valid email address"
+			message[jsonKey] = "Input harus berupa alamat email yang valid"
 		case "max":
-			message[strings.ToLower(convertCase(e.Field(), '_'))] = fmt.Sprintf("Field %s must be less than %s", convertCase(e.Field(), ' '), e.Param())
+			message[jsonKey] = fmt.Sprintf("Field %s maksimal %s", fieldName, e.Param())
 		case "min":
-			message[strings.ToLower(convertCase(e.Field(), '_'))] = fmt.Sprintf("Field %s must be more than %s", convertCase(e.Field(), ' '), e.Param())
+			message[jsonKey] = fmt.Sprintf("Field %s minimal %s", fieldName, e.Param())
 		case "required":
-			message[strings.ToLower(convertCase(e.Field(), '_'))] = fmt.Sprintf("Field %s can not empty!", convertCase(e.Field(), ' '))
+			message[jsonKey] = fmt.Sprintf("Field %s tidak boleh kosong!", fieldName)
 		case "oneof":
-			message[strings.ToLower(convertCase(e.Field(), '_'))] = fmt.Sprintf("Field %s must be one of [%s]", convertCase(e.Field(), ' '), e.Param())
+			message[jsonKey] = fmt.Sprintf("Field %s harus salah satu dari [%s]", fieldName, e.Param())
+
+		case "eqfield":
+			message[jsonKey] = fmt.Sprintf("Field %s harus sama dengan field %s", fieldName, e.Param())
+		case "gt":
+			message[jsonKey] = fmt.Sprintf("Field %s harus lebih besar dari %s", fieldName, e.Param())
+		case "lt":
+			message[jsonKey] = fmt.Sprintf("Field %s harus lebih kecil dari %s", fieldName, e.Param())
+		case "gte":
+			message[jsonKey] = fmt.Sprintf("Field %s harus lebih besar atau sama dengan %s", fieldName, e.Param())
+		case "lte":
+			message[jsonKey] = fmt.Sprintf("Field %s harus lebih kecil atau sama dengan %s", fieldName, e.Param())
+		case "numeric":
+			message[jsonKey] = fmt.Sprintf("Field %s harus berupa angka", fieldName)
+		case "alphanum":
+			message[jsonKey] = fmt.Sprintf("Field %s harus berupa alfanumerik", fieldName)
+		case "url":
+			message[jsonKey] = fmt.Sprintf("Field %s harus berupa URL yang valid", fieldName)
 		}
 	}
 
