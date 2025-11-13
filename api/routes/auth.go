@@ -2,7 +2,7 @@ package routes
 
 import (
 	"be-dashboard-nba/api/app"
-	"be-dashboard-nba/api/handlers"
+	handlers "be-dashboard-nba/api/handlers/auth"
 	"be-dashboard-nba/api/middleware"
 	"be-dashboard-nba/pkg/auth/service"
 

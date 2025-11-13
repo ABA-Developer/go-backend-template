@@ -1,5 +1,77 @@
 basePath: /api/v1
 definitions:
+  presenter.Access:
+    properties:
+      access_id:
+        type: integer
+      access_name:
+        type: string
+      has_access:
+        type: boolean
+    type: object
+  presenter.CreateMenuPermissionRequest:
+    properties:
+      action_name:
+        maxLength: 50
+        minLength: 1
+        type: string
+      code:
+        maxLength: 50
+        minLength: 1
+        type: string
+    required:
+    - action_name
+    - code
+    type: object
+  presenter.CreateMenuRequest:
+    properties:
+      active:
+        type: boolean
+      description:
+        maxLength: 100
+        type: string
+      display:
+        type: boolean
+      group:
+        maxLength: 50
+        minLength: 1
+        type: string
+      icon:
+        maxLength: 50
+        type: string
+      name:
+        maxLength: 50
+        minLength: 1
+        type: string
+      parent_id:
+        minimum: 1
+        type: integer
+      url:
+        maxLength: 100
+        type: string
+    required:
+    - active
+    - display
+    - group
+    - name
+    - url
+    type: object
+  presenter.CreateRoleRequest:
+    properties:
+      code:
+        maxLength: 100
+        minLength: 1
+        type: string
+      description:
+        type: string
+      name:
+        maxLength: 100
+        minLength: 1
+        type: string
+    required:
+    - code
+    - name
+    type: object
   presenter.LoginRequest:
     properties:
       email:
@@ -9,6 +81,84 @@ definitions:
     required:
     - email
     - password
+    type: object
+  presenter.MenuListItem:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/presenter.MenuListItem'
+        type: array
+      icon:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      sort:
+        type: integer
+      url:
+        type: string
+    type: object
+  presenter.MenuParent:
+    properties:
+      group:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  presenter.Pagination:
+    properties:
+      has_next:
+        example: true
+        type: boolean
+      has_prev:
+        example: false
+        type: boolean
+      page:
+        example: 1
+        type: integer
+      page_size:
+        example: 20
+        type: integer
+      total_items:
+        example: 100
+        type: integer
+      total_pages:
+        example: 5
+        type: integer
+    type: object
+  presenter.ReadMenuListResponse:
+    properties:
+      group_childs:
+        items:
+          $ref: '#/definitions/presenter.MenuListItem'
+        type: array
+      group_name:
+        type: string
+    type: object
+  presenter.ReadMenuPermissionResponse:
+    properties:
+      action_name:
+        type: string
+      code:
+        type: string
+      id:
+        type: integer
+      menu_id:
+        type: integer
+    type: object
+  presenter.ReadRoleResponse:
+    properties:
+      code:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
     type: object
   presenter.ReadUserResponse:
     properties:
@@ -29,12 +179,48 @@ definitions:
       phone:
         type: string
     type: object
-  presenter.ResponsePayload:
+  presenter.ResponseErrorPayload:
+    properties:
+      code:
+        type: integer
+      error: {}
+      message:
+        type: string
+    type: object
+  presenter.ResponsePayloadData:
     properties:
       code:
         type: integer
       data: {}
       message:
+        type: string
+    type: object
+  presenter.ResponsePayloadMessage:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+  presenter.ResponsePayloadPaginate:
+    properties:
+      code:
+        type: integer
+      data: {}
+      message:
+        type: string
+      pagination:
+        $ref: '#/definitions/presenter.Pagination'
+    type: object
+  presenter.RoleAccessResponse:
+    properties:
+      accesses:
+        items:
+          $ref: '#/definitions/presenter.Access'
+        type: array
+      menu_id:
+        type: integer
+      menu_name:
         type: string
     type: object
   presenter.SessionResponse:
@@ -45,6 +231,97 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/presenter.UserResponse'
+    type: object
+  presenter.UpdateMenuOrderRequest:
+    properties:
+      parent_id:
+        minimum: 1
+        type: integer
+      sorted_ids:
+        items:
+          type: integer
+        minItems: 1
+        type: array
+    required:
+    - sorted_ids
+    type: object
+  presenter.UpdateMenuPermissionRequest:
+    properties:
+      action_name:
+        maxLength: 50
+        minLength: 1
+        type: string
+      code:
+        maxLength: 50
+        minLength: 1
+        type: string
+    required:
+    - action_name
+    - code
+    type: object
+  presenter.UpdateMenuRequest:
+    properties:
+      active:
+        type: boolean
+      description:
+        maxLength: 100
+        type: string
+      display:
+        type: boolean
+      group:
+        maxLength: 50
+        minLength: 1
+        type: string
+      icon:
+        maxLength: 50
+        type: string
+      name:
+        maxLength: 50
+        minLength: 1
+        type: string
+      parent_id:
+        minimum: 1
+        type: integer
+      url:
+        maxLength: 100
+        type: string
+    required:
+    - active
+    - display
+    - group
+    - name
+    type: object
+  presenter.UpdateRoleAccessItem:
+    properties:
+      access_id:
+        type: integer
+      has_access:
+        type: boolean
+    required:
+    - access_id
+    - has_access
+    type: object
+  presenter.UpdateRoleAccessRequest:
+    properties:
+      access_item:
+        items:
+          $ref: '#/definitions/presenter.UpdateRoleAccessItem'
+        minItems: 1
+        type: array
+    required:
+    - access_item
+    type: object
+  presenter.UpdateRoleRequest:
+    properties:
+      code:
+        type: string
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - code
+    - name
     type: object
   presenter.UpdateUserRequest:
     properties:
@@ -84,14 +361,6 @@ definitions:
       phone:
         type: string
     type: object
-  presenter.responseErrorPayload:
-    properties:
-      code:
-        type: integer
-      error: {}
-      message:
-        type: string
-    type: object
 host: localhost:8000
 info:
   contact: {}
@@ -122,7 +391,7 @@ paths:
           description: Successful login
           schema:
             allOf:
-            - $ref: '#/definitions/presenter.ResponsePayload'
+            - $ref: '#/definitions/presenter.ResponsePayloadData'
             - properties:
                 data:
                   $ref: '#/definitions/presenter.SessionResponse'
@@ -130,15 +399,15 @@ paths:
         "400":
           description: Bad Request (e.g., Validation Error, Invalid JSON)
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "401":
           description: Unauthorized (e.g., Wrong email or password)
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "500":
           description: Internal Server Error (e.g., Database connection issue)
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
       summary: User Login
       tags:
       - Authentication
@@ -152,15 +421,15 @@ paths:
         "200":
           description: Successfully logged out
           schema:
-            $ref: '#/definitions/presenter.ResponsePayload'
+            $ref: '#/definitions/presenter.ResponsePayloadData'
         "400":
           description: Bad Request (e.g., Validation Error, Invalid JSON)
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "500":
           description: Internal Server Error (e.g., Database connection issue)
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
       security:
       - BearerAuth: []
       summary: User Logout
@@ -177,7 +446,7 @@ paths:
           description: Successfully retrieved user profile
           schema:
             allOf:
-            - $ref: '#/definitions/presenter.ResponsePayload'
+            - $ref: '#/definitions/presenter.ResponsePayloadData'
             - properties:
                 data:
                   $ref: '#/definitions/presenter.UserResponse'
@@ -185,61 +454,787 @@ paths:
         "401":
           description: Unauthorized (Invalid or missing token)
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "404":
           description: User profile not found
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
       security:
       - BearerAuth: []
       summary: Get Current User Profile
       tags:
       - Authentication
-  /users/{id}:
-    put:
-      consumes:
-      - application/json
-      description: Updates a user's profile details by their ID. Requires Bearer token.
+  /menu-permissions/{menu_id}:
+    get:
+      description: Retrieves a paginated and searchable list of permissions (e.g.,
+        read, create) for a specific menu ID. Requires Bearer token.
       parameters:
-      - description: User ID
+      - description: ID of the Menu
         in: path
-        name: id
+        name: menu_id
         required: true
+        type: integer
+      - description: Search term for action_name
+        in: query
+        name: search
         type: string
-      - description: User data to update
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/presenter.UpdateUserRequest'
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 10)'
+        in: query
+        name: limit
+        type: integer
+      - description: Sort order (e.g., action_name ASC)
+        in: query
+        name: order
+        type: string
       produces:
       - application/json
       responses:
         "200":
-          description: Successfully update user
+          description: Successfully get menu permission list
           schema:
-            $ref: '#/definitions/presenter.ResponsePayload'
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayloadPaginate'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/presenter.ReadMenuPermissionResponse'
+                  type: array
+              type: object
         "400":
-          description: Bad Request (Invalid ID, Invalid JSON, or Validation Error)
+          description: Bad Request (Invalid Menu ID)
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "404":
+          description: Not Found (Menu ID not found)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Internal Server Error (Query parsing or service failure)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Get Menu Permission List
+      tags:
+      - Menu Permission
+    post:
+      consumes:
+      - application/json
+      description: Adds a new permission (e.g., 'read', 'create') to a specific menu
+        by its ID. Requires Bearer token.
+      parameters:
+      - description: Menu ID
+        in: path
+        name: menu_id
+        required: true
+        type: integer
+      - description: Permission data to create
+        in: body
+        name: permission
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.CreateMenuPermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully create menu permission
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid Menu ID, Invalid JSON, or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
       security:
       - BearerAuth: []
-      summary: Update User
+      summary: Create Menu Permission
       tags:
-      - User Profile
+      - Menu Permission
+  /menu-permissions/{menu_permission_id}:
+    delete:
+      description: Deletes a specific permission from a menu by its unique permission
+        ID. Requires Bearer token.
+      parameters:
+      - description: Menu Permission ID
+        in: path
+        name: menu_permission_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully delete menu permission
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid ID)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "404":
+          description: Not Found (Permission ID not found)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Delete Menu Permission
+      tags:
+      - Menu Permission
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing menu permission (e.g., 'code', 'action_name')
+        by its unique ID. Requires Bearer token.
+      parameters:
+      - description: Menu Permission ID
+        in: path
+        name: menu_permission_id
+        required: true
+        type: integer
+      - description: Permission data to update
+        in: body
+        name: permission
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.UpdateMenuPermissionRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update menu permission
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid ID, Invalid JSON, or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "404":
+          description: Not Found (Permission ID not found)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Update Menu Permission
+      tags:
+      - Menu Permission
+  /menu-permissions/detail/{menu_permission_id}:
+    get:
+      description: Fetches the details of a single menu permission by its unique ID.
+        Requires Bearer token.
+      parameters:
+      - description: Menu Permission ID
+        in: path
+        name: menu_permission_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully get menu permission detail
+          schema:
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayloadData'
+            - properties:
+                data:
+                  $ref: '#/definitions/presenter.ReadMenuPermissionResponse'
+              type: object
+        "400":
+          description: Bad Request (Invalid ID)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "404":
+          description: Not Found (Permission ID not found)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Get Menu Permission Detail
+      tags:
+      - Menu Permission
+  /menus:
+    get:
+      description: Retrieves a paginated and searchable list of all menus in the system.
+      parameters:
+      - description: Search term for name, description, or URL
+        in: query
+        name: search
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully get menu list
+          schema:
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayloadData'
+            - properties:
+                data:
+                  $ref: '#/definitions/presenter.ReadMenuListResponse'
+              type: object
+        "400":
+          description: Invalid query parameters
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Failed get list menu
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      summary: Get List of All Menus (Admin)
+      tags:
+      - Menu
+    post:
+      consumes:
+      - application/json
+      description: Adds a new menu item to the system. Requires Bearer token.
+      parameters:
+      - description: Menu data to create
+        in: body
+        name: menu
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.CreateMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully create menu
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid JSON or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Create Menu
+      tags:
+      - Menu
+  /menus/{menu_id}:
+    delete:
+      consumes:
+      - application/json
+      description: Updates an existing menu item by its ID. Requires Bearer token.
+      parameters:
+      - description: Menu ID
+        in: path
+        name: menu_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully delete menu
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid Menu ID, Invalid JSON, or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Update Menu
+      tags:
+      - Menu
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing menu item by its ID. Requires Bearer token.
+      parameters:
+      - description: Menu ID
+        in: path
+        name: menu_id
+        required: true
+        type: integer
+      - description: Menu data to update
+        in: body
+        name: menu
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.UpdateMenuRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update menu
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid Menu ID, Invalid JSON, or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Update Menu
+      tags:
+      - Menu
+  /menus/parent:
+    get:
+      description: Retrieves a list of all root-level menus (menus without a parent),
+        typically for use in a dropdown. Requires Bearer token.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully get parent menu
+          schema:
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayloadData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/presenter.MenuParent'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Failed get parent menu
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Get Parent Menus
+      tags:
+      - Menu
+  /menus/reorder:
+    put:
+      consumes:
+      - application/json
+      description: Updates the sort order of menus using drag-and-drop. Requires Bearer
+        token.
+      parameters:
+      - description: New menu order
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.UpdateMenuOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update menu order
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid JSON or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Update Menu Order (Reorder)
+      tags:
+      - Menu
+  /menus/sidebar:
+    get:
+      description: Retrieves the menu list specifically for the authenticated user,
+        filtered by their 'read' permissions and formatted in a nested tree structure
+        for the sidebar.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully get sidebar menu
+          schema:
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayloadData'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/presenter.ReadMenuListResponse'
+                  type: array
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Failed get sidebar menu
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Get User's Sidebar Menu
+      tags:
+      - Menu
+  /roles:
+    get:
+      description: Retrieves a paginated and searchable list of all roles. Requires
+        Bearer token.
+      parameters:
+      - description: Search term for role name
+        in: query
+        name: search
+        type: string
+      - description: 'Page number (default: 1)'
+        in: query
+        name: page
+        type: integer
+      - description: 'Items per page (default: 10)'
+        in: query
+        name: limit
+        type: integer
+      - description: Sort order (e.g., name ASC)
+        in: query
+        name: order
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully get roles
+          schema:
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayloadPaginate'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/presenter.ReadRoleResponse'
+                  type: array
+              type: object
+        "400":
+          description: Invalid query parameters
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Failed get role
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Get Roles List
+      tags:
+      - Role
+    post:
+      consumes:
+      - application/json
+      description: Creates a new role. Requires Bearer token.
+      parameters:
+      - description: Role data to create
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.CreateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully create role
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid JSON or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.ResponseErrorPayload'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Failed create role
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Create Role
+      tags:
+      - Role
+  /roles/{role_id}:
+    delete:
+      description: Deletes a role by its ID. Requires Bearer token.
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully delete role
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid Role ID)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized (Missing Auth)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "404":
+          description: Role ID not found
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Failed delete role
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Delete Role
+      tags:
+      - Role
+    get:
+      description: Fetches the details of a single role by its ID. Requires Bearer
+        token.
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully get role detail
+          schema:
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayloadData'
+            - properties:
+                data:
+                  $ref: '#/definitions/presenter.ReadRoleResponse'
+              type: object
+        "400":
+          description: Bad Request (Invalid Role ID)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "404":
+          description: Not Found (Role ID not found)
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Failed get role detail
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Get Role Detail
+      tags:
+      - Role
+    put:
+      consumes:
+      - application/json
+      description: Updates an existing role by its ID. Requires Bearer token.
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: integer
+      - description: Role data to update
+        in: body
+        name: role
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.UpdateRoleRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update role
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid ID, Invalid JSON, or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.ResponseErrorPayload'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "404":
+          description: Role ID not found
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Failed update role
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Update Role
+      tags:
+      - Role
+  /roles/role-access/{role_id}:
+    get:
+      description: Retrieves all menu permissions associated with a specific role.
+        Requires Bearer token.
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully get role menu permission
+          schema:
+            allOf:
+            - $ref: '#/definitions/presenter.ResponsePayloadData'
+            - properties:
+                data:
+                  $ref: '#/definitions/presenter.RoleAccessResponse'
+              type: object
+        "400":
+          description: Invalid Role ID
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "404":
+          description: Role ID not found
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Failed get role menu permission
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Get Role Menu Permission
+      tags:
+      - Role Menu Permission
+    put:
+      consumes:
+      - application/json
+      description: Updates menu permission assigned to a specific role. Requires Bearer
+        token.
+      parameters:
+      - description: Role ID
+        in: path
+        name: role_id
+        required: true
+        type: integer
+      - description: Role menu permission payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/presenter.UpdateRoleAccessRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully update role menu permission
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadData'
+        "400":
+          description: Bad Request (Invalid ID, Invalid JSON, or Validation Error)
+          schema:
+            $ref: '#/definitions/presenter.ResponseErrorPayload'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "404":
+          description: Role ID or Menu Permission not found
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
+      security:
+      - BearerAuth: []
+      summary: Update Role Menu Permission
+      tags:
+      - Role Menu Permission
   /users/me:
     get:
       description: Fetches the profile details of the currently authenticated user.
@@ -251,7 +1246,7 @@ paths:
           description: Successfully retrieved user profile
           schema:
             allOf:
-            - $ref: '#/definitions/presenter.ResponsePayload'
+            - $ref: '#/definitions/presenter.ResponsePayloadData'
             - properties:
                 data:
                   $ref: '#/definitions/presenter.ReadUserResponse'
@@ -259,15 +1254,15 @@ paths:
         "401":
           description: Unauthorized (Invalid or missing token)
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "404":
           description: User profile not found
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
       security:
       - BearerAuth: []
       summary: Get Current User Profile
@@ -290,19 +1285,19 @@ paths:
         "200":
           description: Successfully update user
           schema:
-            $ref: '#/definitions/presenter.ResponsePayload'
+            $ref: '#/definitions/presenter.ResponsePayloadData'
         "400":
           description: Bad Request (Invalid ID, Invalid JSON, or Validation Error)
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/presenter.responseErrorPayload'
+            $ref: '#/definitions/presenter.ResponsePayloadMessage'
       security:
       - BearerAuth: []
       summary: Update User
