@@ -19,6 +19,9 @@ type Repository interface {
 	ReadNextSortForParent(ctx context.Context, parentID int32) (int, error)
 	UpdateMenuSortQuery(ctx context.Context, params UpdateMenuSortParams,
 	) (err error)
+	ReadNextSortForParentAndGroup(ctx context.Context, parentID int32, group string) (int, error)
+	CountMenuChildren(ctx context.Context, menuID int) (int, error)
+	UpdateChildrenGroup(ctx context.Context, parentID int, newGroup string) error
 }
 
 type repository struct {

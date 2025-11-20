@@ -2,6 +2,7 @@ package presenter
 
 import (
 	"be-dashboard-nba/pkg/entities"
+	"sort"
 )
 
 type MenuListItem struct {
@@ -19,54 +20,72 @@ type ReadMenuListResponse struct {
 }
 
 func ToReadMenuListResponse(menuEntities []entities.Menu) []ReadMenuListResponse {
-	childrenMap := make(map[int32][]entities.Menu)
+	if len(menuEntities) == 0 {
+		return make([]ReadMenuListResponse, 0)
+	}
 
-	groupMap := make(map[string][]entities.Menu)
+	menuMap := make(map[int]entities.Menu)
+	for _, menu := range menuEntities {
+		menuMap[menu.ID] = menu
+	}
 
-	for _, e := range menuEntities {
-		if !e.ParentID.Valid {
-			groupMap[e.Group] = append(groupMap[e.Group], e)
-		} else {
-			childrenMap[e.ParentID.Int32] = append(childrenMap[e.ParentID.Int32], e)
+	rootMenus := make(map[string][]MenuListItem)
+
+	for _, menu := range menuEntities {
+		if !menu.ParentID.Valid {
+			group := menu.Group
+			rootMenus[group] = append(rootMenus[group], buildMenuTree(menu, menuMap))
 		}
 	}
 
 	var response []ReadMenuListResponse
-	for groupName, roots := range groupMap {
-		groupItem := ReadMenuListResponse{
+	for groupName, menus := range rootMenus {
+		sortMenuItems(menus)
+		response = append(response, ReadMenuListResponse{
 			GroupName:   groupName,
-			GroupChilds: []MenuListItem{},
-		}
-
-		for _, root := range roots {
-			groupItem.GroupChilds = append(groupItem.GroupChilds, buildTreeRecursiveListItem(root, childrenMap))
-		}
-		response = append(response, groupItem)
+			GroupChilds: menus,
+		})
 	}
+
+	sort.Slice(response, func(i, j int) bool {
+		return response[i].GroupName < response[j].GroupName
+	})
+
 	return response
 }
 
-func buildTreeRecursiveListItem(current entities.Menu, childrenMap map[int32][]entities.Menu) MenuListItem {
-
+func buildMenuTree(menu entities.Menu, menuMap map[int]entities.Menu) MenuListItem {
 	item := MenuListItem{
-		ID:       current.ID,
-		Name:     current.Name,
-		Sort:     current.Sort,
+		ID:       menu.ID,
+		Name:     menu.Name,
+		Sort:     menu.Sort,
 		Children: []MenuListItem{},
 	}
 
-	if current.Icon.Valid {
-		item.Icon = &current.Icon.String
+	if menu.Icon.Valid {
+		item.Icon = &menu.Icon.String
 	}
-	if current.URL.Valid {
-		item.Url = &current.URL.String
+	if menu.URL.Valid {
+		item.Url = &menu.URL.String
 	}
 
-	if children, ok := childrenMap[int32(current.ID)]; ok {
-		for _, childEntity := range children {
-			item.Children = append(item.Children, buildTreeRecursiveListItem(childEntity, childrenMap))
+	for _, potentialChild := range menuMap {
+		if potentialChild.ParentID.Valid && int(potentialChild.ParentID.Int32) == menu.ID {
+			item.Children = append(item.Children, buildMenuTree(potentialChild, menuMap))
 		}
 	}
 
+	sortMenuItems(item.Children)
+
 	return item
+}
+func sortMenuItems(items []MenuListItem) {
+	sort.Slice(items, func(i, j int) bool {
+		return items[i].Sort < items[j].Sort
+	})
+	for i := range items {
+		if len(items[i].Children) > 0 {
+			sortMenuItems(items[i].Children)
+		}
+	}
 }

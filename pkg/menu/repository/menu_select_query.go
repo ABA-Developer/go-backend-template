@@ -33,7 +33,8 @@ func (r *repository) ReadSidebarMenuQuery(
 			AND m.display = true   
 			AND m.active = true  
 		ORDER BY
-			m.sort ASC;
+    		m."group" ASC,
+   		 	m.sort ASC;
 	`
 
 	rows, err := r.db.QueryContext(ctx, stmt, userID)
@@ -69,10 +70,7 @@ func (r *repository) ReadListMenuQuery(
 			WHERE
 				(CASE WHEN $1::bool THEN
 					name ILIKE $2
-				ELSE
-					-- Jika tidak ada pencarian, kita harus memilih SEMUA menu
-					-- (kita tidak bisa 'ELSE TRUE END' di sini)
-					TRUE 
+				ELSE TRUE 
 				END)
 
 			UNION
@@ -110,6 +108,7 @@ func (r *repository) ReadListMenuQuery(
 		}
 		data = append(data, m)
 	}
+
 	return
 }
 
@@ -205,4 +204,18 @@ func (r *repository) ReadSortForGroup(ctx context.Context, group string) (int, e
 	`
 	err := r.db.QueryRowContext(ctx, stmt, group).Scan(&nextSort)
 	return nextSort, err
+}
+
+func (r *repository) ReadNextSortForParentAndGroup(ctx context.Context, parentID int32, group string) (int, error) {
+	const stmt = `SELECT COALESCE(MAX(sort), -1) + 1 FROM app_menu WHERE parent_id = $1 AND "group" = $2`
+	var nextSort int
+	err := r.db.QueryRowContext(ctx, stmt, parentID, group).Scan(&nextSort)
+	return nextSort, err
+}
+
+func (r *repository) CountMenuChildren(ctx context.Context, menuID int) (int, error) {
+	const stmt = `SELECT COUNT(*) FROM app_menu WHERE parent_id = $1`
+	var count int
+	err := r.db.QueryRowContext(ctx, stmt, menuID).Scan(&count)
+	return count, err
 }

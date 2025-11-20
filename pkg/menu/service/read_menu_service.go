@@ -12,8 +12,7 @@ func (s *service) ReadListMenuService(
 	request menuPresenter.ReadMenuListRequest,
 ) (data []entities.Menu, err error) {
 	r := repository.NewRepository(s.db)
-	params := request.ToParams()
-	data, err = r.ReadListMenuQuery(ctx, params)
+	data, err = r.ReadListMenuQuery(ctx, request.ToParams())
 	if err != nil {
 		s.log.Error().Err(err).Msg("error query read list menu")
 		return

@@ -14,6 +14,7 @@ func (s *service) DeleteMenuService(ctx context.Context, menuID int) (err error)
 	if err != nil {
 		s.log.Error().Err(err).Msg("error to begin transaction")
 		err = errors.WithStack(constant.ErrUnknownSource)
+		return
 	}
 
 	defer func() {

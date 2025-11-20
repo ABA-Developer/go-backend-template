@@ -3,9 +3,12 @@ package service
 import (
 	menuPresenter "be-dashboard-nba/api/presenter/menu"
 	"be-dashboard-nba/internal/db"
+	"be-dashboard-nba/internal/utils"
 	"be-dashboard-nba/pkg/entities"
 	"context"
+	"testing"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/rs/zerolog"
 )
 
@@ -30,4 +33,10 @@ func NewService(db db.DB, log *zerolog.Logger) Service {
 		db:  db,
 		log: log,
 	}
+}
+
+func newTestService(t *testing.T) (*service, sqlmock.Sqlmock, func()) {
+	mockDB, mock, cleanup := utils.NewMockDB(t)
+	svc := NewService(mockDB, &zerolog.Logger{}).(*service)
+	return svc, mock, cleanup
 }
