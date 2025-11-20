@@ -14,7 +14,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (s *service) ReadMenuPermissionListParams(
+func (s *service) ReadMenuPermissionService(
 	ctx context.Context,
 	args menuPermissionPresenter.ReadMenuPermissionListRequest,
 	MenuID int,

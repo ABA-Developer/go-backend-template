@@ -10,7 +10,7 @@ type ReadMenuPermissionListRequest struct {
 	utils.PaginationPayload
 }
 
-func (req *ReadMenuPermissionListRequest) ToParams(MenuID int) (params repository.ReadMenuPermissionListParams) {
+func (req *ReadMenuPermissionListRequest) ToParams(MenuID int) (params repository.ReadMenuPermissionService) {
 	req.Init()
 
 	if req.Limit <= 0 {
@@ -21,7 +21,7 @@ func (req *ReadMenuPermissionListRequest) ToParams(MenuID int) (params repositor
 		req.Page = constant.DefaultPage
 	}
 
-	params = repository.ReadMenuPermissionListParams{
+	params = repository.ReadMenuPermissionService{
 		SetSearch: req.SetSearch,
 		Search:    req.Search,
 		Order:     req.Order,
