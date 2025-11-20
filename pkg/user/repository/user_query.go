@@ -12,40 +12,62 @@ type CreateUserParams struct {
 	Password  string
 	Active    bool
 	Phone     sql.NullString
-	ImgPath   sql.NullString
-	ImgName   sql.NullString
 	CreatedBy string
+	RoleID    int
 }
 
 func (r *repository) CreateUserQuery(
 	ctx context.Context,
 	args CreateUserParams,
-) (err error) {
+) (userID string, err error) {
 	const statement = `
 		INSERT INTO app_user (
-			name, full_name, email, password, active,
-			phone, img_path, img_name,
-			created_by, created_at
+			name, full_name, email, password, active, phone, created_by, created_at
 		)
 		VALUES (
-			$1, $2, $3, $4, $5,
-			$6, $7, $8,
-			$9, (now() at time zone 'UTC')::TIMESTAMP
+			$1, $2, $3, $4, $5, $6, $7, (now() at time zone 'UTC')::TIMESTAMP
 		)
+		RETURNING id
 	`
 
-	// DIUBAH: Urutan argumen
-	_, err = r.db.ExecContext(ctx, statement,
+	err = r.db.QueryRowContext(ctx, statement,
 		args.Name,
 		args.FullName,
 		args.Email,
 		args.Password,
 		args.Active,
 		args.Phone,
-		args.ImgPath,
-		args.ImgName,
 		args.CreatedBy,
-	)
+	).Scan(&userID)
+
+	return
+}
+
+func (r *repository) CreateUserRoleQuery(ctx context.Context, roleID int, userID string) (err error) {
+	const stmt = `
+		INSERT INTO app_user_role(
+			user_id, role_id
+		)
+		VALUES (
+			$1, $2
+		)
+	`
+
+	_, err = r.db.ExecContext(ctx, stmt, userID, roleID)
+
+	return
+}
+
+func (r *repository) UpdateUserRoleQuery(ctx context.Context, roleID int, userID string) (err error) {
+	const stmt = `
+		UPDATE app_user_role
+		SET
+			user_id = $1,
+			role_id = $2
+		WHERE user_id = $1
+	`
+
+	_, err = r.db.ExecContext(ctx, stmt, userID, roleID)
 
 	return
 }
@@ -55,12 +77,10 @@ type UpdateUserParams struct {
 	Name      string
 	FullName  string
 	Email     string
-	Password  string
-	Phone     string
+	Phone     sql.NullString
 	Active    bool
-	ImgPath   string
-	ImgName   string
 	UpdatedBy string
+	RoleID    int
 }
 
 func (r *repository) UpdateUserQuery(
@@ -68,34 +88,26 @@ func (r *repository) UpdateUserQuery(
 	args UpdateUserParams,
 ) (err error) {
 	const statement = `
-		UPDATE
-			app_user
-		SET
-			name = CASE WHEN $2 <> '' THEN $2 ELSE name END,
-			full_name = CASE WHEN $3 <> '' THEN $3 ELSE full_name END,
-			email = CASE WHEN $4 <> '' THEN $4 ELSE email END,
-			password = CASE WHEN $5 <> '' THEN $5 ELSE password END,
-			phone = CASE WHEN $6 <> '' THEN $6 ELSE phone END,
-			active = $7,
-			img_path = CASE WHEN $8 <> '' THEN $8 ELSE img_path END,
-			img_name = CASE WHEN $9 <> '' THEN $9 ELSE img_name END,
-			updated_by = $10,
-			updated_at = (now() at time zone 'UTC')::TIMESTAMP
-		WHERE
-			id = $1
+		UPDATE app_user 
+		SET 
+    		name = $1,
+    		full_name = $2,
+    		email = $3,
+    		phone = $4,
+    		active = $5,
+    		updated_by = $6,
+    		updated_at = (now() at time zone 'UTC')::TIMESTAMP
+		WHERE id = $7
 	`
 
 	_, err = r.db.ExecContext(ctx, statement,
-		args.ID,
 		args.Name,
 		args.FullName,
 		args.Email,
-		args.Password,
 		args.Phone,
 		args.Active,
-		args.ImgPath,
-		args.ImgName,
 		args.UpdatedBy,
+		args.ID,
 	)
 
 	return

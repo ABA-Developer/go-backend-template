@@ -6,14 +6,13 @@ import (
 )
 
 type CreateUserRequest struct {
-	Name     string `json:"name" validate:"required"`
-	FullName string `json:"full_name" validate:"required"`
-	Email    string `json:"email" validate:"required,email"`
-	Password string `json:"password" validate:"required,min=8"`
-	Phone    string `json:"phone"`
-	Active   *bool  `json:"active"`
-	ImgPath  string `json:"img_path"`
-	ImgName  string `json:"img_name"`
+	Name     string  `json:"name" validate:"required"`
+	FullName string  `json:"full_name" validate:"required"`
+	Email    string  `json:"email" validate:"required,email"`
+	Password string  `json:"password" validate:"required,min=8"`
+	RoleID   int     `json:"role_id" validate:"required"`
+	Phone    *string `json:"phone"`
+	Active   *bool   `json:"active"  validate:"required"`
 }
 
 func (req *CreateUserRequest) ToParams(userID string, password string) (params repository.CreateUserParams) {
@@ -24,6 +23,7 @@ func (req *CreateUserRequest) ToParams(userID string, password string) (params r
 		Email:     req.Email,
 		Password:  password,
 		CreatedBy: userID,
+		RoleID:    req.RoleID,
 	}
 
 	if req.Active != nil {
@@ -32,14 +32,8 @@ func (req *CreateUserRequest) ToParams(userID string, password string) (params r
 		params.Active = true
 	}
 
-	if req.Phone != "" {
-		params.Phone = sql.NullString{String: req.Phone, Valid: true}
-	}
-	if req.ImgPath != "" {
-		params.ImgPath = sql.NullString{String: req.ImgPath, Valid: true}
-	}
-	if req.ImgName != "" {
-		params.ImgName = sql.NullString{String: req.ImgName, Valid: true}
+	if req.Phone != nil {
+		params.Phone = sql.NullString{String: *req.Phone, Valid: true}
 	}
 
 	return

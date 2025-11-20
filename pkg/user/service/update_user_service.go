@@ -3,8 +3,8 @@ package service
 import (
 	presenter "be-dashboard-nba/api/presenter/user"
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/utils"
-	"be-dashboard-nba/pkg/user/repository"
+	roleRepo "be-dashboard-nba/pkg/role/repository"
+	userRepo "be-dashboard-nba/pkg/user/repository"
 	"context"
 	"database/sql"
 
@@ -14,6 +14,7 @@ import (
 func (s *service) UpdateUserService(
 	ctx context.Context,
 	request presenter.UpdateUserRequest,
+	updatedBy string,
 	userID string,
 ) (err error) {
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{})
@@ -30,27 +31,48 @@ func (s *service) UpdateUserService(
 				err = errors.WithStack(constant.ErrUnknownSource)
 				return
 			}
-
-			if !errors.Is(err, constant.ErrUnknownSource) {
-				err = errors.WithStack(constant.ErrUnknownSource)
-			}
 		}
 	}()
 
-	r := repository.NewRepository(tx)
+	ru := userRepo.NewRepository(tx)
+	rr := roleRepo.NewRepository(tx)
 
-	var password string
+	existingUser, err := ru.ReadUserByIDQuery(ctx, userID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			s.log.Warn().Str("id", userID).Msg("user detail not found")
+			err = constant.ErrUserIdNotFound
+			return
+		}
+		s.log.Error().Err(err).Str("id", userID).Msg("error reading user detail query")
+		err = errors.WithStack(constant.ErrUnknownSource)
+		return
+	}
 
-	if request.Password != "" {
-		password, err = utils.GenerateHashPassword(request.Password)
+	existingRoleUser, err := rr.ReadRoleByIDQuery(ctx, request.RoleID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			s.log.Warn().Int("id", request.RoleID).Msg("role detail not found")
+			err = constant.ErrRoleIdNotFound
+			return
+		}
+		s.log.Error().Err(err).Int("id", request.RoleID).Msg("error reading role detail query")
+		err = errors.WithStack(constant.ErrUnknownSource)
+		return
+	}
+
+	params := request.ToParams(userID, updatedBy, existingUser)
+
+	if existingUser.Role != existingRoleUser.Name {
+		err = ru.UpdateUserRoleQuery(ctx, params.RoleID, params.ID)
 		if err != nil {
-			s.log.Error().Err(err).Msg("error generate hash password")
+			s.log.Error().Err(err).Interface("request_payload", request).Msg("error to update user role")
 			err = errors.WithStack(constant.ErrUnknownSource)
 			return
 		}
 	}
 
-	err = r.UpdateUserQuery(ctx, request.ToParams(userID, password))
+	err = ru.UpdateUserQuery(ctx, params)
 	if err != nil {
 		s.log.Error().Err(err).Interface("request_payload", request).Msg("error to update user")
 		err = errors.WithStack(constant.ErrUnknownSource)

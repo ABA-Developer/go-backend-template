@@ -16,10 +16,11 @@ func (s *service) ReadDetailUserService(
 ) (data entities.User, err error) {
 	r := repository.NewRepository(s.db)
 
-	data, err = r.ReadDetailUserQuery(ctx, id)
+	data, err = r.ReadUserByIDQuery(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			s.log.Warn().Str("id", id).Msg("user detail not found")
+			err = constant.ErrUserIdNotFound
 			return
 		}
 		s.log.Error().Err(err).Str("id", id).Msg("error reading user detail query")

@@ -14,37 +14,36 @@ type ReadListUserParams struct {
 	Offset    int
 }
 
-func (r *repository) ReadListUserQuery(
+func (r *repository) ReadUsersQuery(
 	ctx context.Context,
 	args ReadListUserParams,
 ) (data []entities.User, err error) {
 	const stmt = `
 		SELECT
-			id, name, full_name, email, password, active,
-			phone, img_path, img_name,
-			created_at, created_by, updated_at, updated_by
+			au.id, 
+			au.full_name, 
+			au.active,
+			ar.name AS role,
+			ar.id AS role_id
 		FROM
-			app_user
+			app_user au
+		JOIN 
+			app_user_role aur ON au.id = aur.user_id
+		JOIN 
+			app_role ar ON aur.role_id = ar.id
 		WHERE
 			(CASE WHEN $1::bool THEN(
-				email ILIKE $2
-				OR name ILIKE $2
-				OR full_name ILIKE $2
-				OR phone ILIKE $2
+				full_name ILIKE $2
 			) ELSE TRUE END)
 		ORDER BY
-			(CASE WHEN $3 = 'name ASC' THEN name END) ASC,
-			(CASE WHEN $3 = 'name DESC' THEN name END) DESC,
-			(CASE WHEN $3 = 'full_name ASC' THEN full_name END) ASC,
-			(CASE WHEN $3 = 'full_name DESC' THEN full_name END) DESC,
-			(CASE WHEN $3 = 'email ASC' THEN email END) ASC,
-			(CASE WHEN $3 = 'email DESC' THEN email END) DESC,
-			(CASE WHEN $3 = 'active ASC' THEN active END) ASC,
-			(CASE WHEN $3 = 'active DESC' THEN active END) DESC,
-			(CASE WHEN $3 = 'created_at ASC' THEN created_at END) ASC,
-			(CASE WHEN $3 = 'created_at DESC' THEN created_at END) DESC,
-			(CASE WHEN $3 = 'updated_at ASC' THEN updated_at END) ASC,
-			(CASE WHEN $3 = 'updated_at DESC' THEN updated_at END) DESC
+			(CASE WHEN $3 = 'full_name ASC' THEN au.full_name END) ASC,
+			(CASE WHEN $3 = 'full_name DESC' THEN au.full_name END) DESC,
+			(CASE WHEN $3 = 'role ASC' THEN ar.name END) ASC,
+			(CASE WHEN $3 = 'role DESC' THEN ar.name END) DESC,
+			(CASE WHEN $3 = 'active ASC' THEN au.active END) ASC,
+			(CASE WHEN $3 = 'active DESC' THEN au.active END) DESC,
+			(CASE WHEN $3 = 'created_at ASC' THEN au.created_at END) ASC,
+			(CASE WHEN $3 = 'created_at DESC' THEN au.created_at END) DESC
 		LIMIT $4
 		OFFSET $5
 	`
@@ -66,18 +65,10 @@ func (r *repository) ReadListUserQuery(
 
 		if err = rows.Scan(
 			&u.ID,
-			&u.Name,
 			&u.FullName,
-			&u.Email,
-			&u.Password,
 			&u.Active,
-			&u.Phone,
-			&u.ImgPath,
-			&u.ImgName,
-			&u.CreatedAt,
-			&u.CreatedBy,
-			&u.UpdatedAt,
-			&u.UpdatedBy,
+			&u.Role,
+			&u.RoleID,
 		); err != nil {
 			return
 		}
@@ -88,10 +79,10 @@ func (r *repository) ReadListUserQuery(
 	return
 }
 
-func (r *repository) GetCountUserQuery(
+func (r *repository) ReadCountUserQuery(
 	ctx context.Context,
 	args ReadListUserParams,
-) (count int64, err error) {
+) (count int, err error) {
 	const stmt = `
 		SELECT
 			COUNT(*)
@@ -99,10 +90,7 @@ func (r *repository) GetCountUserQuery(
 			app_user
 		WHERE
 			(CASE WHEN $1::bool THEN(
-				email ILIKE $2
-				OR name ILIKE $2
-				OR full_name ILIKE $2
-				OR phone ILIKE $2
+				full_name ILIKE $2
 			) ELSE TRUE END)
 	`
 
@@ -114,18 +102,28 @@ func (r *repository) GetCountUserQuery(
 	return
 }
 
-func (r *repository) ReadDetailUserQuery(
+func (r *repository) ReadUserByIDQuery(
 	ctx context.Context,
 	id string,
 ) (data entities.User, err error) {
 	const statement = `
 		SELECT 	
-			id, name, full_name, email, active,
-			phone, img_path, img_name
+			au.id, 
+			au.name, 
+			au.full_name, 
+			au.email,
+			au.phone,
+			au.active,
+			ar.name AS role,
+			ar.id AS role_id
 		FROM
-			app_user
+			app_user au
+		JOIN
+			app_user_role aur ON au.id = aur.user_id
+		JOIN 
+			app_role ar ON aur.role_id = ar.id
 		WHERE
-			id = $1
+			au.id = $1
 	`
 
 	err = r.db.QueryRowContext(ctx, statement, id).Scan(
@@ -133,10 +131,52 @@ func (r *repository) ReadDetailUserQuery(
 		&data.Name,
 		&data.FullName,
 		&data.Email,
-		&data.Active,
 		&data.Phone,
+		&data.Active,
+		&data.Role,
+		&data.RoleID,
+	)
+
+	return
+}
+
+func (r *repository) ReadUserProfileQuery(
+	ctx context.Context,
+	id string,
+) (data entities.User, err error) {
+	const statement = `
+		SELECT 	
+			au.id, 
+			au.name, 
+			au.full_name, 
+			au.email,
+			au.phone,
+			au.active,
+			au.img_path,
+			au.img_name,
+			ar.name AS role,
+			ar.id AS role_id
+		FROM
+			app_user au
+		JOIN
+			app_user_role aur ON au.id = aur.user_id
+		JOIN 
+			app_role ar ON aur.role_id = ar.id
+		WHERE
+			au.id = $1
+	`
+
+	err = r.db.QueryRowContext(ctx, statement, id).Scan(
+		&data.ID,
+		&data.Name,
+		&data.FullName,
+		&data.Email,
+		&data.Phone,
+		&data.Active,
 		&data.ImgPath,
 		&data.ImgName,
+		&data.Role,
+		&data.RoleID,
 	)
 
 	return

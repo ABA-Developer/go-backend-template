@@ -3,13 +3,11 @@ package handlers
 import (
 	"be-dashboard-nba/api/presenter"
 	userPresenter "be-dashboard-nba/api/presenter/user"
+	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/pkg/user/service"
-	"context"
-	"database/sql"
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -34,29 +32,27 @@ func ReadProfileApp(svc service.Service) fiber.Handler {
 				Message: "Failed to get auth claims",
 			})
 		}
-		ctx, cancel := context.WithTimeout(c.UserContext(), 5*time.Second)
-		defer cancel()
 
-		data, err := svc.ReadDetailUserService(ctx, ah.GetClaims().UserID)
+		data, err := svc.ReadUserProfile(c.UserContext(), ah.GetClaims().UserID)
 
 		if err != nil {
-			if errors.Is(err, sql.ErrNoRows) {
+			if errors.Is(err, constant.ErrUserIdNotFound) {
 				return presenter.ResponseMessage(c, presenter.ResponsePayloadMessage{
-					Code:    http.StatusNotFound,
-					Message: "Not found",
+					Code:    constant.ErrUserIdNotFound.Code,
+					Message: constant.ErrUserIdNotFound.Message,
 				})
 			} else {
 				return presenter.ResponseMessage(c, presenter.ResponsePayloadMessage{
 					Code:    http.StatusInternalServerError,
-					Message: "failed to get profile",
+					Message: "failed to get user profile",
 				})
 			}
 		}
 
 		return presenter.ResponseData(c, presenter.ResponsePayloadData{
 			Code:    http.StatusOK,
-			Data:    userPresenter.ToReadUserResponse(data),
-			Message: "Successfully read profile user",
+			Data:    userPresenter.ToReadUserProfileResponse(data),
+			Message: "Successfully read user profile",
 		})
 	}
 }

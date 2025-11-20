@@ -18,10 +18,17 @@ var (
 	ErrTokenExpired        = fiber.NewError(http.StatusUnauthorized, "expired token")
 	ErrTokenUnauthorized   = fiber.NewError(http.StatusUnauthorized, "unauthorized token")
 
+	// 401
+	ErrUserIdNotFound           = fiber.NewError(http.StatusNotFound, "user Id not found")
 	ErrDataNotFound             = fiber.NewError(http.StatusNotFound, "data not found")
 	ErrMenuIdNotFound           = fiber.NewError(http.StatusNotFound, "menu not found")
 	ErrMenuPermissionIdNotFound = fiber.NewError(http.StatusNotFound, "menu permission not found")
 	ErrRoleIdNotFound           = fiber.NewError(http.StatusNotFound, "role not found")
+
+	//403
+	ErrForbiddenSelfDelete = fiber.NewError(http.StatusForbidden, "anda tidak diperbolehkan menghapus akun Anda sendiri")
+
+	ErrMenuHasChildren = fiber.NewError(http.StatusBadRequest, "tidak dapat menambahkan parent, karena menu masih memilki child")
 
 	ErrUnknownSource = fiber.NewError(http.StatusInternalServerError, "an error occurred, please try again later")
 )
@@ -40,9 +47,6 @@ var (
 	ErrEmailAlreadyExists   = errors.New("email already exists")
 	ErrIDNull               = errors.New("ID cannot be null")
 	ErrWrongEmailOrPassword = errors.New("wrong email or password")
-
-	// 401
-	ErrUserIdNotFound = errors.New("user Id not found")
 
 	// 403.
 	ErrForbiddenRole       = errors.New("your role is not allowed to access this resource")
