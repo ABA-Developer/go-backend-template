@@ -33,9 +33,16 @@ func (s *service) UpdateMenuOrderService(ctx context.Context, request menuPresen
 	paramsList := request.ToParamsList(userID)
 
 	for _, params := range paramsList {
+
 		err = q.UpdateMenuSortQuery(ctx, params)
 		if err != nil {
 			s.log.Error().Err(err).Int("menu_id", params.ID).Msg("Failed to update menu sort")
+			err = errors.WithStack(constant.ErrUnknownSource)
+			return
+		}
+		err = q.UpdateChildrenGroup(ctx, params.ID, params.Group)
+		if err != nil {
+			s.log.Error().Err(err).Int("menu_id", params.ID).Msg("Failed to update children group on update sort")
 			err = errors.WithStack(constant.ErrUnknownSource)
 			return
 		}
@@ -44,6 +51,7 @@ func (s *service) UpdateMenuOrderService(ctx context.Context, request menuPresen
 	if err = tx.Commit(); err != nil {
 		s.log.Error().Err(err).Msg("error to commit transaction")
 		err = errors.WithStack(constant.ErrUnknownSource)
+		return
 	}
 
 	return

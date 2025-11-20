@@ -42,7 +42,7 @@ func DeleteMenu(svc service.Service) fiber.Handler {
 				return presenter.ResponseMessage(c,
 					presenter.ResponsePayloadMessage{
 						Code:    http.StatusNotFound,
-						Message: constant.ErrDataNotFound.Message,
+						Message: constant.ErrMenuIdNotFound.Message,
 					})
 			}
 		}

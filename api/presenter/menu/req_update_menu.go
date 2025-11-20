@@ -31,7 +31,11 @@ func (req *UpdateMenuRequest) ToUpdateParams(userID string, menuID int) (params 
 		params.UpdatedBy = sql.NullString{String: userID, Valid: true}
 	}
 
-	if req.ParentID != nil {
+	if req.ParentID == nil {
+		params.ParentID = sql.NullInt32{Valid: false}
+	} else if *req.ParentID == 0 {
+		params.ParentID = sql.NullInt32{Valid: false}
+	} else {
 		params.ParentID = sql.NullInt32{Int32: int32(*req.ParentID), Valid: true}
 	}
 

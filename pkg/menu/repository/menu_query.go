@@ -43,6 +43,7 @@ type UpdateMenuParams struct {
 	Name        string
 	Description sql.NullString
 	URL         sql.NullString
+	Sort        int
 	Group       string
 	Icon        sql.NullString
 	Active      bool
@@ -55,26 +56,35 @@ func (r *repository) UpdateMenuQuery(
 	params UpdateMenuParams,
 ) (err error) {
 	const stmt = `
-		UPDATE app_menu
-		SET
-			name = $3, 
-			sort = $6, 
-			parent_id = COALESCE($2, parent_id),
-			description = COALESCE($4, description),
-			url = COALESCE($5, url),
-			"group" = COALESCE($6, "group"), 
-			icon = COALESCE($7, icon),      
-			active = COALESCE($8, active),     
-			display = COALESCE($9, display), 
+        UPDATE app_menu
+        SET
+            name = $2, 
+            parent_id = $3,
+            description = $4,
+            url = $5,
+            sort = $6,
+            "group" = $7, 
+            icon = $8,      
+            active = $9,     
+            display = $10, 
+            updated_by = $11,
+            updated_at = NOW()
+        WHERE
+            id = $1;
+    `
 
-			updated_by = $10, -- $11 menjadi $10
-			updated_at = NOW()
-		WHERE
-			id = $1;
-	`
 	_, err = r.db.ExecContext(ctx, stmt,
-		params.ID, params.ParentID, params.Name, params.Description, params.URL,
-		params.Group, params.Icon, params.Active, params.Display, params.UpdatedBy,
+		params.ID,
+		params.Name,
+		params.ParentID,
+		params.Description,
+		params.URL,
+		params.Sort,
+		params.Group,
+		params.Icon,
+		params.Active,
+		params.Display,
+		params.UpdatedBy,
 	)
 	return
 }
@@ -95,6 +105,8 @@ type UpdateMenuSortParams struct {
 	ID        int
 	Sort      int
 	UpdatedBy string
+	ParentID  sql.NullInt32
+	Group     string
 }
 
 func (r *repository) UpdateMenuSortQuery(
@@ -105,16 +117,25 @@ func (r *repository) UpdateMenuSortQuery(
 		UPDATE app_menu
 		SET 
 			sort = $1,
-			updated_by = $2,
+			"group" = $2,
+			parent_id = $3,
+			updated_by = $4,
 			updated_at = NOW()
 		WHERE 
-			id = $3
+			id = $5
 	`
-	// Gunakan ExecContext karena ini adalah UPDATE
 	_, err = r.db.ExecContext(ctx, stmt,
 		params.Sort,
+		params.Group,
+		params.ParentID,
 		params.UpdatedBy,
 		params.ID,
 	)
 	return
+}
+
+func (r *repository) UpdateChildrenGroup(ctx context.Context, parentID int, newGroup string) error {
+	const stmt = `UPDATE app_menu SET "group" = $1, updated_at = NOW() WHERE parent_id = $2`
+	_, err := r.db.ExecContext(ctx, stmt, newGroup, parentID)
+	return err
 }

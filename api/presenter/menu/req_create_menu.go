@@ -10,7 +10,7 @@ type CreateMenuRequest struct {
 	ParentID    *int    `json:"parent_id" validate:"omitempty,min=1"`
 	Name        string  `json:"name" validate:"required,min=1,max=50"`
 	Description *string `json:"description" validate:"omitempty,max=100"`
-	URL         *string `json:"url" validate:"required,max=100,uri"`
+	URL         *string `json:"url" validate:"required,max=100"`
 	Group       string  `json:"group" validate:"required,min=1,max=50"`
 	Icon        *string `json:"icon" validate:"omitempty,max=50"`
 	Active      *bool   `json:"active" validate:"required,boolean"`
@@ -23,8 +23,18 @@ func (req *CreateMenuRequest) ToParams(userID string) (params repository.CreateM
 		Name:      req.Name,
 		CreatedBy: userID,
 		Group:     req.Group,
-		Active:    *req.Active,
-		Display:   *req.Display,
+	}
+
+	if req.Active != nil {
+		params.Active = *req.Active
+	} else {
+		params.Active = false
+	}
+
+	if req.Display != nil {
+		params.Display = *req.Display
+	} else {
+		params.Display = false
 	}
 
 	if req.ParentID != nil {

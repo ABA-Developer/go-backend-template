@@ -70,6 +70,11 @@ func UpdateMenu(svc service.Service, validate *validator.Validator) fiber.Handle
 						Message: constant.ErrDataNotFound.Message,
 					})
 			}
+			return presenter.ResponseMessage(c,
+				presenter.ResponsePayloadMessage{
+					Code:    http.StatusInternalServerError,
+					Message: "Failed update menu",
+				})
 		}
 
 		return presenter.ResponseData(c, presenter.ResponsePayloadData{
