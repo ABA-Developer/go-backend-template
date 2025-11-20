@@ -13,7 +13,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 )
 
-// ReadMenuPermissionListParams godoc
+// ReadMenuPermissionService godoc
 // @Summary      Get Menu Permission List
 // @Description  Retrieves a paginated and searchable list of permissions (e.g., read, create) for a specific menu ID. Requires Bearer token.
 // @Tags         Menu Permission
@@ -30,7 +30,7 @@ import (
 // @Failure      500      {object}  presenter.ResponsePayloadMessage "Internal Server Error (Query parsing or service failure)"
 // @Security     BearerAuth
 // @Router       /menu-permissions/{menu_id} [get]
-func ReadMenuPermissionListParams(svc service.Service) fiber.Handler {
+func ReadMenuPermissionService(svc service.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		menuIDParams := c.Params("menu_id")
 		menuID, err := strconv.Atoi(menuIDParams)
@@ -52,7 +52,7 @@ func ReadMenuPermissionListParams(svc service.Service) fiber.Handler {
 				})
 		}
 
-		data, err := svc.ReadMenuPermissionListParams(c.UserContext(), request, menuID)
+		data, err := svc.ReadMenuPermissionService(c.UserContext(), request, menuID)
 		if err != nil {
 			if errors.Is(err, constant.ErrMenuIdNotFound) {
 				return presenter.ResponseMessage(c,

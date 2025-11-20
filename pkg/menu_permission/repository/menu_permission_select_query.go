@@ -5,7 +5,7 @@ import (
 	"context"
 )
 
-type ReadMenuPermissionListParams struct {
+type ReadMenuPermissionService struct {
 	SetSearch bool
 	Search    string
 	Order     string
@@ -16,8 +16,9 @@ type ReadMenuPermissionListParams struct {
 
 func (r *repository) ReadMenuPermissionListQuery(
 	ctx context.Context,
-	args ReadMenuPermissionListParams,
+	args ReadMenuPermissionService,
 ) (data []entities.MenuPermission, err error) {
+
 	const stmt = `
 	SELECT
 		id, menu_id, code, action_name
@@ -95,7 +96,7 @@ func (r *repository) ReadMenuPermissionByIdQuery(ctx context.Context, MenuPermis
 }
 
 func (r *repository) ReadMenuPermissionCount(ctx context.Context,
-	args ReadMenuPermissionListParams) (count int, err error) {
+	args ReadMenuPermissionService) (count int, err error) {
 	const stmt = `
 			SELECT COUNT(*)
 			FROM
@@ -112,6 +113,10 @@ func (r *repository) ReadMenuPermissionCount(ctx context.Context,
 		args.Search,
 		args.MenuID,
 	).Scan(&count)
+
+	if err != nil {
+		return 0, err
+	}
 
 	return
 }

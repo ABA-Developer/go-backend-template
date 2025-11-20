@@ -3,9 +3,11 @@ package handlers
 import (
 	"be-dashboard-nba/api/presenter"
 	menuPermissionPresenter "be-dashboard-nba/api/presenter/menu_permission"
+	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
 	"be-dashboard-nba/pkg/menu_permission/service"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -63,6 +65,13 @@ func CreateMenuPermission(svc service.Service, validate *validator.Validator) fi
 		err = svc.CreateMenuPermissionService(c.UserContext(), payload, userID, menuID)
 
 		if err != nil {
+			if errors.Is(err, constant.ErrMenuIdNotFound) {
+				return presenter.ResponseMessage(c,
+					presenter.ResponsePayloadMessage{
+						Code:    http.StatusNotFound,
+						Message: constant.ErrDataNotFound.Message,
+					})
+			}
 			return presenter.ResponseMessage(c,
 				presenter.ResponsePayloadMessage{
 					Code:    http.StatusInternalServerError,

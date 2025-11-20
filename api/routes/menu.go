@@ -27,11 +27,11 @@ func MenuRouter(http fiber.Router, application *app.Application) {
 
 	routes.Get("/parent", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionRead), handlers.ReadMenuParent(menuService))
 
-	routes.Put("/reorder", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionUpdate), handlers.UpdateMenuOrder(menuService, application.Validator))
+	routes.Put("/reorder", handlers.UpdateMenuOrder(menuService, application.Validator))
 
 	routes.Get("/:menu_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionRead), handlers.ReadMenuDetail(menuService))
 
 	routes.Delete("/:menu_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionDelete), handlers.DeleteMenu(menuService))
 
-	routes.Put("/:menu_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionUpdate), handlers.UpdateMenu(menuService, application.Validator))
+	routes.Put("/:menu_id", handlers.UpdateMenu(menuService, application.Validator))
 }
