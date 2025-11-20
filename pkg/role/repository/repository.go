@@ -13,7 +13,8 @@ type Repository interface {
 	CreateRoleQuery(ctx context.Context, payload CreateRolePayload) (err error)
 	UpdateRoleQuery(ctx context.Context, payload UpdateRolePayload) (err error)
 	DeleteRoleQuery(ctx context.Context, roleID int) (err error)
-	ReadRoleAccess(ctx context.Context, roleID int) (data []entities.RoleAccessResponse, err error)
+	ReadRoleAccessQuery(ctx context.Context, args ReadRoleAccessParams) (data []entities.RoleAccessResponse, err error)
+	ReadRoleAccessCount(ctx context.Context, args ReadRoleAccessParams) (count int, err error)
 	DeleteRoleAccess(ctx context.Context, payload UpdateRoleMenuPermission) (err error)
 	CreateRoleAccess(ctx context.Context, payload UpdateRoleMenuPermission) (err error)
 }

@@ -9,6 +9,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/log"
 	"github.com/pkg/errors"
 )
 
@@ -38,7 +39,17 @@ func ReadRoleAccess(svc service.Service) fiber.Handler {
 
 		}
 
-		data, err := svc.ReadRoleAccessService(c.UserContext(), roleID)
+		var request rolePresenter.ReadRoleAccessesRequest
+		if err = c.QueryParser(&request); err != nil {
+			log.Errorw("error parse request", err)
+			return presenter.ResponseMessage(c,
+				presenter.ResponsePayloadMessage{
+					Code:    http.StatusBadRequest,
+					Message: "Invalid query parameters",
+				})
+		}
+
+		data, err := svc.ReadRoleAccessService(c.UserContext(), request, roleID)
 		if err != nil {
 			if errors.Is(err, constant.ErrRoleIdNotFound) {
 				return presenter.ResponseMessage(c,
@@ -54,10 +65,11 @@ func ReadRoleAccess(svc service.Service) fiber.Handler {
 					})
 			}
 		}
-		return presenter.ResponseData(c, presenter.ResponsePayloadData{
-			Code:    http.StatusOK,
-			Data:    rolePresenter.ToReadRoleAccessResponse(data),
-			Message: "Successfully get role detail",
+		return presenter.ResponsePaginate(c, presenter.ResponsePayloadPaginate{
+			Code:       http.StatusOK,
+			Message:    "Successfully get role detail",
+			Data:       rolePresenter.ToReadRoleAccessResponse(data.Data),
+			Pagination: data.Pagination,
 		})
 	}
 }
