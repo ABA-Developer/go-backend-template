@@ -32,3 +32,8 @@ type RolePaginationResponse struct {
 	Data       []Role
 	Pagination presenter.Pagination
 }
+
+type RoleAccessPaginationResponse struct {
+	Data       []RoleAccessResponse
+	Pagination presenter.Pagination
+}

@@ -22,7 +22,7 @@ func (s *service) ReadRolesService(
 
 	totalItems, err := r.ReadRolesCount(ctx, params)
 	if err != nil {
-		s.log.Error().Err(err).Msg("error query get menu permission count")
+		s.log.Error().Err(err).Msg("error query get role count")
 		err = errors.WithStack(constant.ErrUnknownSource)
 		return
 	}
@@ -42,7 +42,7 @@ func (s *service) ReadRolesService(
 
 	rolesData, err := r.ReadRolesQuery(ctx, params)
 	if err != nil {
-		s.log.Error().Err(err).Msg("error query read list menu permission")
+		s.log.Error().Err(err).Msg("error query read roles")
 		err = errors.WithStack(constant.ErrUnknownSource)
 		return
 	}

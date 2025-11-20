@@ -6,7 +6,6 @@ import (
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
 	"be-dashboard-nba/pkg/role/service"
-	"fmt"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -29,15 +28,15 @@ import (
 func CreateRole(svc service.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 
-		var payload rolePresenter.CreateRoleRequest
-		if err = c.BodyParser(&payload); err != nil {
+		var request rolePresenter.CreateRoleRequest
+		if err = c.BodyParser(&request); err != nil {
 			return presenter.ResponseMessage(c, presenter.ResponsePayloadMessage{
 				Code:    http.StatusBadRequest,
 				Message: "Failed parse request",
 			})
 		}
 
-		if err := validate.Validate(payload); err != nil {
+		if err := validate.Validate(request); err != nil {
 			return presenter.ResponseErrorValidate(c, err)
 		}
 
@@ -49,9 +48,7 @@ func CreateRole(svc service.Service, validate *validator.Validator) fiber.Handle
 
 		userID := ah.GetClaims().UserID
 
-		fmt.Printf("userId: %s", userID)
-
-		err = svc.CreateRoleService(c.UserContext(), payload, userID)
+		err = svc.CreateRoleService(c.UserContext(), request, userID)
 		if err != nil {
 			return presenter.ResponseMessage(c,
 				presenter.ResponsePayloadMessage{

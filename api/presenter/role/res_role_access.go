@@ -16,6 +16,7 @@ type RoleAccessResponse struct {
 
 func ToReadRoleAccessResponse(rows []entities.RoleAccessResponse) []RoleAccessResponse {
 	menuMap := make(map[int]*RoleAccessResponse)
+	orderedMenuIDs := make([]int, 0)
 
 	for _, r := range rows {
 		if _, exists := menuMap[r.MenuID]; !exists {
@@ -24,6 +25,7 @@ func ToReadRoleAccessResponse(rows []entities.RoleAccessResponse) []RoleAccessRe
 				MenuName: r.MenuName,
 				Accesses: []Access{},
 			}
+			orderedMenuIDs = append(orderedMenuIDs, r.MenuID)
 		}
 
 		menuMap[r.MenuID].Accesses = append(menuMap[r.MenuID].Accesses, Access{
@@ -34,8 +36,8 @@ func ToReadRoleAccessResponse(rows []entities.RoleAccessResponse) []RoleAccessRe
 	}
 
 	result := make([]RoleAccessResponse, 0, len(menuMap))
-	for _, m := range menuMap {
-		result = append(result, *m)
+	for _, id := range orderedMenuIDs {
+		result = append(result, *menuMap[id])
 	}
 
 	return result
