@@ -18,6 +18,7 @@ type Validator struct {
 }
 
 func (v Validator) Validate(i interface{}) (err error) {
+	fmt.Println(err)
 	err = v.Validator.Struct(i)
 
 	return
@@ -32,7 +33,7 @@ func ValidationErrors(err error) (message map[string]interface{}) {
 	message = make(map[string]interface{})
 
 	for _, e := range ve {
-		jsonKey := strings.ToLower(convertCase(e.Field(), '_'))
+		jsonKey := strings.ToLower(e.Field())
 		fieldName := convertCase(e.Field(), ' ')
 
 		switch e.Tag() {
@@ -65,6 +66,10 @@ func ValidationErrors(err error) (message map[string]interface{}) {
 			message[jsonKey] = fmt.Sprintf("Field %s harus berupa alfanumerik", fieldName)
 		case "url":
 			message[jsonKey] = fmt.Sprintf("Field %s harus berupa URL yang valid", fieldName)
+		case "uri":
+			message[jsonKey] = fmt.Sprintf("Field %s harus berupa path atau URI yang valid", fieldName)
+		default:
+			message[jsonKey] = fmt.Sprintf("Field %s tidak valid (%s)", fieldName, e.Tag())
 		}
 	}
 

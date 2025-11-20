@@ -9,44 +9,61 @@ import (
 type MenuPermission struct {
 	ID         int
 	MenuID     int
-	Code       string
 	ActionName string
-	CreatedBy  string
+	Code       string
 }
 
 var menuPermissions = []MenuPermission{
-	{ID: 101, MenuID: 1, Code: "R", ActionName: "read", CreatedBy: "fcdb2142-4731-470e-8a1b-8d0037665fb2"},
+	{ID: 101, MenuID: 1, ActionName: "read", Code: "R"},
 
-	{ID: 301, MenuID: 3, Code: "C", ActionName: "create", CreatedBy: "fcdb2142-4731-470e-8a1b-8d0037665fb2"},
-	{ID: 302, MenuID: 3, Code: "R", ActionName: "read", CreatedBy: "fcdb2142-4731-470e-8a1b-8d0037665fb2"},
-	{ID: 303, MenuID: 3, Code: "U", ActionName: "update", CreatedBy: "fcdb2142-4731-470e-8a1b-8d0037665fb2"},
-	{ID: 304, MenuID: 3, Code: "D", ActionName: "delete", CreatedBy: "fcdb2142-4731-470e-8a1b-8d0037665fb2"},
+	{ID: 301, MenuID: 3, ActionName: "create", Code: "C"},
+	{ID: 302, MenuID: 3, ActionName: "read", Code: "R"},
+	{ID: 303, MenuID: 3, ActionName: "update", Code: "U"},
+	{ID: 304, MenuID: 3, ActionName: "delete", Code: "D"},
 
-	{ID: 401, MenuID: 4, Code: "C", ActionName: "create", CreatedBy: "fcdb2142-4731-470e-8a1b-8d0037665fb2"},
-	{ID: 402, MenuID: 4, Code: "R", ActionName: "read", CreatedBy: "fcdb2142-4731-470e-8a1b-8d0037665fb2"},
-	{ID: 403, MenuID: 4, Code: "U", ActionName: "update", CreatedBy: "fcdb2142-4731-470e-8a1b-8d0037665fb2"},
-	{ID: 404, MenuID: 4, Code: "D", ActionName: "delete", CreatedBy: "fcdb2142-4731-470e-8a1b-8d0037665fb2"},
+	{ID: 401, MenuID: 4, ActionName: "create", Code: "C"},
+	{ID: 402, MenuID: 4, ActionName: "read", Code: "R"},
+	{ID: 403, MenuID: 4, ActionName: "update", Code: "U"},
+	{ID: 404, MenuID: 4, ActionName: "delete", Code: "D"},
+
+	{ID: 201, MenuID: 2, ActionName: "read", Code: "R"},
+	{ID: 202, MenuID: 2, ActionName: "create", Code: "C"},
+	{ID: 203, MenuID: 2, ActionName: "update", Code: "U"},
+	{ID: 204, MenuID: 2, ActionName: "delete", Code: "D"},
 }
 
 func menuPermissionSeeder(s goseeder.Seeder) {
 	const statement = `
 	INSERT INTO app_menu_permission(
-		id, menu_id, code, action_name, created_by, created_at
+		id, menu_id, action_name, code, created_by, created_at
 	)
 	VALUES($1, $2, $3, $4, $5, NOW())
-	ON CONFLICT (id) DO UPDATE
-	SET code = EXCLUDED.code, action_name = EXCLUDED.action_name, menu_id = EXCLUDED.menu_id;
+	ON CONFLICT (id) DO NOTHING;
 	`
-	for i := range menuPermissions {
+
+	const createdBy = "fcdb2142-4731-470e-8a1b-8d0037665fb2"
+
+	for _, mp := range menuPermissions {
 		_, err := s.DB.Exec(statement,
-			menuPermissions[i].ID,
-			menuPermissions[i].MenuID,
-			menuPermissions[i].Code,
-			menuPermissions[i].ActionName,
-			menuPermissions[i].CreatedBy,
+			mp.ID,
+			mp.MenuID,
+			mp.ActionName,
+			mp.Code,
+			createdBy,
 		)
 		if err != nil {
 			log.Fatalf("❌ ERROR execute menu_permission seeder : %v", err.Error())
 		}
+	}
+
+	const resetSeq = `
+        SELECT setval(
+            pg_get_serial_sequence('app_menu_permission', 'id'),
+            COALESCE((SELECT MAX(id) FROM app_menu_permission), 1)
+        );
+    `
+
+	if _, err := s.DB.Exec(resetSeq); err != nil {
+		log.Fatalf("❌ ERROR execute menu_permission reset sequence : %v", err.Error())
 	}
 }

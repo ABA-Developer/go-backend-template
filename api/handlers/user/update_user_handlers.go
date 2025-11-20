@@ -3,30 +3,22 @@ package handlers
 import (
 	"be-dashboard-nba/api/presenter"
 	userPresenter "be-dashboard-nba/api/presenter/user"
+	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
 	"be-dashboard-nba/pkg/user/service"
+	"errors"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 )
 
-// UpdateUserApp godoc
-// @Summary      Update User
-// @Description  Updates a user's profile details by their ID. Requires Bearer token.
-// @Tags         User Profile
-// @Accept       json
-// @Produce      json
-// @Param        user body     presenter.UpdateUserRequest true "User data to update"
-// @Success      200  {object} presenter.ResponsePayloadData     "Successfully update user"
-// @Failure      400  {object} presenter.ResponsePayloadMessage       "Bad Request (Invalid ID, Invalid JSON, or Validation Error)"
-// @Failure      401  {object} presenter.ResponsePayloadMessage       "Unauthorized"
-// @Failure      500  {object} presenter.ResponsePayloadMessage       "Internal Server Error"
-// @Security     BearerAuth
-// @Router       /users/me [put]
-func UpdateProfileApp(svc service.Service, validate *validator.Validator) fiber.Handler {
+func UpdateUser(svc service.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
+
+		userIDParams := c.Params("user_id")
+
 		var request userPresenter.UpdateUserRequest
 
 		if err = c.BodyParser(&request); err != nil {
@@ -50,8 +42,20 @@ func UpdateProfileApp(svc service.Service, validate *validator.Validator) fiber.
 
 		userIDFromToken := ah.GetClaims().UserID
 
-		err = svc.UpdateUserService(c.UserContext(), request, userIDFromToken, "")
+		err = svc.UpdateUserService(c.UserContext(), request, userIDFromToken, userIDParams)
 		if err != nil {
+			if errors.Is(err, constant.ErrRoleIdNotFound) {
+				return presenter.ResponseMessage(c, presenter.ResponsePayloadMessage{
+					Code:    http.StatusNotFound,
+					Message: constant.ErrRoleIdNotFound.Message,
+				})
+			}
+			if errors.Is(err, constant.ErrUserIdNotFound) {
+				return presenter.ResponseMessage(c, presenter.ResponsePayloadMessage{
+					Code:    http.StatusNotFound,
+					Message: constant.ErrUserIdNotFound.Message,
+				})
+			}
 			return presenter.ResponseMessage(c, presenter.ResponsePayloadMessage{
 				Code:    http.StatusInternalServerError,
 				Message: "Failed update user",

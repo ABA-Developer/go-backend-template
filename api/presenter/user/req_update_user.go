@@ -1,47 +1,45 @@
 package presenter
 
-import "be-dashboard-nba/pkg/user/repository"
+import (
+	"be-dashboard-nba/pkg/entities"
+	"be-dashboard-nba/pkg/user/repository"
+	"database/sql"
+)
 
 type UpdateUserRequest struct {
-	Name     string  `json:"name"`
-	FullName string  `json:"full_name"`
-	Email    string  `json:"email"`
-	Password string  `json:"password"`
-	Phone    string  `json:"phone"`
-	Active   *bool   `json:"active"`
-	ImgPath  *string `json:"img_path"`
-	ImgName  *string `json:"img_name"`
+	Name     string  `json:"name" validate:"required"`
+	FullName string  `json:"full_name"  validate:"required"`
+	Email    string  `json:"email"  validate:"required,email"`
+	RoleID   int     `json:"role_id" validate:"required"`
+	Phone    *string `json:"phone"`
+	Active   *bool   `json:"active"  validate:"required"`
 }
 
-func (req *UpdateUserRequest) ToParams(userID string, password string) (params repository.UpdateUserParams) {
-
+func (req *UpdateUserRequest) ToParams(userID string, updatedBy string, existingUser entities.User) (params repository.UpdateUserParams) {
 	params = repository.UpdateUserParams{
 		ID:        userID,
 		Name:      req.Name,
 		FullName:  req.FullName,
 		Email:     req.Email,
-		Password:  password,
-		Phone:     req.Phone,
-		UpdatedBy: userID,
+		UpdatedBy: updatedBy,
+		RoleID:    req.RoleID,
 	}
 
 	if req.Active != nil {
 		params.Active = *req.Active
+	} else {
+
+		params.Active = existingUser.Active
 	}
 
-	if req.Active == nil {
-		params.Active = true
-	}
-	if req.ImgPath != nil {
-		params.ImgPath = *req.ImgPath
+	if req.Phone != nil {
+		if *req.Phone == "" {
+			params.Phone = sql.NullString{Valid: false}
+		} else {
+			params.Phone = sql.NullString{String: *req.Phone, Valid: true}
+		}
 	} else {
-		params.ImgPath = ""
-	}
-
-	if req.ImgName != nil {
-		params.ImgName = *req.ImgName
-	} else {
-		params.ImgName = ""
+		params.Phone = existingUser.Phone
 	}
 
 	return

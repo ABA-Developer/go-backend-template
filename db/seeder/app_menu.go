@@ -43,7 +43,7 @@ var menus = []Menu{
 		ParentID:  sql.NullInt32{Int32: 2, Valid: true},
 		Group:     "system",
 		Name:      "Menu",
-		URL:       "/settings/Menu",
+		URL:       "/settings/menu",
 		Icon:      "ri-menu-line",
 		Sort:      1,
 		CreatedBy: "fcdb2142-4731-470e-8a1b-8d0037665fb2",
@@ -79,8 +79,19 @@ func menuSeeder(s goseeder.Seeder) {
 			menus[i].Sort,
 			menus[i].CreatedBy,
 		)
+
 		if err != nil {
 			log.Fatalf("❌ ERROR execute menu seeder : %v", err.Error())
 		}
 	}
+	const resetSeq = `
+        SELECT setval(
+            pg_get_serial_sequence('app_menu', 'id'),
+            COALESCE((SELECT MAX(id) FROM app_menu), 1)
+        );
+    `
+	if _, err := s.DB.Exec(resetSeq); err != nil {
+		log.Fatalf("❌ ERROR execute menu seeder : %v", err.Error())
+	}
+
 }

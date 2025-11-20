@@ -14,6 +14,11 @@ type RoleAccessResponse struct {
 var roleAccesses = []RoleAccessResponse{
 	{RoleID: 1, MenuPermissionID: 101},
 
+	{RoleID: 1, MenuPermissionID: 201},
+	{RoleID: 1, MenuPermissionID: 202},
+	{RoleID: 1, MenuPermissionID: 203},
+	{RoleID: 1, MenuPermissionID: 204},
+
 	{RoleID: 1, MenuPermissionID: 301},
 	{RoleID: 1, MenuPermissionID: 302},
 	{RoleID: 1, MenuPermissionID: 303},
@@ -25,6 +30,7 @@ var roleAccesses = []RoleAccessResponse{
 	{RoleID: 1, MenuPermissionID: 404},
 
 	{RoleID: 2, MenuPermissionID: 101},
+	{RoleID: 2, MenuPermissionID: 201},
 }
 
 func roleAccessSeeder(s goseeder.Seeder) {
@@ -44,4 +50,5 @@ func roleAccessSeeder(s goseeder.Seeder) {
 			log.Fatalf("❌ ERROR execute role_access seeder : %v", err.Error())
 		}
 	}
+
 }

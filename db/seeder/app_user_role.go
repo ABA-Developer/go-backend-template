@@ -14,7 +14,11 @@ type UserRole struct {
 var userRoles = []UserRole{
 	{
 		UserID: "fcdb2142-4731-470e-8a1b-8d0037665fb2",
-		RoleID: 1,
+		RoleID: 1, // Super Admin
+	},
+	{
+		UserID: "8a92bf0c-9e11-4b3b-9a6b-1b1234567890",
+		RoleID: 2, // User reguler
 	},
 }
 

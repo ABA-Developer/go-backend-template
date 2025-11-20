@@ -88,7 +88,6 @@ func Authorize(
 
 		userID := ah.GetClaims().UserID
 		codesToCheck := permissions.GetInheritedPermissions(permissionCode)
-		fmt.Println(codesToCheck)
 
 		hasAccess, err := svc.CheckPermissionService(c.UserContext(), menuURL, userID, codesToCheck)
 		if err != nil {

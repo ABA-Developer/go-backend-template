@@ -23,8 +23,18 @@ var users = []User{
 		Name:      "superadmin1",
 		FullName:  "Super Admin Tes",
 		Email:     "super@admin.com",
-		Password:  "$2a$10$oPZtYt40bTpZxNS9Ayjj1OQizSbZ8f5DcOkjNFBJwkwf3qD8xQLiO",
+		Password:  "$2a$10$oPZtYt40bTpZxNS9Ayjj1OQizSbZ8f5DcOkjNFBJwkwf3qD8xQLiO", // bcrypt: "password"
 		Phone:     "123143124",
+		Active:    true,
+		CreatedBy: "system",
+	},
+	{
+		ID:        "8a92bf0c-9e11-4b3b-9a6b-1b1234567890",
+		Name:      "user1",
+		FullName:  "User Biasa",
+		Email:     "user@demo.com",
+		Password:  "$2a$10$oPZtYt40bTpZxNS9Ayjj1OQizSbZ8f5DcOkjNFBJwkwf3qD8xQLiO", // bcrypt: "password"
+		Phone:     "08123456789",
 		Active:    true,
 		CreatedBy: "system",
 	},
@@ -49,8 +59,8 @@ func userSeeder(s goseeder.Seeder) {
 			users[i].Phone,
 			users[i].Active,
 			users[i].CreatedBy,
-			) 
-			if err != nil {
+		)
+		if err != nil {
 			log.Fatalf("❌ ERROR execute user seeder : %v", err.Error())
 		}
 	}

@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"be-dashboard-nba/api/presenter"
 	"database/sql"
 	"time"
 )
@@ -9,6 +10,8 @@ type User struct {
 	ID        string         `json:"id"`
 	Name      string         `json:"name"`
 	FullName  string         `json:"full_name"`
+	Role      string         `json:"role"`
+	RoleID    int            `json:"role_id"`
 	Email     string         `json:"email"`
 	Password  string         `json:"password"`
 	Active    bool           `json:"active"`
@@ -19,4 +22,9 @@ type User struct {
 	CreatedAt time.Time      `json:"created_at"`
 	UpdatedBy sql.NullString `json:"updated_by"`
 	UpdatedAt sql.NullTime   `json:"updated_at"`
+}
+
+type UserPaginationResponse struct {
+	Data       []User
+	Pagination presenter.Pagination
 }

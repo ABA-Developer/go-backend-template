@@ -19,7 +19,7 @@ func MenuPermissionRouter(http fiber.Router, application *app.Application) {
 	routes := http.Group("/menu-permissions")
 	routes.Use(mdw.ValidateToken())
 
-	routes.Get("/:menu_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionReadMenuPermission), handlers.ReadMenuPermissionListParams(menuPermissionService))
+	routes.Get("/:menu_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionReadMenuPermission), handlers.ReadMenuPermissionService(menuPermissionService))
 
 	routes.Get("/detail/:menu_permission_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionReadMenuPermission), handlers.ReadMenuPermissionDetail(menuPermissionService))
 
