@@ -1,4 +1,4 @@
-package payload
+package presenter
 
 import (
 	"be-dashboard-nba/constant"
