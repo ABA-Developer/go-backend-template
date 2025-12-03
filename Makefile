@@ -8,6 +8,7 @@ NAME = go-backend-nba
 BUILD_PATH = ./build
 MAIN_DIR = ./cmd/
 MAIN_FILE = main.go
+SEEDER_FILE=cmd/seeder/main.go
 MIGRATION_PATH = ./db/migrations
 
 # Target: build
@@ -21,7 +22,7 @@ build:
 .PHONY: run
 run:
 	@echo "🚀 Running the application without building..."
-	@cd $(BUILD_PATH) && go run .$(MAIN_DIR)*go
+	go run $(MAIN_DIR)$(MAIN_FILE)
 	@echo "Run completed."
 
 # Target: run prebuild program
@@ -66,6 +67,11 @@ migrate-down:
 .PHONY: migrate-fix
 migrate-fix:
 	@migrate -path=$(MIGRATION_PATH) -database=$(DB_ADDR) force $(filter-out $@,$(MAKECMDGOALS))
+
+.PHONY: migrate-seed
+migrate-seed: ## Run the seeder script
+	@echo "🌱 Starting seeder..."
+	@go run $(SEEDER_FILE) --gseed
 
 # This avoids "No rule to make target" error for extra args
 %:

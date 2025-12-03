@@ -8,7 +8,7 @@ import (
 )
 
 type RefreshTokenPayload struct {
-	GUID string
+	SessionID string
 }
 
 // Generate refresh token with signing JWT method HS256.
@@ -21,7 +21,7 @@ func GenerateRefreshToken(request RefreshTokenPayload) (response TokenPayload, e
 	expiresAt := time.Now().Add(expiredDuration)
 
 	claims := &jwt.MapClaims{
-		"jti": request.GUID,
+		"jti": request.SessionID,
 		"exp": expiresAt.Unix(),
 	}
 
@@ -46,7 +46,7 @@ func ClaimsRefreshToken(token string) (response RefreshTokenPayload, err error) 
 	}
 
 	response = RefreshTokenPayload{
-		GUID: claims["jti"].(string),
+		SessionID: claims["jti"].(string),
 	}
 
 	return

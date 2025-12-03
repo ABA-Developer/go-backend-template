@@ -1,32 +1,30 @@
 package entities
 
 import (
+	"be-dashboard-nba/api/presenter"
 	"database/sql"
 	"time"
 )
 
 type User struct {
-	ID         int64         `json:"id"`
-	FirstName  string        `json:"first_name"`
-	MiddleName string        `json:"middle_name"`
-	LastName   string        `json:"last_name"`
-	Email      string        `json:"email"`
-	Password   string        `json:"password"`
-	Role       string        `json:"role"`
-	IsActive   bool          `json:"is_active"`
-	CreatedAt  time.Time     `json:"created_at"`
-	CreatedBy  sql.NullInt64 `json:"created_by"`
-	UpdatedAt  sql.NullTime  `json:"updated_at"`
-	UpdatedBy  sql.NullInt64 `json:"updated_by"`
+	ID        string         `json:"id"`
+	Name      string         `json:"name"`
+	FullName  string         `json:"full_name"`
+	Role      string         `json:"role"`
+	RoleID    int            `json:"role_id"`
+	Email     string         `json:"email"`
+	Password  string         `json:"password"`
+	Active    bool           `json:"active"`
+	Phone     sql.NullString `json:"phone"`
+	ImgPath   sql.NullString `json:"img_path"`
+	ImgName   sql.NullString `json:"img_name"`
+	CreatedBy string         `json:"created_by"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedBy sql.NullString `json:"updated_by"`
+	UpdatedAt sql.NullTime   `json:"updated_at"`
 }
 
-type UserUpdate struct {
-	FirstName  string    `json:"first_name"`
-	MiddleName string    `json:"middle_name"`
-	LastName   string    `json:"last_name"`
-	Email      string    `json:"email"`
-	Password   string    `json:"password"`
-	Role       string    `json:"role"`
-	IsActive   bool      `json:"is_active"`
-	UpdatedAt  time.Time `json:"updated_at"`
+type UserPaginationResponse struct {
+	Data       []User
+	Pagination presenter.Pagination
 }
