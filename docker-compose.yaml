@@ -1,11 +1,11 @@
 services:
   db:
-    image: postgres:15
+    image: postgres:16
     container_name: db-auth-user
     volumes:
       - db-auth-user:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "5435:5432"
     networks:
       - go-backend-nba-network
     environment:
