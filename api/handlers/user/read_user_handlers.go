@@ -3,14 +3,14 @@ package handlers
 import (
 	"be-dashboard-nba/api/presenter"
 	userPresenter "be-dashboard-nba/api/presenter/user"
-	"be-dashboard-nba/pkg/user/service"
+	"be-dashboard-nba/usecase/user"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
 )
 
-func ReadUsers(svc service.Service) fiber.Handler {
+func ReadUsers(svc user.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		var request userPresenter.ReadUserRequest
 		if err = c.QueryParser(&request); err != nil {

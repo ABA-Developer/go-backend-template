@@ -6,7 +6,7 @@ import (
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/user/service"
+	"be-dashboard-nba/usecase/user"
 	"errors"
 	"net/http"
 
@@ -14,7 +14,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 )
 
-func UpdateUser(svc service.Service, validate *validator.Validator) fiber.Handler {
+func UpdateUser(svc user.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 
 		userIDParams := c.Params("user_id")

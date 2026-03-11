@@ -6,7 +6,7 @@ import (
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/user/service"
+	"be-dashboard-nba/usecase/user"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -14,7 +14,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func CreateUser(svc service.Service, validate *validator.Validator) fiber.Handler {
+func CreateUser(svc user.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 
 		var request userPresenter.CreateUserRequest

@@ -5,7 +5,7 @@ import (
 	menuPresenter "be-dashboard-nba/api/presenter/menu"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/menu/service"
+	"be-dashboard-nba/usecase/menu"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -25,7 +25,7 @@ import (
 // @Failure      500  {object} presenter.ResponsePayloadMessage    "Internal Server Error"
 // @Security     BearerAuth
 // @Router       /menus [post]
-func CreateMenu(svc service.Service, validate *validator.Validator) fiber.Handler {
+func CreateMenu(svc menu.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		var request menuPresenter.CreateMenuRequest
 		if err = c.BodyParser(&request); err != nil {

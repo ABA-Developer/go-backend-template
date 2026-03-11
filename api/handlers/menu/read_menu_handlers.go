@@ -3,7 +3,7 @@ package handlers
 import (
 	"be-dashboard-nba/api/presenter"
 	menuPresenter "be-dashboard-nba/api/presenter/menu"
-	"be-dashboard-nba/pkg/menu/service"
+	"be-dashboard-nba/usecase/menu"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -20,7 +20,7 @@ import (
 // @Failure      400  {object}  presenter.ResponsePayloadMessage "Invalid query parameters"
 // @Failure      500  {object}  presenter.ResponsePayloadMessage "Failed get list menu"
 // @Router       /menus [get]
-func ReadListMenu(svc service.Service) fiber.Handler {
+func ReadListMenu(svc menu.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		var request menuPresenter.ReadMenuListRequest
 		if err = c.QueryParser(&request); err != nil {

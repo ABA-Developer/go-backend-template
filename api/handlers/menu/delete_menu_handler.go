@@ -3,7 +3,7 @@ package handlers
 import (
 	"be-dashboard-nba/api/presenter"
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/pkg/menu/service"
+	"be-dashboard-nba/usecase/menu"
 	"errors"
 	"net/http"
 	"strconv"
@@ -24,7 +24,7 @@ import (
 // @Failure      500      {object}  presenter.ResponsePayloadMessage  "Internal Server Error"
 // @Security     BearerAuth
 // @Router       /menus/{menu_id} [delete]
-func DeleteMenu(svc service.Service) fiber.Handler {
+func DeleteMenu(svc menu.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		menuIDParams := c.Params("menu_id")
 		menuID, err := strconv.Atoi(menuIDParams)

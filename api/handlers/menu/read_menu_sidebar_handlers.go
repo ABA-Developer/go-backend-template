@@ -4,7 +4,7 @@ import (
 	"be-dashboard-nba/api/presenter"
 	menuPresenter "be-dashboard-nba/api/presenter/menu"
 	"be-dashboard-nba/internal/auth"
-	"be-dashboard-nba/pkg/menu/service"
+	"be-dashboard-nba/usecase/menu"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -21,7 +21,7 @@ import (
 // @Failure      500  {object}  presenter.ResponsePayloadMessage "Failed get sidebar menu"
 // @Security     BearerAuth
 // @Router       /menus/sidebar [get]
-func ReadMenuSidebar(svc service.Service) fiber.Handler {
+func ReadMenuSidebar(svc menu.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 
 		ah, err := auth.GetAuth(c)

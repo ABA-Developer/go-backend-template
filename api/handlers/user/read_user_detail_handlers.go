@@ -4,14 +4,14 @@ import (
 	"be-dashboard-nba/api/presenter"
 	userPresenter "be-dashboard-nba/api/presenter/user"
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/pkg/user/service"
+	"be-dashboard-nba/usecase/user"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/pkg/errors"
 )
 
-func ReadUserDetail(svc service.Service) fiber.Handler {
+func ReadUserDetail(svc user.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		userIDParams := c.Params("user_id")
 

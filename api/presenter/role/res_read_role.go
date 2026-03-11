@@ -1,6 +1,6 @@
 package presenter
 
-import "be-dashboard-nba/pkg/entities"
+import "be-dashboard-nba/usecase/entities"
 
 type ReadRoleResponse struct {
 	ID          int     `json:"id"`

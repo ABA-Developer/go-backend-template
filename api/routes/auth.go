@@ -4,13 +4,13 @@ import (
 	"be-dashboard-nba/api/app"
 	handlers "be-dashboard-nba/api/handlers/auth"
 	"be-dashboard-nba/api/middleware"
-	"be-dashboard-nba/pkg/auth/service"
+	"be-dashboard-nba/usecase/auth"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func AuthRouter(http fiber.Router, application *app.Application) {
-	svc := service.NewService(application.DB, application.Log)
+	svc := auth.NewService(application.DB, application.Log)
 	mdw := middleware.NewEnsureToken(application.DB)
 
 	routes := http.Group("/auth")

@@ -3,7 +3,7 @@ package handlers
 import (
 	"be-dashboard-nba/api/presenter"
 	menuPresenter "be-dashboard-nba/api/presenter/menu"
-	"be-dashboard-nba/pkg/menu/service"
+	"be-dashboard-nba/usecase/menu"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -19,7 +19,7 @@ import (
 // @Failure      500 {object} presenter.ResponsePayloadMessage "Failed get parent menu"
 // @Security     BearerAuth
 // @Router       /menus/parent [get]
-func ReadMenuParent(svc service.Service) fiber.Handler {
+func ReadMenuParent(svc menu.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 
 		data, err := svc.ReadMenuParentService(c.UserContext())

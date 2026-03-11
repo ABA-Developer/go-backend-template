@@ -6,7 +6,7 @@ import (
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/menu/service"
+	"be-dashboard-nba/usecase/menu"
 	"errors"
 	"net/http"
 	"strconv"
@@ -29,7 +29,7 @@ import (
 // @Failure      500      {object}  presenter.ResponsePayloadMessage  "Internal Server Error"
 // @Security     BearerAuth
 // @Router       /menus/{menu_id} [put]
-func UpdateMenu(svc service.Service, validate *validator.Validator) fiber.Handler {
+func UpdateMenu(svc menu.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		var request menuPresenter.UpdateMenuRequest
 

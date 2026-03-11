@@ -1,7 +1,7 @@
 package presenter
 
 import (
-	"be-dashboard-nba/pkg/role/repository"
+	"be-dashboard-nba/repository/role"
 	"database/sql"
 )
 

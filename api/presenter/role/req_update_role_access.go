@@ -1,6 +1,6 @@
 package presenter
 
-import "be-dashboard-nba/pkg/role/repository"
+import "be-dashboard-nba/repository/role"
 
 type UpdateRoleAccessItem struct {
 	AccessID  int   `json:"access_id" validate:"required"`

@@ -1,8 +1,8 @@
 package presenter
 
 import (
-	"be-dashboard-nba/pkg/entities"
-	"be-dashboard-nba/pkg/user/repository"
+	"be-dashboard-nba/usecase/entities"
+	"be-dashboard-nba/repository/user"
 	"database/sql"
 )
 

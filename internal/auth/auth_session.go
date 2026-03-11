@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/pkg/auth/repository"
+	"be-dashboard-nba/repository/auth"
 )
 
 func (a *Auth) ValidateSession(ctx context.Context) (err error) {

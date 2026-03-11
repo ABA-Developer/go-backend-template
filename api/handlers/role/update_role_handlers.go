@@ -6,7 +6,7 @@ import (
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/role/service"
+	"be-dashboard-nba/usecase/role"
 	"net/http"
 	"strconv"
 
@@ -30,7 +30,7 @@ import (
 // @Failure      500      {object}  presenter.ResponsePayloadMessage "Failed update role"
 // @Security     BearerAuth
 // @Router       /roles/{role_id} [put]
-func UpdateRole(svc service.Service, validate *validator.Validator) fiber.Handler {
+func UpdateRole(svc role.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 
 		roleIDParams := c.Params("role_id")

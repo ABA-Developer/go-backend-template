@@ -5,7 +5,7 @@ import (
 	authPresenter "be-dashboard-nba/api/presenter/auth"
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/auth/service"
+	"be-dashboard-nba/usecase/auth"
 	"errors"
 	"net/http"
 
@@ -23,7 +23,7 @@ import (
 // @Failure      401 {object} presenter.ResponsePayloadMessage "Unauthorized (e.g., Wrong email or password)"
 // @Failure      500 {object} presenter.ResponsePayloadMessage "Internal Server Error (e.g., Database connection issue)"
 // @Router       /auth/login [post]
-func Login(svc service.Service, validate *validator.Validator) fiber.Handler {
+func Login(svc auth.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		var request authPresenter.LoginRequest
 

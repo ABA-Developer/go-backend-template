@@ -15,7 +15,7 @@ import (
 	"be-dashboard-nba/internal/db"
 	"be-dashboard-nba/internal/jwt"
 	"be-dashboard-nba/internal/permissions"
-	"be-dashboard-nba/pkg/auth/service"
+	authService "be-dashboard-nba/usecase/auth"
 )
 
 type EnsureToken struct {
@@ -75,7 +75,7 @@ func parseHeaderToken(headerDataToken string) (string, error) {
 }
 
 func Authorize(
-	svc service.Service,
+	svc authService.Service,
 	menuURL constant.MenuKey,
 	permissionCode constant.PermissionCode,
 ) fiber.Handler {

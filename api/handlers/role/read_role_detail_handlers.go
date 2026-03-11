@@ -4,7 +4,7 @@ import (
 	"be-dashboard-nba/api/presenter"
 	rolePresenter "be-dashboard-nba/api/presenter/role"
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/pkg/role/service"
+	"be-dashboard-nba/usecase/role"
 	"net/http"
 	"strconv"
 
@@ -25,7 +25,7 @@ import (
 // @Failure      500 {object}  presenter.ResponsePayloadMessage "Failed get role detail"
 // @Security     BearerAuth
 // @Router       /roles/{role_id} [get]
-func ReadRoleDetail(svc service.Service) fiber.Handler {
+func ReadRoleDetail(svc role.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		roleIDParams := c.Params("role_id")
 		roleID, err := strconv.Atoi(roleIDParams)

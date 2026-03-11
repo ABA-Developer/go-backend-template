@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"be-dashboard-nba/api/presenter"
-	"be-dashboard-nba/internal/auth"
-	"be-dashboard-nba/pkg/auth/service"
+	authInternal "be-dashboard-nba/internal/auth"
+	"be-dashboard-nba/usecase/auth"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -19,9 +19,9 @@ import (
 // @Failure      500 {object} presenter.ResponsePayloadMessage "Internal Server Error (e.g., Database connection issue)"
 // @Security     BearerAuth
 // @Router       /auth/logout [post]
-func Logout(svc service.Service) fiber.Handler {
+func Logout(svc auth.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
-		ah, err := auth.GetAuth(c)
+		ah, err := authInternal.GetAuth(c)
 		if err != nil {
 			return
 		}

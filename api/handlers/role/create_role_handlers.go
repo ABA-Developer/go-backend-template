@@ -5,7 +5,7 @@ import (
 	rolePresenter "be-dashboard-nba/api/presenter/role"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/role/service"
+	"be-dashboard-nba/usecase/role"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -25,7 +25,7 @@ import (
 // @Failure      500  {object}  presenter.ResponsePayloadMessage "Failed create role"
 // @Security     BearerAuth
 // @Router       /roles [post]
-func CreateRole(svc service.Service, validate *validator.Validator) fiber.Handler {
+func CreateRole(svc role.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 
 		var request rolePresenter.CreateRoleRequest

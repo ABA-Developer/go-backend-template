@@ -6,7 +6,7 @@ import (
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/menu_permission/service"
+	"be-dashboard-nba/usecase/menu_permission"
 	"errors"
 	"net/http"
 	"strconv"
@@ -29,7 +29,7 @@ import (
 // @Failure      500        {object}  presenter.ResponsePayloadMessage        "Internal Server Error"
 // @Security     BearerAuth
 // @Router       /menu-permissions/{menu_id} [post]
-func CreateMenuPermission(svc service.Service, validate *validator.Validator) fiber.Handler {
+func CreateMenuPermission(svc menu_permission.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		menuIDParams := c.Params("menu_id")
 		menuID, err := strconv.Atoi(menuIDParams)

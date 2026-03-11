@@ -4,7 +4,7 @@ import (
 	"be-dashboard-nba/api/presenter"
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/auth"
-	"be-dashboard-nba/pkg/user/service"
+	"be-dashboard-nba/usecase/user"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func DeleteUser(svc service.Service) fiber.Handler {
+func DeleteUser(svc user.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 
 		userIDParams := c.Params("user_id")

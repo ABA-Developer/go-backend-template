@@ -1,7 +1,7 @@
 package presenter
 
 import (
-	"be-dashboard-nba/pkg/menu/repository"
+	"be-dashboard-nba/repository/menu"
 )
 
 type ReadMenuListRequest struct {

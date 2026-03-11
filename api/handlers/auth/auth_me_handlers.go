@@ -4,8 +4,8 @@ import (
 	"be-dashboard-nba/api/presenter"
 	authPresenter "be-dashboard-nba/api/presenter/auth"
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/auth"
-	"be-dashboard-nba/pkg/auth/service"
+	authInternal "be-dashboard-nba/internal/auth"
+	"be-dashboard-nba/usecase/auth"
 	"errors"
 	"net/http"
 
@@ -24,9 +24,9 @@ import (
 // @Failure      500 {object} presenter.ResponsePayloadMessage "Internal Server Error"
 // @Security     BearerAuth
 // @Router       /auth/me [get]
-func AuthMe(svc service.Service) fiber.Handler {
+func AuthMe(svc auth.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
-		ah, err := auth.GetAuth(c)
+		ah, err := authInternal.GetAuth(c)
 		if err != nil {
 			log.WithContext(c.UserContext()).Error(err, "error get auth handler")
 			return

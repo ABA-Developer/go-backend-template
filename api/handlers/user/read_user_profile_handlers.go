@@ -5,7 +5,7 @@ import (
 	userPresenter "be-dashboard-nba/api/presenter/user"
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/auth"
-	"be-dashboard-nba/pkg/user/service"
+	"be-dashboard-nba/usecase/user"
 	"errors"
 	"net/http"
 
@@ -23,7 +23,7 @@ import (
 // @Failure      500 {object} presenter.ResponsePayloadMessage "Internal Server Error"
 // @Security     BearerAuth
 // @Router       /users/me [get]
-func ReadProfileApp(svc service.Service) fiber.Handler {
+func ReadProfileApp(svc user.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		ah, err := auth.GetAuth(c)
 		if err != nil {

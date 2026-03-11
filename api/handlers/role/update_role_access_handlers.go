@@ -5,7 +5,7 @@ import (
 	rolePresenter "be-dashboard-nba/api/presenter/role"
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/role/service"
+	"be-dashboard-nba/usecase/role"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -29,7 +29,7 @@ import (
 // @Failure      500      {object}  presenter.ResponsePayloadMessage        "Internal server error"
 // @Security     BearerAuth
 // @Router       /roles/role-access/{role_id} [put]
-func UpdateRoleMenuPermission(svc service.Service, validate *validator.Validator) fiber.Handler {
+func UpdateRoleMenuPermission(svc role.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		roleIDParams := c.Params("role_id")
 

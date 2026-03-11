@@ -3,7 +3,7 @@ package presenter
 import (
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/utils"
-	"be-dashboard-nba/pkg/user/repository"
+	"be-dashboard-nba/repository/user"
 )
 
 type ReadUserRequest struct {

@@ -3,7 +3,7 @@ package presenter
 import (
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/utils"
-	"be-dashboard-nba/pkg/menu_permission/repository"
+	"be-dashboard-nba/repository/menu_permission"
 )
 
 type ReadMenuPermissionListRequest struct {

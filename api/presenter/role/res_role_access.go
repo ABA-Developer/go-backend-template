@@ -1,6 +1,6 @@
 package presenter
 
-import "be-dashboard-nba/pkg/entities"
+import "be-dashboard-nba/usecase/entities"
 
 type Access struct {
 	AccessID   int    `json:"access_id"`

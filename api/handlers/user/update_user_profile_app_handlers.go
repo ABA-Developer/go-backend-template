@@ -5,7 +5,7 @@ import (
 	userPresenter "be-dashboard-nba/api/presenter/user"
 	"be-dashboard-nba/internal/auth"
 	"be-dashboard-nba/internal/validator"
-	"be-dashboard-nba/pkg/user/service"
+	"be-dashboard-nba/usecase/user"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -25,7 +25,7 @@ import (
 // @Failure      500  {object} presenter.ResponsePayloadMessage       "Internal Server Error"
 // @Security     BearerAuth
 // @Router       /users/me [put]
-func UpdateProfileApp(svc service.Service, validate *validator.Validator) fiber.Handler {
+func UpdateProfileApp(svc user.Service, validate *validator.Validator) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		var request userPresenter.UpdateUserRequest
 

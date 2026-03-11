@@ -1,7 +1,7 @@
 package presenter
 
 import (
-	"be-dashboard-nba/pkg/entities"
+	"be-dashboard-nba/usecase/entities"
 )
 
 type UserResponse struct {

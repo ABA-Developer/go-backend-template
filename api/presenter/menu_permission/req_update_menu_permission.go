@@ -1,6 +1,6 @@
 package presenter
 
-import "be-dashboard-nba/pkg/menu_permission/repository"
+import "be-dashboard-nba/repository/menu_permission"
 
 type UpdateMenuPermissionRequest struct {
 	Code       string `json:"code" validate:"required,min=1,max=50"`

@@ -6,12 +6,12 @@ import (
 	"be-dashboard-nba/api/app"
 	handlers "be-dashboard-nba/api/handlers/user"
 	"be-dashboard-nba/api/middleware"
-	"be-dashboard-nba/pkg/user/service"
+	"be-dashboard-nba/usecase/user"
 )
 
 func UserRouter(http fiber.Router, application *app.Application) {
 
-	svc := service.NewService(application.DB, application.Log)
+	svc := user.NewService(application.DB, application.Log)
 	mdw := middleware.NewEnsureToken(application.DB)
 
 	routes := http.Group("/users")

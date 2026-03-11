@@ -4,7 +4,7 @@ import (
 	presenter "be-dashboard-nba/api/presenter"
 	menuPresenter "be-dashboard-nba/api/presenter/menu"
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/pkg/menu/service"
+	"be-dashboard-nba/usecase/menu"
 	"errors"
 	"net/http"
 	"strconv"
@@ -12,7 +12,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func ReadMenuDetail(svc service.Service) fiber.Handler {
+func ReadMenuDetail(svc menu.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		menuIDParams := c.Params("menu_id")
 		menuID, err := strconv.Atoi(menuIDParams)

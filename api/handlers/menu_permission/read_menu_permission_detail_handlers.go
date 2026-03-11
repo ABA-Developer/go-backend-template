@@ -4,7 +4,7 @@ import (
 	"be-dashboard-nba/api/presenter"
 	menuPermissionPresenter "be-dashboard-nba/api/presenter/menu_permission"
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/pkg/menu_permission/service"
+	"be-dashboard-nba/usecase/menu_permission"
 	"errors"
 	"net/http"
 	"strconv"
@@ -25,7 +25,7 @@ import (
 // @Failure      500 {object}  presenter.ResponsePayloadMessage "Internal Server Error"
 // @Security     BearerAuth
 // @Router       /menu-permissions/detail/{menu_permission_id} [get]
-func ReadMenuPermissionDetail(svc service.Service) fiber.Handler {
+func ReadMenuPermissionDetail(svc menu_permission.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		menuPermissionIDParams := c.Params("menu_permission_id")
 		menuPermissionID, err := strconv.Atoi(menuPermissionIDParams)

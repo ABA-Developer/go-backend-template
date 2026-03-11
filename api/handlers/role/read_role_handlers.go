@@ -3,7 +3,7 @@ package handlers
 import (
 	"be-dashboard-nba/api/presenter"
 	rolePresenter "be-dashboard-nba/api/presenter/role"
-	"be-dashboard-nba/pkg/role/service"
+	"be-dashboard-nba/usecase/role"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -25,7 +25,7 @@ import (
 // @Failure      500  {object}  presenter.ResponsePayloadMessage "Failed get role"
 // @Security     BearerAuth
 // @Router       /roles [get]
-func ReadRoles(svc service.Service) fiber.Handler {
+func ReadRoles(svc role.Service) fiber.Handler {
 	return func(c *fiber.Ctx) (err error) {
 		var request rolePresenter.ReadRolesRequest
 		if err = c.QueryParser(&request); err != nil {
