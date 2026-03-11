@@ -8,9 +8,9 @@ import (
 	"github.com/rs/zerolog"
 
 	"be-dashboard-nba/docs"
-	"be-dashboard-nba/internal/config"
-	"be-dashboard-nba/internal/db"
-	"be-dashboard-nba/internal/validator"
+	"be-dashboard-nba/internal/core/config"
+	"be-dashboard-nba/internal/core/db"
+	"be-dashboard-nba/internal/core/validator"
 )
 
 type Application struct {

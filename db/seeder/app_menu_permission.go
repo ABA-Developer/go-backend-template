@@ -30,6 +30,11 @@ var menuPermissions = []MenuPermission{
 	{ID: 202, MenuID: 2, ActionName: "create", Code: "C"},
 	{ID: 203, MenuID: 2, ActionName: "update", Code: "U"},
 	{ID: 204, MenuID: 2, ActionName: "delete", Code: "D"},
+
+	{ID: 501, MenuID: 3, ActionName: "create", Code: "CMP"},
+	{ID: 502, MenuID: 3, ActionName: "read", Code: "RMP"},
+	{ID: 503, MenuID: 3, ActionName: "update", Code: "UMP"},
+	{ID: 504, MenuID: 3, ActionName: "delete", Code: "DMP"},
 }
 
 func menuPermissionSeeder(s goseeder.Seeder) {

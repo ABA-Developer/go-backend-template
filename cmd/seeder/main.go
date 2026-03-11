@@ -9,9 +9,9 @@ import (
 	"github.com/kristijorgji/goseeder"
 
 	_ "be-dashboard-nba/db/seeder"
-	"be-dashboard-nba/internal/config"
-	"be-dashboard-nba/internal/db"
-	"be-dashboard-nba/internal/utils"
+	"be-dashboard-nba/internal/core/config"
+	"be-dashboard-nba/internal/core/db"
+	"be-dashboard-nba/internal/core/utils"
 )
 
 func main() {

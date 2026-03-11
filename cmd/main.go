@@ -11,7 +11,7 @@ import (
 
 	"be-dashboard-nba/api/app"
 	"be-dashboard-nba/api/routes"
-	"be-dashboard-nba/internal/utils"
+	"be-dashboard-nba/internal/core/utils"
 
 	_ "be-dashboard-nba/docs"
 

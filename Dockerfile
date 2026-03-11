@@ -14,6 +14,9 @@ RUN go mod tidy
 
 RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /app/go-backend-nba ./cmd/main.go
 
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /app/seeder ./cmd/seeder/main.go
+
+
 FROM alpine:latest
 
 WORKDIR /app
@@ -21,5 +24,7 @@ WORKDIR /app
 COPY --from=builder /app/go-backend-nba ./
 
 COPY --from=builder /app/.env .env
+
+COPY --from=builder /app/seeder ./
 
 ENTRYPOINT [ "./go-backend-nba" ]

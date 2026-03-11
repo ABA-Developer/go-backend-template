@@ -5,7 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 
 	"be-dashboard-nba/api/middleware"
-	"be-dashboard-nba/internal/config"
+	"be-dashboard-nba/internal/core/config"
 
 	"github.com/gofiber/swagger"
 )

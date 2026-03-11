@@ -11,11 +11,11 @@ import (
 	"github.com/gofiber/fiber/v2/log"
 
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/auth"
-	"be-dashboard-nba/internal/db"
-	"be-dashboard-nba/internal/jwt"
-	"be-dashboard-nba/internal/permissions"
-	"be-dashboard-nba/pkg/auth/service"
+	"be-dashboard-nba/internal/core/db"
+	"be-dashboard-nba/internal/core/jwt"
+	"be-dashboard-nba/internal/core/permissions"
+	"be-dashboard-nba/internal/modules/auth"
+	"be-dashboard-nba/internal/modules/auth/domain"
 )
 
 type EnsureToken struct {
@@ -75,7 +75,7 @@ func parseHeaderToken(headerDataToken string) (string, error) {
 }
 
 func Authorize(
-	svc service.Service,
+	usecase domain.AuthUsecase,
 	menuURL constant.MenuKey,
 	permissionCode constant.PermissionCode,
 ) fiber.Handler {
@@ -89,7 +89,7 @@ func Authorize(
 		userID := ah.GetClaims().UserID
 		codesToCheck := permissions.GetInheritedPermissions(permissionCode)
 
-		hasAccess, err := svc.CheckPermissionService(c.UserContext(), menuURL, userID, codesToCheck)
+		hasAccess, err := usecase.CheckPermissionUsecase(c.UserContext(), menuURL, userID, codesToCheck)
 		if err != nil {
 			log.WithContext(c.UserContext()).Error(err, "Failed to check permissions")
 			return fiber.NewError(http.StatusInternalServerError, "Failed to check permissions")

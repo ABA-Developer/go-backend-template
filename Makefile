@@ -71,7 +71,8 @@ migrate-fix:
 .PHONY: migrate-seed
 migrate-seed: ## Run the seeder script
 	@echo "🌱 Starting seeder..."
-	@go run $(SEEDER_FILE) --gseed
+	@go build -o $(BUILD_PATH)/seeder.exe $(SEEDER_FILE)
+	@$(BUILD_PATH)/seeder.exe --gseed
 
 # This avoids "No rule to make target" error for extra args
 %:

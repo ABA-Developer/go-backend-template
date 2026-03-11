@@ -35,8 +35,8 @@ var (
 
 // error message.
 const (
-	ErrMsgValidate      = "There are some errors in your request"
-	ErrMsgUnknownSource = "an error occurred, please try again later"
+	ErrMsgValidate      = "Terdapat beberapa kesalahan pada input data Anda"
+	ErrMsgUnknownSource = "Terjadi kesalahan sistem, silakan coba beberapa saat lagi"
 )
 
 // error form field.

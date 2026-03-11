@@ -1,0 +1,71 @@
+package http
+
+import "be-dashboard-nba/internal/modules/menu/domain"
+
+type MenuListItem struct {
+	ID       int            `json:"id"`
+	Name     string         `json:"name"`
+	Icon     *string        `json:"icon"`
+	Url      *string        `json:"url"`
+	Children []MenuListItem `json:"children"`
+	Sort     int            `json:"sort"`
+}
+
+type ReadMenuListResponse struct {
+	GroupName   string         `json:"group_name"`
+	GroupChilds []MenuListItem `json:"group_childs"`
+}
+
+func ToReadMenuListResponse(menuEntities []domain.Menu) []ReadMenuListResponse {
+	childrenMap := make(map[int32][]domain.Menu)
+	groupMap := make(map[string][]domain.Menu)
+
+	for _, e := range menuEntities {
+		if e.ParentID == nil {
+			groupMap[e.Group] = append(groupMap[e.Group], e)
+		} else {
+			childrenMap[*e.ParentID] = append(childrenMap[*e.ParentID], e)
+		}
+	}
+
+	var response []ReadMenuListResponse
+
+	for groupName, roots := range groupMap {
+		groupItem := ReadMenuListResponse{
+			GroupName:   groupName,
+			GroupChilds: []MenuListItem{},
+		}
+
+		for _, root := range roots {
+			groupItem.GroupChilds = append(groupItem.GroupChilds, buildTreeRecursiveListItem(root, childrenMap))
+		}
+		response = append(response, groupItem)
+	}
+
+	return response
+}
+
+func buildTreeRecursiveListItem(current domain.Menu, childrenMap map[int32][]domain.Menu) MenuListItem {
+	item := MenuListItem{
+		ID:       current.ID,
+		Name:     current.Name,
+		Sort:     current.Sort,
+		Children: []MenuListItem{},
+	}
+
+	if current.Icon != nil {
+		item.Icon = current.Icon
+	}
+
+	if current.URL != nil {
+		item.Url = current.URL
+	}
+
+	if children, ok := childrenMap[int32(current.ID)]; ok {
+		for _, childEntity := range children {
+			item.Children = append(item.Children, buildTreeRecursiveListItem(childEntity, childrenMap))
+		}
+	}
+
+	return item
+}

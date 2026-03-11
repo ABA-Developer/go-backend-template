@@ -2,36 +2,40 @@ package routes
 
 import (
 	"be-dashboard-nba/api/app"
-	handlers "be-dashboard-nba/api/handlers/menu"
 	"be-dashboard-nba/api/middleware"
 	"be-dashboard-nba/constant"
-	authService "be-dashboard-nba/pkg/auth/service"
-	menuService "be-dashboard-nba/pkg/menu/service"
+	authRepo "be-dashboard-nba/internal/modules/auth/repository"
+	authUsecase "be-dashboard-nba/internal/modules/auth/usecase"
+	handlers "be-dashboard-nba/internal/modules/menu/delivery/http"
+	menuRepo "be-dashboard-nba/internal/modules/menu/repository"
+	menuUsecase "be-dashboard-nba/internal/modules/menu/usecase"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func MenuRouter(http fiber.Router, application *app.Application) {
-	authService := authService.NewService(application.DB, application.Log)
-	menuService := menuService.NewService(application.DB, application.Log)
+	aRepo := authRepo.NewAuthRepository(application.DB)
+	aUsecase := authUsecase.NewAuthUsecase(aRepo, application.Log, application.DB)
+	mRepo := menuRepo.NewMenuRepository(application.DB)
+	mUsecase := menuUsecase.NewMenuUsecase(mRepo, application.Log)
 	mdw := middleware.NewEnsureToken(application.DB)
 
 	routes := http.Group("/menus")
 	routes.Use(mdw.ValidateToken())
 
-	routes.Get("/", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionRead), handlers.ReadListMenu(menuService))
+	routes.Get("/", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionRead), handlers.ReadListMenu(mUsecase))
 
-	routes.Post("/", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionCreate), handlers.CreateMenu(menuService, application.Validator))
+	routes.Post("/", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionCreate), handlers.CreateMenu(mUsecase, application.Validator))
 
-	routes.Get("/sidebar", handlers.ReadMenuSidebar(menuService))
+	routes.Get("/sidebar", handlers.ReadMenuSidebar(mUsecase))
 
-	routes.Get("/parent", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionRead), handlers.ReadMenuParent(menuService))
+	routes.Get("/parent", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionRead), handlers.ReadMenuParent(mUsecase))
 
-	routes.Put("/reorder", handlers.UpdateMenuOrder(menuService, application.Validator))
+	routes.Put("/reorder", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionUpdate), handlers.UpdateMenuOrder(mUsecase, application.Validator))
 
-	routes.Get("/:menu_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionRead), handlers.ReadMenuDetail(menuService))
+	routes.Get("/:menu_id", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionRead), handlers.ReadMenuDetail(mUsecase))
 
-	routes.Delete("/:menu_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionDelete), handlers.DeleteMenu(menuService))
+	routes.Delete("/:menu_id", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionDelete), handlers.DeleteMenu(mUsecase))
 
-	routes.Put("/:menu_id", handlers.UpdateMenu(menuService, application.Validator))
+	routes.Put("/:menu_id", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionUpdate), handlers.UpdateMenu(mUsecase, application.Validator))
 }

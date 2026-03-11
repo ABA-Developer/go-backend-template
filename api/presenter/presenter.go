@@ -2,7 +2,7 @@ package presenter
 
 import (
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/validator"
+	"be-dashboard-nba/internal/core/validator"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"

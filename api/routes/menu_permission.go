@@ -2,30 +2,38 @@ package routes
 
 import (
 	"be-dashboard-nba/api/app"
-	handlers "be-dashboard-nba/api/handlers/menu_permission"
 	"be-dashboard-nba/api/middleware"
 	"be-dashboard-nba/constant"
-	authService "be-dashboard-nba/pkg/auth/service"
-	menuPermissionService "be-dashboard-nba/pkg/menu_permission/service"
+	authRepo "be-dashboard-nba/internal/modules/auth/repository"
+	authUsecase "be-dashboard-nba/internal/modules/auth/usecase"
+	menuRepo "be-dashboard-nba/internal/modules/menu/repository"
+	handlers "be-dashboard-nba/internal/modules/menu_permission/delivery/http"
+	menuPermissionRepo "be-dashboard-nba/internal/modules/menu_permission/repository"
+	menuPermissionUsecase "be-dashboard-nba/internal/modules/menu_permission/usecase"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 func MenuPermissionRouter(http fiber.Router, application *app.Application) {
-	menuPermissionService := menuPermissionService.NewService(application.DB, application.Log)
-	authService := authService.NewService(application.DB, application.Log)
+	aRepo := authRepo.NewAuthRepository(application.DB)
+	mRepo := menuRepo.NewMenuRepository(application.DB)
+	mprRepo := menuPermissionRepo.NewMenuRepository(application.DB)
+
+	aUsecase := authUsecase.NewAuthUsecase(aRepo, application.Log, application.DB)
+	mprUsecase := menuPermissionUsecase.NewMenuPermissionUsecase(mprRepo, mRepo, application.Log)
 	mdw := middleware.NewEnsureToken(application.DB)
 
 	routes := http.Group("/menu-permissions")
 	routes.Use(mdw.ValidateToken())
 
-	routes.Get("/:menu_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionReadMenuPermission), handlers.ReadMenuPermissionService(menuPermissionService))
+	routes.Post("/:menu_id", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionCreateMenuPermission), handlers.CreateMenuPermission(mprUsecase, application.Validator))
 
-	routes.Get("/detail/:menu_permission_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionReadMenuPermission), handlers.ReadMenuPermissionDetail(menuPermissionService))
+	routes.Get("/:menu_id", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionReadMenuPermission), handlers.ReadMenuPermissionService(mprUsecase))
 
-	routes.Post("/:menu_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionCreateMenuPermission), handlers.CreateMenuPermission(menuPermissionService, application.Validator))
+	routes.Put("/:menu_permission_id", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionUpdateMenuPermission), handlers.UpdateMenuPermission(mprUsecase, application.Validator))
 
-	routes.Put("/:menu_permission_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionUpdateMenuPermission), handlers.UpdateMenuPermission(menuPermissionService, application.Validator))
+	routes.Get("/detail/:menu_permission_id", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionReadMenuPermission), handlers.ReadMenuPermissionDetail(mprUsecase))
 
-	routes.Delete("/:menu_permission_id", middleware.Authorize(authService, constant.MenuSettingsMenu, constant.ActionDeleteMenuPermission), handlers.DeleteMenuPermission(menuPermissionService))
+	routes.Delete("/:menu_permission_id", middleware.Authorize(aUsecase, constant.MenuSettingsMenu, constant.ActionDeleteMenuPermission), handlers.DeleteMenuPermission(mprUsecase))
+
 }
