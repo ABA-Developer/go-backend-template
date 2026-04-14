@@ -9,9 +9,9 @@ import (
 	"github.com/kristijorgji/goseeder"
 
 	_ "be-dashboard-nba/db/seeder"
-	"be-dashboard-nba/internal/config"
-	"be-dashboard-nba/internal/db"
-	"be-dashboard-nba/internal/utils"
+	config "be-dashboard-nba/internal/infrastructure/runtime"
+	db "be-dashboard-nba/internal/infrastructure/database"
+	"be-dashboard-nba/internal/infrastructure/logger"
 )
 
 func main() {
@@ -29,7 +29,7 @@ func main() {
 }
 
 func conProvider() *sql.DB {
-	log := utils.NewLogger()
+	log := logger.NewLogger()
 	config := config.NewConfig(log)
 
 	db, err := db.NewDatabase(config, log)

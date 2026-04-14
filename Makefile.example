@@ -1,0 +1,124 @@
+include .env
+
+NAME=go-backend-template
+BUILD_PATH=./build
+MAIN_DIR=./cmd/server/
+MAIN_FILE=main.go
+SEEDER_DIR=cmd/seeder/
+MIGRATE_PATH=./db/migrations
+MIGRATE_DB_URL=postgres://$(DB_USER):$(DB_PASS)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable
+
+COVER_PROFILE=coverage
+COVER_HTML=coverage.html
+
+# OS Detection for binary naming and execution
+ifeq ($(OS),Windows_NT)
+    BINARY_NAME=$(NAME).exe
+    # On Windows, we call the file directly from the directory
+    EXEC_CMD=$(BINARY_NAME)
+else
+    BINARY_NAME=$(NAME)
+    # On Unix, we need the ./ prefix
+    EXEC_CMD=./$(BINARY_NAME)
+endif
+
+.PHONY: help
+help: ## Show available commands
+ifeq ($(OS),Windows_NT)
+	@echo Available commands:
+	@powershell -Command "Get-Content Makefile | ForEach-Object { if ($$_ -match '^[a-zA-Z0-9_-]+:') { ($$_ -split ':')[0] } }"
+else
+	@echo "Available commands:"
+	@grep -E '^[a-zA-Z0-9_-]+:' Makefile | cut -d: -f1
+endif
+
+.PHONY: build
+build: ## Build the application
+	@echo "Building application for $(OS)..."
+	@go build -o $(BUILD_PATH)/$(BINARY_NAME) $(MAIN_DIR)$(MAIN_FILE)
+	@echo "Build completed. Output: $(BUILD_PATH)/$(BINARY_NAME)"
+
+.PHONY: run
+run: ## Run directly without building
+	@echo "Starting application without build step..."
+	@go run $(MAIN_DIR)$(MAIN_FILE)
+
+.PHONY: start
+start: ## Run the prebuilt binary
+	@echo "Starting application from built binary..."
+	@cd $(BUILD_PATH) && $(EXEC_CMD)
+
+.PHONY: deps
+deps: ## Install and tidy dependencies
+	@echo "Installing and tidying dependencies..."
+	@go mod tidy
+
+.PHONY: build.run
+build.run: ## Build and then run the binary
+	@echo "Building application..."
+	@go build -o $(BUILD_PATH)/$(BINARY_NAME) $(MAIN_DIR)$(MAIN_FILE)
+	@echo "Build completed. Starting application..."
+	@cd $(BUILD_PATH) && $(EXEC_CMD)
+	@echo "Build and run completed."
+
+# --- Database Migrations ---
+
+.PHONY: migrate.create
+migrate.create: ## Create a new migration file (use name=migration_name)
+	@migrate create -ext sql -dir $(MIGRATE_PATH) $(name)
+
+.PHONY: migrate.up
+migrate.up: ## Run all up migrations
+	@migrate -path=$(MIGRATE_PATH) -database="$(MIGRATE_DB_URL)" up
+
+.PHONY: migrate.down
+migrate.down: ## Rollback migrations (use name=count)
+	@migrate -path=$(MIGRATE_PATH) -database="$(MIGRATE_DB_URL)" down $(name)
+
+.PHONY: migrate.fix
+migrate.fix: ## Force migration to a specific version (use name=version)
+	@migrate -path=$(MIGRATE_PATH) -database="$(MIGRATE_DB_URL)" force $(name)
+
+.PHONY: migrate.seed
+migrate.seed: ## Run database seeders
+	@echo "Running database seeder..."
+	@go run $(SEEDER_DIR)$(MAIN_FILE) --gseed
+
+# Swagger documentation
+
+.PHONY: swag
+swag: ## Generate Swagger documentation
+	@echo "Generating Swagger documentation..."
+	@swag init -g $(MAIN_DIR)$(MAIN_FILE) --parseDependency --parseInternal --parseDepth 1
+	@echo "Swagger documentation generated in ./docs."
+
+# --- Testing & Coverage ---
+
+.PHONY: test
+test: ## Run all tests with coverage profile
+	@echo "Running tests with coverage..."
+	@go test -v -cover -coverprofile=$(COVER_PROFILE) ./...
+
+.PHONY: test.cover
+test.cover: ## Show coverage summary in terminal
+	@echo "Coverage summary:"
+	@go tool cover -func=$(COVER_PROFILE)
+
+.PHONY: test.cover.open
+test.cover.open: ## Open coverage report in browser
+	@echo "Opening coverage report in browser..."
+	@go tool cover -html=$(COVER_PROFILE)
+
+.PHONY: test.cover.html
+test.cover.html: ## Generate coverage report as HTML file
+	@echo "Generating coverage HTML file: $(COVER_HTML)"
+	@go tool cover -html=$(COVER_PROFILE) -o $(COVER_HTML)
+
+.PHONY: test.coverage
+test.coverage: test test.cover test.cover.html ## Run full coverage pipeline
+	@echo "Coverage pipeline completed. Open $(COVER_HTML) to review."
+
+# --- Catch-all rule ---
+%:
+	@echo "Unknown command: '$@'"
+	@echo "Run 'make help' to see available commands."

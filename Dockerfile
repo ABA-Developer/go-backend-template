@@ -12,7 +12,7 @@ COPY . .
 
 RUN go mod tidy
 
-RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /app/go-backend-nba ./cmd/main.go
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /app/go-backend-nba ./cmd/server/main.go
 
 FROM alpine:latest
 

@@ -10,10 +10,6 @@ const docTemplate = `{
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
         "contact": {},
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
@@ -39,7 +35,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presenter.LoginRequest"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_auth.LoginRequest"
                         }
                     }
                 ],
@@ -49,13 +45,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadData"
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/presenter.SessionResponse"
+                                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_auth.SessionResponse"
                                         }
                                     }
                                 }
@@ -65,19 +61,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request (e.g., Validation Error, Invalid JSON)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized (e.g., Wrong email or password)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error (e.g., Database connection issue)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -102,19 +98,19 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully logged out",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                         }
                     },
                     "400": {
                         "description": "Bad Request (e.g., Validation Error, Invalid JSON)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error (e.g., Database connection issue)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -141,13 +137,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadData"
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/presenter.UserResponse"
+                                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_auth.UserResponse"
                                         }
                                     }
                                 }
@@ -157,61 +153,55 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized (Invalid or missing token)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "404": {
                         "description": "User profile not found",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
             }
         },
-        "/menu-permissions/detail/{menu_permission_id}": {
+        "/menus": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Fetches the details of a single menu permission by its unique ID. Requires Bearer token.",
+                "description": "Retrieves a paginated and searchable list of all menus in the system.",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Menu Permission"
+                    "Menu"
                 ],
-                "summary": "Get Menu Permission Detail",
+                "summary": "Get List of All Menus (Admin)",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Menu Permission ID",
-                        "name": "menu_permission_id",
-                        "in": "path",
-                        "required": true
+                        "type": "string",
+                        "description": "Search term for name, description, or URL",
+                        "name": "search",
+                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Successfully get menu permission detail",
+                        "description": "Successfully get menu list",
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadData"
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/presenter.ReadMenuPermissionResponse"
+                                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu.ReadMenuListResponse"
                                         }
                                     }
                                 }
@@ -219,33 +209,354 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Bad Request (Invalid ID)",
+                        "description": "Invalid query parameters",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed get list menu",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Adds a new menu item to the system. Requires Bearer token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Create Menu",
+                "parameters": [
+                    {
+                        "description": "Menu data to create",
+                        "name": "menu",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu.CreateMenuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully create menu",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (Invalid JSON or Validation Error)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found (Permission ID not found)",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
             }
         },
-        "/menu-permissions/{menu_id}": {
+        "/menus/parent": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a list of all root-level menus (menus without a parent), typically for use in a dropdown. Requires Bearer token.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Get Parent Menus",
+                "responses": {
+                    "200": {
+                        "description": "Successfully get parent menu",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu.MenuParent"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed get parent menu",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/menus/reorder": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates the sort order of menus using drag-and-drop. Requires Bearer token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Update Menu Order (Reorder)",
+                "parameters": [
+                    {
+                        "description": "New menu order",
+                        "name": "order",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu.UpdateMenuOrderRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully update menu order",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (Invalid JSON or Validation Error)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/menus/sidebar": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves the menu list specifically for the authenticated user, filtered by their 'read' permissions and formatted in a nested tree structure for the sidebar.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Get User's Sidebar Menu",
+                "responses": {
+                    "200": {
+                        "description": "Successfully get sidebar menu",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu.ReadMenuListResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed get sidebar menu",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/menus/{menu_id}": {
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing menu item by its ID. Requires Bearer token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Update Menu",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Menu ID",
+                        "name": "menu_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Menu data to update",
+                        "name": "menu",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu.UpdateMenuRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully update menu",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (Invalid Menu ID, Invalid JSON, or Validation Error)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates an existing menu item by its ID. Requires Bearer token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu"
+                ],
+                "summary": "Update Menu",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Menu ID",
+                        "name": "menu_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully delete menu",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (Invalid Menu ID, Invalid JSON, or Validation Error)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/menus/{menu_id}/permissions": {
             "get": {
                 "security": [
                     {
@@ -299,7 +610,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadPaginate"
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadPaginate"
                                 },
                                 {
                                     "type": "object",
@@ -307,7 +618,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/presenter.ReadMenuPermissionResponse"
+                                                "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu_menu-permission.ReadMenuPermissionResponse"
                                             }
                                         }
                                     }
@@ -318,25 +629,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request (Invalid Menu ID)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "404": {
                         "description": "Not Found (Menu ID not found)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
-                        "description": "Internal Server Error (Query parsing or service failure)",
+                        "description": "Internal Server Error (Query parsing or usecase failure)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -372,7 +683,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presenter.CreateMenuPermissionRequest"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu_menu-permission.CreateMenuPermissionRequest"
                         }
                     }
                 ],
@@ -380,31 +691,106 @@ const docTemplate = `{
                     "201": {
                         "description": "Successfully create menu permission",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                         }
                     },
                     "400": {
                         "description": "Bad Request (Invalid Menu ID, Invalid JSON, or Validation Error)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
             }
         },
-        "/menu-permissions/{menu_permission_id}": {
+        "/menus/{menu_id}/permissions/{menu_permission_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Fetches the details of a single menu permission by its unique ID. Requires Bearer token.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Menu Permission"
+                ],
+                "summary": "Get Menu Permission Detail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Menu ID",
+                        "name": "menu_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Menu Permission ID",
+                        "name": "menu_permission_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully get menu permission detail",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu_menu-permission.ReadMenuPermissionResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (Invalid ID)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found (Permission ID not found)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            },
             "put": {
                 "security": [
                     {
@@ -425,6 +811,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "Menu ID",
+                        "name": "menu_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
                         "description": "Menu Permission ID",
                         "name": "menu_permission_id",
                         "in": "path",
@@ -436,7 +829,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presenter.UpdateMenuPermissionRequest"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu_menu-permission.UpdateMenuPermissionRequest"
                         }
                     }
                 ],
@@ -444,31 +837,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully update menu permission",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                         }
                     },
                     "400": {
                         "description": "Bad Request (Invalid ID, Invalid JSON, or Validation Error)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "404": {
                         "description": "Not Found (Permission ID not found)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -490,6 +883,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "integer",
+                        "description": "Menu ID",
+                        "name": "menu_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
                         "description": "Menu Permission ID",
                         "name": "menu_permission_id",
                         "in": "path",
@@ -500,416 +900,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully delete menu permission",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                         }
                     },
                     "400": {
                         "description": "Bad Request (Invalid ID)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "404": {
                         "description": "Not Found (Permission ID not found)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    }
-                }
-            }
-        },
-        "/menus": {
-            "get": {
-                "description": "Retrieves a paginated and searchable list of all menus in the system.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Get List of All Menus (Admin)",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search term for name, description, or URL",
-                        "name": "search",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully get menu list",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/presenter.ReadMenuListResponse"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid query parameters",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "500": {
-                        "description": "Failed get list menu",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    }
-                }
-            },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Adds a new menu item to the system. Requires Bearer token.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Create Menu",
-                "parameters": [
-                    {
-                        "description": "Menu data to create",
-                        "name": "menu",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/presenter.CreateMenuRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Successfully create menu",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request (Invalid JSON or Validation Error)",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    }
-                }
-            }
-        },
-        "/menus/parent": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Retrieves a list of all root-level menus (menus without a parent), typically for use in a dropdown. Requires Bearer token.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Get Parent Menus",
-                "responses": {
-                    "200": {
-                        "description": "Successfully get parent menu",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/presenter.MenuParent"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "500": {
-                        "description": "Failed get parent menu",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    }
-                }
-            }
-        },
-        "/menus/reorder": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Updates the sort order of menus using drag-and-drop. Requires Bearer token.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Update Menu Order (Reorder)",
-                "parameters": [
-                    {
-                        "description": "New menu order",
-                        "name": "order",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/presenter.UpdateMenuOrderRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully update menu order",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request (Invalid JSON or Validation Error)",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    }
-                }
-            }
-        },
-        "/menus/sidebar": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Retrieves the menu list specifically for the authenticated user, filtered by their 'read' permissions and formatted in a nested tree structure for the sidebar.",
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Get User's Sidebar Menu",
-                "responses": {
-                    "200": {
-                        "description": "Successfully get sidebar menu",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadData"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/presenter.ReadMenuListResponse"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "500": {
-                        "description": "Failed get sidebar menu",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    }
-                }
-            }
-        },
-        "/menus/{menu_id}": {
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Updates an existing menu item by its ID. Requires Bearer token.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Update Menu",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Menu ID",
-                        "name": "menu_id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Menu data to update",
-                        "name": "menu",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/presenter.UpdateMenuRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully update menu",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request (Invalid Menu ID, Invalid JSON, or Validation Error)",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Updates an existing menu item by its ID. Requires Bearer token.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Menu"
-                ],
-                "summary": "Update Menu",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Menu ID",
-                        "name": "menu_id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Successfully delete menu",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request (Invalid Menu ID, Invalid JSON, or Validation Error)",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -962,7 +977,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadPaginate"
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadPaginate"
                                 },
                                 {
                                     "type": "object",
@@ -970,7 +985,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/presenter.ReadRoleResponse"
+                                                "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_role.ReadRoleResponse"
                                             }
                                         }
                                     }
@@ -981,19 +996,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Invalid query parameters",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Failed get role",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -1022,7 +1037,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presenter.CreateRoleRequest"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_role.CreateRoleRequest"
                         }
                     }
                 ],
@@ -1030,25 +1045,25 @@ const docTemplate = `{
                     "201": {
                         "description": "Successfully create role",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                         }
                     },
                     "400": {
                         "description": "Bad Request (Invalid JSON or Validation Error)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponseErrorPayload"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponseErrorPayload"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Failed create role",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -1084,13 +1099,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadData"
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/presenter.RoleAccessResponse"
+                                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_role.RoleAccessResponse"
                                         }
                                     }
                                 }
@@ -1100,25 +1115,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Invalid Role ID",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "404": {
                         "description": "Role ID not found",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Failed get role menu permission",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -1154,7 +1169,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presenter.UpdateRoleAccessRequest"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_role.UpdateRoleAccessRequest"
                         }
                     }
                 ],
@@ -1162,31 +1177,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully update role menu permission",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                         }
                     },
                     "400": {
                         "description": "Bad Request (Invalid ID, Invalid JSON, or Validation Error)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponseErrorPayload"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponseErrorPayload"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "404": {
                         "description": "Role ID or Menu Permission not found",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Internal server error",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -1222,13 +1237,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadData"
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/presenter.ReadRoleResponse"
+                                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_role.ReadRoleResponse"
                                         }
                                     }
                                 }
@@ -1238,25 +1253,25 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request (Invalid Role ID)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "404": {
                         "description": "Not Found (Role ID not found)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Failed get role detail",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -1292,7 +1307,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presenter.UpdateRoleRequest"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_role.UpdateRoleRequest"
                         }
                     }
                 ],
@@ -1300,31 +1315,31 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully update role",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                         }
                     },
                     "400": {
                         "description": "Bad Request (Invalid ID, Invalid JSON, or Validation Error)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponseErrorPayload"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponseErrorPayload"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "404": {
                         "description": "Role ID not found",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Failed update role",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -1356,31 +1371,174 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully delete role",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                         }
                     },
                     "400": {
                         "description": "Bad Request (Invalid Role ID)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized (Missing Auth)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "404": {
                         "description": "Role ID not found",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Failed delete role",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Retrieves a paginated and searchable list of users in the system. Requires Bearer token.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search term for name or email",
+                        "name": "search",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page number (default: 1)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Items per page (default: 10)",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Sort order (e.g., name ASC)",
+                        "name": "order",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully get users",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadPaginate"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_user.ReadUserResponse"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid query parameters",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Failed get users",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Creates a new user with the provided details. Requires Bearer token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "description": "User data to create",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_user.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Successfully create user",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (Invalid JSON or Validation Error)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Role ID not found",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -1398,7 +1556,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User Profile"
+                    "User"
                 ],
                 "summary": "Get Current User Profile",
                 "responses": {
@@ -1407,13 +1565,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/presenter.ResponsePayloadData"
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/presenter.ReadUserResponse"
+                                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_user.ReadUserResponse"
                                         }
                                     }
                                 }
@@ -1423,19 +1581,19 @@ const docTemplate = `{
                     "401": {
                         "description": "Unauthorized (Invalid or missing token)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "404": {
                         "description": "User profile not found",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -1454,7 +1612,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "User Profile"
+                    "User"
                 ],
                 "summary": "Update User",
                 "parameters": [
@@ -1464,7 +1622,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/presenter.UpdateUserRequest"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_user.UpdateUserRequest"
                         }
                     }
                 ],
@@ -1472,25 +1630,222 @@ const docTemplate = `{
                     "200": {
                         "description": "Successfully update user",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadData"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
                         }
                     },
                     "400": {
                         "description": "Bad Request (Invalid ID, Invalid JSON, or Validation Error)",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "401": {
                         "description": "Unauthorized",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/presenter.ResponsePayloadMessage"
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Fetches the details of a single user by their ID. Requires Bearer token.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully get user detail",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_user.ReadUserDetailResponse"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (Invalid User ID)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found (User ID not found)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Updates a user's profile details by their ID. Requires Bearer token.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User data to update",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_user.UpdateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully update user",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (Invalid ID, Invalid JSON, or Validation Error)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "User ID not found",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Deletes a user by their ID. Requires Bearer token. Users cannot delete themselves.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successfully delete user",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request (Invalid User ID)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden (Attempt to delete own account)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found (User ID not found)",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage"
                         }
                     }
                 }
@@ -1498,40 +1853,144 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "presenter.Access": {
+        "be-dashboard-nba_internal_presentation_presenter.Pagination": {
             "type": "object",
             "properties": {
-                "access_id": {
+                "has_next": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "has_prev": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "page": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "page_size": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "total_items": {
+                    "type": "integer",
+                    "example": 100
+                },
+                "total_pages": {
+                    "type": "integer",
+                    "example": 5
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter.ResponseErrorPayload": {
+            "type": "object",
+            "properties": {
+                "code": {
                     "type": "integer"
                 },
-                "access_name": {
+                "error": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter.ResponsePayloadData": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter.ResponsePayloadMessage": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter.ResponsePayloadPaginate": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "data": {},
+                "message": {
                     "type": "string"
                 },
-                "has_access": {
-                    "type": "boolean"
+                "pagination": {
+                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter.Pagination"
                 }
             }
         },
-        "presenter.CreateMenuPermissionRequest": {
+        "be-dashboard-nba_internal_presentation_presenter_auth.LoginRequest": {
             "type": "object",
             "required": [
-                "action_name",
-                "code"
+                "email",
+                "password"
             ],
             "properties": {
-                "action_name": {
-                    "type": "string",
-                    "maxLength": 50,
-                    "minLength": 1
+                "email": {
+                    "type": "string"
                 },
-                "code": {
-                    "type": "string",
-                    "maxLength": 50,
-                    "minLength": 1
+                "password": {
+                    "type": "string"
                 }
             }
         },
-        "presenter.CreateMenuRequest": {
+        "be-dashboard-nba_internal_presentation_presenter_auth.SessionResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "user": {
+                    "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_auth.UserResponse"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_auth.UserResponse": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "img_name": {
+                    "type": "string"
+                },
+                "img_path": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_menu.CreateMenuRequest": {
             "type": "object",
             "required": [
                 "active",
@@ -1575,50 +2034,13 @@ const docTemplate = `{
                 }
             }
         },
-        "presenter.CreateRoleRequest": {
-            "type": "object",
-            "required": [
-                "code",
-                "name"
-            ],
-            "properties": {
-                "code": {
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 1
-                },
-                "description": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string",
-                    "maxLength": 100,
-                    "minLength": 1
-                }
-            }
-        },
-        "presenter.LoginRequest": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                }
-            }
-        },
-        "presenter.MenuListItem": {
+        "be-dashboard-nba_internal_presentation_presenter_menu.MenuListItem": {
             "type": "object",
             "properties": {
                 "children": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/presenter.MenuListItem"
+                        "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu.MenuListItem"
                     }
                 },
                 "icon": {
@@ -1638,7 +2060,7 @@ const docTemplate = `{
                 }
             }
         },
-        "presenter.MenuParent": {
+        "be-dashboard-nba_internal_presentation_presenter_menu.MenuParent": {
             "type": "object",
             "properties": {
                 "group": {
@@ -1652,42 +2074,13 @@ const docTemplate = `{
                 }
             }
         },
-        "presenter.Pagination": {
-            "type": "object",
-            "properties": {
-                "has_next": {
-                    "type": "boolean",
-                    "example": true
-                },
-                "has_prev": {
-                    "type": "boolean",
-                    "example": false
-                },
-                "page": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "page_size": {
-                    "type": "integer",
-                    "example": 20
-                },
-                "total_items": {
-                    "type": "integer",
-                    "example": 100
-                },
-                "total_pages": {
-                    "type": "integer",
-                    "example": 5
-                }
-            }
-        },
-        "presenter.ReadMenuListResponse": {
+        "be-dashboard-nba_internal_presentation_presenter_menu.ReadMenuListResponse": {
             "type": "object",
             "properties": {
                 "group_childs": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/presenter.MenuListItem"
+                        "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_menu.MenuListItem"
                     }
                 },
                 "group_name": {
@@ -1695,156 +2088,16 @@ const docTemplate = `{
                 }
             }
         },
-        "presenter.ReadMenuPermissionResponse": {
-            "type": "object",
-            "properties": {
-                "action_name": {
-                    "type": "string"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "menu_id": {
-                    "type": "integer"
-                }
-            }
-        },
-        "presenter.ReadRoleResponse": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "presenter.ReadUserResponse": {
-            "type": "object",
-            "properties": {
-                "active": {
-                    "type": "boolean"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "full_name": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "img_name": {
-                    "type": "string"
-                },
-                "img_path": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "presenter.ResponseErrorPayload": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "error": {},
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "presenter.ResponsePayloadData": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {},
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "presenter.ResponsePayloadMessage": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "message": {
-                    "type": "string"
-                }
-            }
-        },
-        "presenter.ResponsePayloadPaginate": {
-            "type": "object",
-            "properties": {
-                "code": {
-                    "type": "integer"
-                },
-                "data": {},
-                "message": {
-                    "type": "string"
-                },
-                "pagination": {
-                    "$ref": "#/definitions/presenter.Pagination"
-                }
-            }
-        },
-        "presenter.RoleAccessResponse": {
-            "type": "object",
-            "properties": {
-                "accesses": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/presenter.Access"
-                    }
-                },
-                "menu_id": {
-                    "type": "integer"
-                },
-                "menu_name": {
-                    "type": "string"
-                }
-            }
-        },
-        "presenter.SessionResponse": {
-            "type": "object",
-            "properties": {
-                "access_token": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                },
-                "user": {
-                    "$ref": "#/definitions/presenter.UserResponse"
-                }
-            }
-        },
-        "presenter.UpdateMenuOrderRequest": {
+        "be-dashboard-nba_internal_presentation_presenter_menu.UpdateMenuOrderRequest": {
             "type": "object",
             "required": [
+                "group",
                 "sorted_ids"
             ],
             "properties": {
+                "group": {
+                    "type": "string"
+                },
                 "parent_id": {
                     "type": "integer",
                     "minimum": 1
@@ -1858,26 +2111,7 @@ const docTemplate = `{
                 }
             }
         },
-        "presenter.UpdateMenuPermissionRequest": {
-            "type": "object",
-            "required": [
-                "action_name",
-                "code"
-            ],
-            "properties": {
-                "action_name": {
-                    "type": "string",
-                    "maxLength": 50,
-                    "minLength": 1
-                },
-                "code": {
-                    "type": "string",
-                    "maxLength": 50,
-                    "minLength": 1
-                }
-            }
-        },
-        "presenter.UpdateMenuRequest": {
+        "be-dashboard-nba_internal_presentation_presenter_menu.UpdateMenuRequest": {
             "type": "object",
             "required": [
                 "active",
@@ -1920,7 +2154,132 @@ const docTemplate = `{
                 }
             }
         },
-        "presenter.UpdateRoleAccessItem": {
+        "be-dashboard-nba_internal_presentation_presenter_menu_menu-permission.CreateMenuPermissionRequest": {
+            "type": "object",
+            "required": [
+                "action_name",
+                "code"
+            ],
+            "properties": {
+                "action_name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1
+                },
+                "code": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_menu_menu-permission.ReadMenuPermissionResponse": {
+            "type": "object",
+            "properties": {
+                "action_name": {
+                    "type": "string"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "menu_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_menu_menu-permission.UpdateMenuPermissionRequest": {
+            "type": "object",
+            "required": [
+                "action_name",
+                "code"
+            ],
+            "properties": {
+                "action_name": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1
+                },
+                "code": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_role.Access": {
+            "type": "object",
+            "properties": {
+                "access_id": {
+                    "type": "integer"
+                },
+                "access_name": {
+                    "type": "string"
+                },
+                "has_access": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_role.CreateRoleRequest": {
+            "type": "object",
+            "required": [
+                "code",
+                "name"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                },
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_role.ReadRoleResponse": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_role.RoleAccessResponse": {
+            "type": "object",
+            "properties": {
+                "accesses": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_role.Access"
+                    }
+                },
+                "menu_id": {
+                    "type": "integer"
+                },
+                "menu_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_role.UpdateRoleAccessItem": {
             "type": "object",
             "required": [
                 "access_id",
@@ -1935,7 +2294,7 @@ const docTemplate = `{
                 }
             }
         },
-        "presenter.UpdateRoleAccessRequest": {
+        "be-dashboard-nba_internal_presentation_presenter_role.UpdateRoleAccessRequest": {
             "type": "object",
             "required": [
                 "access_item"
@@ -1945,12 +2304,12 @@ const docTemplate = `{
                     "type": "array",
                     "minItems": 1,
                     "items": {
-                        "$ref": "#/definitions/presenter.UpdateRoleAccessItem"
+                        "$ref": "#/definitions/be-dashboard-nba_internal_presentation_presenter_role.UpdateRoleAccessItem"
                     }
                 }
             }
         },
-        "presenter.UpdateRoleRequest": {
+        "be-dashboard-nba_internal_presentation_presenter_role.UpdateRoleRequest": {
             "type": "object",
             "required": [
                 "code",
@@ -1968,8 +2327,16 @@ const docTemplate = `{
                 }
             }
         },
-        "presenter.UpdateUserRequest": {
+        "be-dashboard-nba_internal_presentation_presenter_user.CreateUserRequest": {
             "type": "object",
+            "required": [
+                "active",
+                "email",
+                "full_name",
+                "name",
+                "password",
+                "role_id"
+            ],
             "properties": {
                 "active": {
                     "type": "boolean"
@@ -1980,24 +2347,22 @@ const docTemplate = `{
                 "full_name": {
                     "type": "string"
                 },
-                "img_name": {
-                    "type": "string"
-                },
-                "img_path": {
-                    "type": "string"
-                },
                 "name": {
                     "type": "string"
                 },
                 "password": {
-                    "type": "string"
+                    "type": "string",
+                    "minLength": 8
                 },
                 "phone": {
                     "type": "string"
+                },
+                "role_id": {
+                    "type": "integer"
                 }
             }
         },
-        "presenter.UserResponse": {
+        "be-dashboard-nba_internal_presentation_presenter_user.ReadUserDetailResponse": {
             "type": "object",
             "properties": {
                 "active": {
@@ -2012,10 +2377,54 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
-                "img_name": {
+                "name": {
                     "type": "string"
                 },
-                "img_path": {
+                "phone": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                },
+                "role_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_user.ReadUserResponse": {
+            "type": "object",
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "full_name": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
+        "be-dashboard-nba_internal_presentation_presenter_user.UpdateUserRequest": {
+            "type": "object",
+            "required": [
+                "active",
+                "email",
+                "full_name",
+                "name",
+                "role_id"
+            ],
+            "properties": {
+                "active": {
+                    "type": "boolean"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "full_name": {
                     "type": "string"
                 },
                 "name": {
@@ -2023,6 +2432,9 @@ const docTemplate = `{
                 },
                 "phone": {
                     "type": "string"
+                },
+                "role_id": {
+                    "type": "integer"
                 }
             }
         }
@@ -2040,9 +2452,9 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8000",
-	BasePath:         "/api/v1",
-	Schemes:          []string{"http", "https"},
+	Host:             "",
+	BasePath:         "",
+	Schemes:          []string{},
 	Title:            "Base APP Go",
 	Description:      "Template API for Golang project",
 	InfoInstanceName: "swagger",

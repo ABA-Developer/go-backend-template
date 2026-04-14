@@ -41,7 +41,7 @@ This project provides a starting point for building a web application with a cle
 2. Set the environment variables in a `.env` file:
 
    ```env
-    DB_MIGRATOR_DRIVER="postgres"
+    DB_DRIVER="postgres"
     DB_USERNAME="auth_user"
     DB_PASSWORD="auth_user"
     DB_NAME="auth_user"
@@ -112,7 +112,7 @@ Clean Architecture is a software design philosophy that emphasizes the separatio
 - **Entities**: The `entities.User` struct represents the core business model for a user.
 - **Use Cases**: The `user.Service` interface defines the methods for interacting with user, such as `CreateUser`, `UpdateUser`, `DeleteUser`, and `GetUserById`.
 - **Interface Adapters**: The `handlers` package contains the HTTP handlers that interact with the `user.Service` to process HTTP requests and responses.
-- **Frameworks and Drivers**: The `cmd/main.go` file initializes the Fiber application and sets up the routes using the `routes.UserRouter` function.
+- **Frameworks and Drivers**: The `cmd/server/main.go` file initializes the Fiber application and sets up the routes using the `routes.UserRouter` function.
 
 By following Clean Architecture principles, this example ensures that each layer is independent and can be modified or replaced without affecting the other layers, leading to a more maintainable and scalable application.
 

@@ -1,0 +1,23 @@
+package model
+
+import (
+	"be-dashboard-nba/internal/presentation/presenter"
+	"database/sql"
+	"time"
+)
+
+type MenuPermission struct {
+	ID         int            `json:"id"`
+	MenuID     int            `json:"menu_id"`
+	Code       string         `json:"code"`
+	ActionName string         `json:"action_name"`
+	CreatedBy  time.Time      `json:"created_by"`
+	CreatedAt  time.Time      `json:"created_at"`
+	UpdatedBy  sql.NullString `json:"updated_by"`
+	UpdatedAt  sql.NullTime   `json:"updated_at"`
+}
+
+type MenuPermissionPaginationResponse struct {
+	Data       []MenuPermission
+	Pagination presenter.Pagination
+}
