@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"be-dashboard-nba/internal/application/dto"
+	"be-dashboard-nba/internal/application/role/dto"
 	"be-dashboard-nba/internal/domain/model"
 	"context"
 	"fmt"
@@ -46,7 +46,9 @@ func (r *repository) ReadRolesQuery(
 	if err != nil {
 		return
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	for rows.Next() {
 		var r model.Role
@@ -164,7 +166,9 @@ func (r *repository) ReadRoleAccessQuery(
 	if err != nil {
 		return
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	for rows.Next() {
 		var res model.RoleAccessResponse

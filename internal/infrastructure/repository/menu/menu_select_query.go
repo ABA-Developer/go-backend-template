@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"be-dashboard-nba/internal/application/dto"
+	"be-dashboard-nba/internal/application/menu/dto"
 	"be-dashboard-nba/internal/domain/model"
 	"context"
 )
@@ -37,7 +37,9 @@ func (r *repository) ReadSidebarMenuQuery(
 	if err != nil {
 		return
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	for rows.Next() {
 		var m model.Menu
@@ -91,7 +93,9 @@ func (r *repository) ReadListMenuQuery(
 	if err != nil {
 		return
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	for rows.Next() {
 		var m model.Menu
@@ -148,7 +152,9 @@ func (r *repository) ReadParentMenuQuery(
 	if err != nil {
 		return
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	for rows.Next() {
 		var m model.Menu

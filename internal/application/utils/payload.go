@@ -30,7 +30,7 @@ func (p *PaginationPayload) Init() {
 		p.Order = fmt.Sprintf("%s %s", p.Sort, p.Direction)
 	}
 
-	if !(p.Page <= 0 && p.Limit <= 0) {
+	if p.Page > 0 || p.Limit > 0 {
 		if p.Page <= 0 {
 			p.Page = constant.DefaultPage
 		}

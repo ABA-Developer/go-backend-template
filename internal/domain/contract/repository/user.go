@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/dto"
+	"be-dashboard-nba/internal/application/user/dto"
 	"be-dashboard-nba/internal/domain/model"
 )
 
@@ -20,4 +20,3 @@ type UserRepository interface {
 	IsUserEmailExistsQuery(ctx context.Context, email string) (exists bool, err error)
 	IsUpdateUserEmailExistsQuery(ctx context.Context, email, id string) (exists bool, err error)
 }
-

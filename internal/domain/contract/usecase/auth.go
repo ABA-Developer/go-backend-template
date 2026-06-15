@@ -6,7 +6,7 @@ import (
 	"be-dashboard-nba/constant"
 	"be-dashboard-nba/internal/application/jwt"
 	"be-dashboard-nba/internal/domain/model"
-	authPresenter "be-dashboard-nba/internal/presentation/presenter/auth"
+	authPresenter "be-dashboard-nba/internal/presentation/auth/presenter"
 )
 
 type AuthUseCase interface {
@@ -15,4 +15,3 @@ type AuthUseCase interface {
 	AuthMeUseCase(ctx context.Context, id string) (data model.User, err error)
 	CheckPermissionUseCase(ctx context.Context, menuURL constant.MenuKey, userID string, permissionCode []string) (hasAccess bool, err error)
 }
-

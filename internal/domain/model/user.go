@@ -1,9 +1,10 @@
 package model
 
 import (
-	"be-dashboard-nba/internal/presentation/presenter"
 	"database/sql"
 	"time"
+
+	shareddto "be-dashboard-nba/internal/application/shared/dto"
 )
 
 type User struct {
@@ -26,5 +27,5 @@ type User struct {
 
 type UserPaginationResponse struct {
 	Data       []User
-	Pagination presenter.Pagination
+	Pagination shareddto.Pagination
 }

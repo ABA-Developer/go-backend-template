@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/dto"
+	"be-dashboard-nba/internal/application/user/dto"
 	"be-dashboard-nba/internal/domain/model"
 )
 
@@ -51,7 +51,9 @@ func (r *repository) ReadUsersQuery(
 	if err != nil {
 		return
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	for rows.Next() {
 		var u model.User

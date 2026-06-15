@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/dto"
+	"be-dashboard-nba/internal/application/menu/menu-permission/dto"
 	"be-dashboard-nba/internal/domain/model"
 )
 

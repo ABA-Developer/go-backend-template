@@ -1,11 +1,15 @@
 package routes
 
-import app "be-dashboard-nba/internal/infrastructure/api"
+import (
+	"be-dashboard-nba/internal/infrastructure/runtime/container"
 
-func Routes(app *app.Application) {
-	api := app.Server.Group("/api").Group("/v1")
-	AuthRouter(api, app)
-	UserRouter(api, app)
-	MenuRouter(api, app)
-	RoleRouter(api, app)
+	"github.com/gofiber/fiber/v2"
+)
+
+func Routes(app *fiber.App, c *container.Container) {
+	api := app.Group("/api").Group("/v1")
+	AuthRouter(api, c)
+	UserRouter(api, c)
+	MenuRouter(api, c)
+	RoleRouter(api, c)
 }

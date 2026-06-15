@@ -2,30 +2,30 @@ package routes
 
 import (
 	"be-dashboard-nba/constant"
-	authUseCase "be-dashboard-nba/internal/application/usecase/auth"
-	roleUseCase "be-dashboard-nba/internal/application/usecase/role"
-	app "be-dashboard-nba/internal/infrastructure/api"
-	handlers "be-dashboard-nba/internal/presentation/handler/role"
+	authUseCase "be-dashboard-nba/internal/application/auth/usecase"
+	roleUseCase "be-dashboard-nba/internal/application/role/usecase"
+	"be-dashboard-nba/internal/infrastructure/runtime/container"
 	"be-dashboard-nba/internal/presentation/middleware"
+	handlers "be-dashboard-nba/internal/presentation/role/handler"
 
 	"github.com/gofiber/fiber/v2"
 )
 
-func RoleRouter(http fiber.Router, application *app.Application) {
-	authSvc := authUseCase.NewUseCase(application.DB, application.Log)
-	roleSvc := roleUseCase.NewUseCase(application.DB, application.Log)
-	mdw := middleware.NewEnsureToken(application.DB)
+func RoleRouter(http fiber.Router, c *container.Container) {
+	authSvc := authUseCase.NewUseCase(c.GetDB())
+	roleSvc := roleUseCase.NewUseCase(c.GetDB())
+	mdw := middleware.NewEnsureToken(c.GetDB())
 
 	routes := http.Group("roles")
 	routes.Use(mdw.ValidateToken())
 
 	routes.Get("/", middleware.Authorize(authSvc, constant.MenuSettingsRole, constant.ActionRead), handlers.ReadRoles(roleSvc))
 
-	routes.Post("/", middleware.Authorize(authSvc, constant.MenuSettingsRole, constant.ActionCreate), handlers.CreateRole(roleSvc, application.Validator))
+	routes.Post("/", middleware.Authorize(authSvc, constant.MenuSettingsRole, constant.ActionCreate), handlers.CreateRole(roleSvc, c.GetValidator()))
 
-	routes.Put("/role-access/:role_id", handlers.UpdateRoleMenuPermission(roleSvc, application.Validator))
+	routes.Put("/role-access/:role_id", handlers.UpdateRoleMenuPermission(roleSvc, c.GetValidator()))
 
-	routes.Put("/:role_id", middleware.Authorize(authSvc, constant.MenuSettingsRole, constant.ActionUpdate), handlers.UpdateRole(roleSvc, application.Validator))
+	routes.Put("/:role_id", middleware.Authorize(authSvc, constant.MenuSettingsRole, constant.ActionUpdate), handlers.UpdateRole(roleSvc, c.GetValidator()))
 
 	routes.Delete("/:role_id", middleware.Authorize(authSvc, constant.MenuSettingsRole, constant.ActionDelete), handlers.DeleteRole(roleSvc))
 

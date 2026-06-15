@@ -6,27 +6,25 @@ import (
 	"log"
 
 	_ "github.com/go-sql-driver/mysql"
-
-	config "be-dashboard-nba/internal/infrastructure/runtime"
 )
 
-func NewMySQL(config *config.Config) (db *sql.DB, err error) {
-	dsn := fmt.Sprintf("%s:%s@(%s:%s)/%s",
-		config.DB.Username,
-		config.DB.Password,
-		config.DB.Host,
-		config.DB.Port,
-		config.DB.Name,
+func NewMySQL(opt *databaseOption) (db *sql.DB, err error) {
+	dsn := fmt.Sprintf("%s:%s@(%s:%d)/%s",
+		opt.username,
+		opt.password,
+		opt.host,
+		opt.port,
+		opt.schema,
 	)
 
-	db, err = openSQL("mysql", dsn, config)
+	db, err = openSQL("mysql", dsn, opt.connectionOption)
 	if err != nil {
 		return
 	}
 
-	log.Printf("Successfully connected to MySQL %s:%s database: %s", config.DB.Host, config.DB.Port, config.DB.Name)
+	log.Printf("Successfully connected to MySQL %s:%d database: %s", opt.host, opt.port, opt.schema)
 
-	go keepAlive(db, config.DB.Driver, config.DB.Name, config.DB.KeepAliveInterval)
+	go keepAlive(db, opt.driver, opt.schema, opt.keepAliveInterval)
 
 	return
 }

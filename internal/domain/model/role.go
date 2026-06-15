@@ -1,9 +1,10 @@
 package model
 
 import (
-	"be-dashboard-nba/internal/presentation/presenter"
 	"database/sql"
 	"time"
+
+	shareddto "be-dashboard-nba/internal/application/shared/dto"
 )
 
 type Role struct {
@@ -30,10 +31,10 @@ type RoleAccessResponse struct {
 
 type RolePaginationResponse struct {
 	Data       []Role
-	Pagination presenter.Pagination
+	Pagination shareddto.Pagination
 }
 
 type RoleAccessPaginationResponse struct {
 	Data       []RoleAccessResponse
-	Pagination presenter.Pagination
+	Pagination shareddto.Pagination
 }

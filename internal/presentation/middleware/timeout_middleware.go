@@ -8,7 +8,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 
 	"be-dashboard-nba/constant"
-
 )
 
 func TimeoutMiddleware(app *fiber.App) {

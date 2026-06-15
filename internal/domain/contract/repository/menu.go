@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/dto"
+	"be-dashboard-nba/internal/application/menu/dto"
 	"be-dashboard-nba/internal/domain/model"
 )
 
@@ -23,4 +23,3 @@ type MenuRepository interface {
 	CountMenuChildren(ctx context.Context, menuID int) (int, error)
 	UpdateChildrenGroup(ctx context.Context, parentID int, newGroup string) error
 }
-

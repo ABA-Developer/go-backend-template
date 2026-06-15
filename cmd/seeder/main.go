@@ -8,10 +8,10 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kristijorgji/goseeder"
 
-	_ "be-dashboard-nba/db/seeder"
-	config "be-dashboard-nba/internal/infrastructure/runtime"
+	_ "be-dashboard-nba/database/seeders"
 	db "be-dashboard-nba/internal/infrastructure/database"
 	"be-dashboard-nba/internal/infrastructure/logger"
+	config "be-dashboard-nba/internal/infrastructure/runtime"
 )
 
 func main() {
@@ -29,10 +29,12 @@ func main() {
 }
 
 func conProvider() *sql.DB {
-	log := logger.NewLogger()
-	config := config.NewConfig(log)
+	logger.NewLogger()
+	ctx, cancel := config.NewRuntimeContext()
+	defer cancel()
 
-	db, err := db.NewDatabase(config, log)
+	log := logger.WithContext(ctx)
+	db, err := db.NewDatabase(ctx)
 	if err != nil {
 		log.Fatal().Msg("failed to connect to database")
 		return nil

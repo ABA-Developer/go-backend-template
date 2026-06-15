@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/dto"
+	"be-dashboard-nba/internal/application/auth/dto"
 	"be-dashboard-nba/internal/domain/model"
 
 	"github.com/stretchr/testify/mock"

@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"be-dashboard-nba/internal/domain/model"
-	menuPresenter "be-dashboard-nba/internal/presentation/presenter/menu"
+	menuPresenter "be-dashboard-nba/internal/presentation/menu/presenter"
 )
 
 type MenuUseCase interface {
@@ -17,4 +17,3 @@ type MenuUseCase interface {
 	ReadMenuDetailUseCase(ctx context.Context, menuID int) (data model.Menu, err error)
 	ReadMenuParentUseCase(ctx context.Context) (data []model.Menu, err error)
 }
-

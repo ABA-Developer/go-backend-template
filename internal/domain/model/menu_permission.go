@@ -1,9 +1,10 @@
 package model
 
 import (
-	"be-dashboard-nba/internal/presentation/presenter"
 	"database/sql"
 	"time"
+
+	shareddto "be-dashboard-nba/internal/application/shared/dto"
 )
 
 type MenuPermission struct {
@@ -19,5 +20,5 @@ type MenuPermission struct {
 
 type MenuPermissionPaginationResponse struct {
 	Data       []MenuPermission
-	Pagination presenter.Pagination
+	Pagination shareddto.Pagination
 }

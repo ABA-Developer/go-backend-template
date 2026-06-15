@@ -6,8 +6,8 @@ import (
 )
 
 type Session struct {
-	ID                    string       `db:"id"`       // DIUBAH: dari GUID ke ID (uuid -> string)
-	UserID                string       `db:"user_id"`  // DIUBAH: dari int64 ke string
+	ID                    string       `db:"id"`      // DIUBAH: dari GUID ke ID (uuid -> string)
+	UserID                string       `db:"user_id"` // DIUBAH: dari int64 ke string
 	AccessToken           string       `db:"access_token"`
 	AccessTokenExpiredAt  time.Time    `db:"access_token_expired_at"`
 	RefreshToken          string       `db:"refresh_token"`

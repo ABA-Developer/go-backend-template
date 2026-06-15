@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/dto"
+	"be-dashboard-nba/internal/application/menu/menu-permission/dto"
 )
 
 func (r *repository) CreateMenuPermissionQuery(ctx context.Context, params dto.CreateMenuPermissionParams) (err error) {

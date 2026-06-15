@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"be-dashboard-nba/internal/application/dto"
+	"be-dashboard-nba/internal/application/menu/menu-permission/dto"
 	"be-dashboard-nba/internal/domain/model"
 	"context"
 )
@@ -48,7 +48,9 @@ func (r *repository) ReadMenuPermissionListQuery(
 	if err != nil {
 		return
 	}
-	defer rows.Close()
+	defer func() {
+		_ = rows.Close()
+	}()
 
 	for rows.Next() {
 		var mp model.MenuPermission

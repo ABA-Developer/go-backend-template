@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"be-dashboard-nba/internal/domain/model"
-	userPresenter "be-dashboard-nba/internal/presentation/presenter/user"
+	userPresenter "be-dashboard-nba/internal/presentation/user/presenter"
 )
 
 type UserUseCase interface {
@@ -15,4 +15,3 @@ type UserUseCase interface {
 	DeleteUserUseCase(ctx context.Context, userID string, deletedBy string) (err error)
 	ReadUserProfileUseCase(ctx context.Context, userID string) (data model.User, err error)
 }
-

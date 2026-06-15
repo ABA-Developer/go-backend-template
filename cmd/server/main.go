@@ -1,17 +1,16 @@
 package main
 
 import (
-	"context"
-	"fmt"
 	"log"
 	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
-	app "be-dashboard-nba/internal/infrastructure/api"
-	"be-dashboard-nba/internal/infrastructure/api/routes"
+	"be-dashboard-nba/internal/infrastructure/api"
+	db "be-dashboard-nba/internal/infrastructure/database"
 	"be-dashboard-nba/internal/infrastructure/logger"
+	runtime "be-dashboard-nba/internal/infrastructure/runtime"
+	"be-dashboard-nba/internal/infrastructure/runtime/container"
+	"be-dashboard-nba/internal/infrastructure/validator"
 
 	_ "be-dashboard-nba/docs"
 
@@ -37,34 +36,26 @@ func main() {
 
 	setDefaultTimezone()
 
-	log := logger.NewLogger()
+	logger.NewLogger()
 
-	// Create a context that listens for OS signals
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	ctx, stop := runtime.NewRuntimeContext()
 	defer stop()
 
-	// Initialize application dependencies
-	application, err := app.NewApplication(log)
+	log := logger.WithContext(ctx)
+
+	cfg := runtime.NewConfig()
+
+	dbConn, err := db.NewDatabase(ctx)
 	if err != nil {
-		log.Fatal().Msgf("Failed to initialize application, %v", err)
+		log.Fatal().Msgf("Failed to initialize database, %v", err)
 	}
 
-	routes.Routes(application)
+	validatorEngine := validator.NewValidator()
+	c := container.NewContainer(dbConn, log.Raw(), validatorEngine)
 
-	go func() {
-		if err := application.Server.Listen(fmt.Sprintf(":%d", application.Config.Port)); err != nil {
-			log.Error().Err(err).Msg("Server failed to start or stopped with an error")
-			stop()
-			os.Exit(1)
-		}
-	}()
-
-	log.Info().Msgf("Server is listening on port %d", application.Config.Port)
-
-	<-ctx.Done()
-	log.Warn().Msg("Shutdown signal received, starting graceful shutdown...")
-
-	app.GracefulShutdown(application)
+	if err := api.RunFiberServer(ctx, c, cfg); err != nil {
+		log.Fatal().Msgf("Failed to run server, %v", err)
+	}
 }
 
 func setDefaultTimezone() {

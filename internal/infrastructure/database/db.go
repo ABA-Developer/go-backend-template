@@ -1,23 +1,25 @@
 package db
 
 import (
+	"context"
 	"database/sql"
 
 	"github.com/pkg/errors"
-	"github.com/rs/zerolog"
-
-	config "be-dashboard-nba/internal/infrastructure/runtime"
 )
 
-func NewDatabase(config *config.Config, log *zerolog.Logger) (db *sql.DB, err error) {
-	log.Info().Msg("Connecting to database...")
-	switch config.DB.Driver {
+func NewDatabase(ctx context.Context) (db *sql.DB, err error) {
+	opt, err := newDatabaseOption(ctx)
+	if err != nil {
+		return
+	}
+
+	switch opt.driver {
 	case "postgresql":
-		db, err = NewPostgresql(config)
+		db, err = NewPostgresql(opt)
 	case "mysql":
-		db, err = NewMySQL(config)
+		db, err = NewMySQL(opt)
 	default:
-		err = errors.Wrapf(errors.New("invalid datasources driver"), "db: driver=%s", config.DB.Driver)
+		err = errors.Wrapf(errors.New("invalid datasources driver"), "db: driver=%s", opt.driver)
 	}
 
 	return

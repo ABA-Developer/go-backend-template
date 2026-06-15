@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"be-dashboard-nba/internal/domain/model"
-	menuPermissionPresenter "be-dashboard-nba/internal/presentation/presenter/menu/menu-permission"
+	menuPermissionPresenter "be-dashboard-nba/internal/presentation/menu/menu-permission/presenter"
 )
 
 type MenuPermissionUseCase interface {

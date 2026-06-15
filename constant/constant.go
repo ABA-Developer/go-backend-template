@@ -13,9 +13,11 @@ const (
 
 // runtime.
 const (
-	DefaultAppName = "GO Backend Template API"
-	DefaultAppPort = 8000
-	DefaultAppHost = "127.0.0.1"
+	DefaultAppName            = "GO Backend Template API"
+	DefaultAppPort            = 8000
+	DefaultAppHost            = "127.0.0.1"
+	DefaultAppShutdownTimeout = 10 * time.Second
+	DefaultAppShutdownWait    = 200 * time.Millisecond
 )
 
 // db connection.

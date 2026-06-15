@@ -3,7 +3,7 @@ package mock
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/dto"
+	"be-dashboard-nba/internal/application/role/dto"
 	"be-dashboard-nba/internal/domain/model"
 
 	"github.com/stretchr/testify/mock"

@@ -6,28 +6,26 @@ import (
 	"log"
 
 	_ "github.com/lib/pq"
-
-	config "be-dashboard-nba/internal/infrastructure/runtime"
 )
 
-func NewPostgresql(config *config.Config) (db *sql.DB, err error) {
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		config.DB.Host,
-		config.DB.Port,
-		config.DB.Username,
-		config.DB.Password,
-		config.DB.Name,
-		config.DB.SSLMode,
+func NewPostgresql(opt *databaseOption) (db *sql.DB, err error) {
+	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		opt.host,
+		opt.port,
+		opt.username,
+		opt.password,
+		opt.schema,
+		opt.sslmode,
 	)
 
-	db, err = openSQL("postgres", dsn, config)
+	db, err = openSQL("postgres", dsn, opt.connectionOption)
 	if err != nil {
 		return
 	}
 
-	log.Printf("Successfully connected to postgresql %s:%s schema: %s", config.DB.Host, config.DB.Port, config.DB.Name)
+	log.Printf("Successfully connected to postgresql %s:%d schema: %s", opt.host, opt.port, opt.schema)
 
-	go keepAlive(db, config.DB.Driver, config.DB.Name, config.DB.KeepAliveInterval)
+	go keepAlive(db, opt.driver, opt.schema, opt.keepAliveInterval)
 
 	return
 }

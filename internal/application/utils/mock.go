@@ -20,7 +20,7 @@ func NewMockDB(t *testing.T) (*sql.DB, sqlmock.Sqlmock, func()) {
 
 	cleanup := func() {
 		assert.NoError(t, mock.ExpectationsWereMet())
-		db.Close()
+		_ = db.Close()
 	}
 
 	return db, mock, cleanup

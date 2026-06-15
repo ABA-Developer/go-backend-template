@@ -1,43 +1,54 @@
 services:
-  db:
-    image: postgres:16
-    container_name: db-auth-user
-    volumes:
-      - db-auth-user:/var/lib/postgresql/data
-    ports:
-      - "5435:5432"
-    networks:
-      - go-backend-nba-network
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: go-backend-nba
-
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: go-backend-nba-app
-    ports:
-      - "8000:8000"
+    container_name: go-backend-template
     env_file:
       - .env
-    depends_on:
-      - db
-    networks:
-      - go-backend-nba-network
     environment:
-      DB_USERNAME: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: go-backend-nba
-      DB_HOST: db 
-      DB_PORT: "5432"
-      DB_SSLMODE: disable
-      DB_ADDR: postgres://postgres:300805@db:5432/go-backend-nba?sslmode=disable
+      DB_HOST: postgres
+      DB_PORT: 5432
+    volumes:
+      - ./.env:/app/.env
+      - ./database/migrations:/app/database/migrations
+      - ./database/seeders:/app/database/seeders
+      - ./scripts:/app/scripts
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - go-backend-template-network
+
+  postgres:
+    image: postgres:18
+    container_name: go-backend-template-postgres
+    environment:
+      POSTGRES_DB: ${DB_SCHEMA}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5437:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_SCHEMA}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - go-backend-template-network
 
 volumes:
-  db-auth-user:
+  postgres_data:
 
 networks:
-  go-backend-nba-network:
-    name: go-backend-nba-network
+  go-backend-template-network:
+    name: go-backend-template-network
+    driver: bridge
+    attachable: true

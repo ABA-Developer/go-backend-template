@@ -4,7 +4,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/gofiber/fiber/v2/log"
+	"be-dashboard-nba/internal/infrastructure/logger"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"
@@ -45,9 +45,10 @@ func CompareHashPassword(passwordInput, passwordDB string) (err error) {
 func GenerateUUID() string {
 	guid, err := uuid.NewV7()
 	if err != nil {
-		log.Errorf("error generate UUID %v", err)
+		logger.Errorf("error generate UUID %v", err)
 		return uuid.NewString()
 	}
 
 	return guid.String()
 }
+

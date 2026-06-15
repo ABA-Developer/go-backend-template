@@ -7,55 +7,55 @@ import (
 	"net/http"
 	"strings"
 
+	"be-dashboard-nba/internal/infrastructure/logger"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/log"
 
 	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/auth"
 	"be-dashboard-nba/internal/application/jwt"
 	contract "be-dashboard-nba/internal/domain/contract/usecase"
 	db "be-dashboard-nba/internal/infrastructure/database"
+	auth "be-dashboard-nba/internal/presentation/auth"
 )
 
 type EnsureToken struct {
-	auth *auth.Auth
+	db db.DB
 }
 
 func NewEnsureToken(db db.DB) *EnsureToken {
-	ah := auth.NewAuth(db)
-	return &EnsureToken{auth: ah}
+	return &EnsureToken{db: db}
 }
 
 func (et *EnsureToken) ValidateToken() fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		ah := auth.NewAuth(et.db)
+
 		tokenHeader := c.Get(constant.DefaultMdwHeaderToken)
 		token, err := parseHeaderToken(tokenHeader)
 		if err != nil {
-			log.WithContext(c.Context()).Error(err, "error parse header token")
+			logger.WithContext(c.Context()).Error(err, "error parse header token")
 			return fiber.NewError(http.StatusUnauthorized, "Token tidak valid")
 		}
 
 		accessTokenClaims, err := jwt.ClaimsAccessToken(token)
 		if err != nil {
-			log.WithContext(c.Context()).Error(err, "error claims access token")
+			logger.WithContext(c.Context()).Error(err, "error claims access token")
 			return fiber.NewError(http.StatusUnauthorized, "Token tidak valid atau kedaluwarsa")
 		}
 
-		et.auth.SetClaims(&accessTokenClaims)
+		ah.SetClaims(&accessTokenClaims)
 
-		err = et.auth.ValidateSession(c.UserContext())
+		err = ah.ValidateSession(c.UserContext())
 		if err != nil {
-
 			if errors.Is(err, sql.ErrNoRows) {
-				log.WithContext(c.Context()).Warn(err, "Invalid session (token valid, but session not found)")
+				logger.WithContext(c.Context()).Warn(err, "Invalid session (token valid, but session not found)")
 				return fiber.NewError(http.StatusUnauthorized, "Sesi tidak valid atau telah berakhir")
 			}
 
-			log.WithContext(c.Context()).Error(err, "Failed to validate session (database error)")
+			logger.WithContext(c.Context()).Error(err, "Failed to validate session (database error)")
 			return fiber.NewError(http.StatusInternalServerError, "Gagal memvalidasi sesi")
 		}
 
-		c.Locals("auth", *et.auth)
+		c.Locals("auth", *ah)
 		return c.Next()
 	}
 }
@@ -81,7 +81,7 @@ func Authorize(
 	return func(c *fiber.Ctx) (err error) {
 		ah, err := auth.GetAuth(c)
 		if err != nil {
-			log.WithContext(c.UserContext()).Error(err, "error get auth handler")
+			logger.WithContext(c.UserContext()).Error(err, "error get auth handler")
 			return fiber.NewError(http.StatusUnauthorized, "Unauthorized")
 		}
 
@@ -90,7 +90,7 @@ func Authorize(
 
 		hasAccess, err := svc.CheckPermissionUseCase(c.UserContext(), menuURL, userID, codesToCheck)
 		if err != nil {
-			log.WithContext(c.UserContext()).Error(err, "Failed to check permissions")
+			logger.WithContext(c.UserContext()).Error(err, "Failed to check permissions")
 			return fiber.NewError(http.StatusInternalServerError, "Failed to check permissions")
 
 		}
@@ -100,3 +100,4 @@ func Authorize(
 		return c.Next()
 	}
 }
+

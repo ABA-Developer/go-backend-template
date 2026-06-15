@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"be-dashboard-nba/internal/domain/model"
-	rolePresenter "be-dashboard-nba/internal/presentation/presenter/role"
+	rolePresenter "be-dashboard-nba/internal/presentation/role/presenter"
 )
 
 type RoleUseCase interface {
@@ -16,4 +16,3 @@ type RoleUseCase interface {
 	ReadRoleAccessUseCase(ctx context.Context, args rolePresenter.ReadRoleAccessesRequest, roleID int) (data model.RoleAccessPaginationResponse, err error)
 	UpdateRoleAccessUseCase(ctx context.Context, roleID int, request rolePresenter.UpdateRoleAccessRequest) (err error)
 }
-
