@@ -1,6 +1,6 @@
 # Go Backend Template
 
-Backend template in Go with the NATA HR transaction service layer structure and Fiber as the HTTP framework.
+Go backend template built with Fiber and a layered architecture.
 
 ## Structure
 
