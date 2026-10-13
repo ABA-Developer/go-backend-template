@@ -1,16 +1,16 @@
-package role
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/role/mapper"
-	presenter "be-dashboard-nba/internal/presentation/role/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/role/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/role/mapper"
 	"context"
 	"database/sql"
 
 	"github.com/pkg/errors"
 )
 
-func (s *useCase) UpdateRoleAccessUseCase(ctx context.Context, roleID int, request presenter.UpdateRoleAccessRequest) (err error) {
+func (s *useCase) UpdateRoleAccessUseCase(ctx context.Context, roleID int, request appdto.UpdateRoleAccessPayload) (err error) {
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error to begin transaction")
@@ -33,7 +33,7 @@ func (s *useCase) UpdateRoleAccessUseCase(ctx context.Context, roleID int, reque
 	for _, req := range request.AccessItem {
 		params := mapper.ToUpdateRoleMenuPermissionParam(&req, roleID)
 
-		_, err = rolerepo.ReadRoleByIDQuery(ctx, params.RoleID)
+		_, err = rolerepo.ReadRoleByIDQry(ctx, params.RoleID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				log(ctx).Warn().Int("id", params.RoleID).Msg("role detail not found for update role menu permission")
@@ -45,7 +45,7 @@ func (s *useCase) UpdateRoleAccessUseCase(ctx context.Context, roleID int, reque
 			return
 		}
 
-		_, err = menuPermissionRepo.ReadMenuPermissionByIdQuery(ctx, params.MenuPermissionID)
+		_, err = menuPermissionRepo.ReadMenuPermissionByIdQry(ctx, params.MenuPermissionID)
 		if err != nil {
 			if errors.Is(err, sql.ErrNoRows) {
 				log(ctx).Warn().Int("id", params.RoleID).Msg("menu permission detail not found for update role menu permission")
@@ -57,14 +57,14 @@ func (s *useCase) UpdateRoleAccessUseCase(ctx context.Context, roleID int, reque
 			return
 		}
 		if *req.HasAccess {
-			err = rolerepo.CreateRoleAccess(ctx, params)
+			err = rolerepo.CreateRoleAccessQry(ctx, params)
 			if err != nil {
 				log(ctx).Error().Err(err).Interface("request_payload", request).Msg("error to create role menu permission")
 				err = errors.WithStack(constant.ErrUnknownSource)
 				return
 			}
 		} else {
-			err = rolerepo.DeleteRoleAccess(ctx, params)
+			err = rolerepo.DeleteRoleAccessQry(ctx, params)
 			if err != nil {
 				log(ctx).Error().Err(err).Interface("request_payload", request).Msg("error to delete role menu permission")
 				err = errors.WithStack(constant.ErrUnknownSource)

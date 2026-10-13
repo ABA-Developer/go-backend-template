@@ -1,13 +1,13 @@
-package role
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -29,8 +29,8 @@ func TestDeleteRoleUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
-				roleRepo.On("DeleteRoleQuery", testifymock.Anything, 10).Return(nil).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
+				roleRepo.On("DeleteRoleQry", testifymock.Anything, 10).Return(nil).Once()
 			},
 		},
 		{
@@ -40,7 +40,7 @@ func TestDeleteRoleUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 999).Return(model.Role{}, sql.ErrNoRows).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 999).Return(model.Role{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrRoleIdNotFound,
 		},
@@ -51,8 +51,8 @@ func TestDeleteRoleUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
-				roleRepo.On("DeleteRoleQuery", testifymock.Anything, 10).Return(errors.New("delete failed")).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
+				roleRepo.On("DeleteRoleQry", testifymock.Anything, 10).Return(errors.New("delete failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

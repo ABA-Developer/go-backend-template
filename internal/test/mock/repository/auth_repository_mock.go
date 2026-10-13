@@ -3,9 +3,9 @@ package mock
 import (
 	"context"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/auth/dto"
-	"be-dashboard-nba/internal/domain/model"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -16,22 +16,22 @@ type AuthRepositoryMock struct {
 
 func NewAuthRepository() *AuthRepositoryMock { return &AuthRepositoryMock{} }
 
-func (m *AuthRepositoryMock) CreateSessionQuery(ctx context.Context, args dto.SessionParams) error {
+func (m *AuthRepositoryMock) CreateSessionQry(ctx context.Context, args repoParams.SessionParams) error {
 	call := m.Called(ctx, args)
 	return call.Error(0)
 }
 
-func (m *AuthRepositoryMock) UpdateSessionQuery(ctx context.Context, args dto.SessionParams) error {
+func (m *AuthRepositoryMock) UpdateSessionQry(ctx context.Context, args repoParams.SessionParams) error {
 	call := m.Called(ctx, args)
 	return call.Error(0)
 }
 
-func (m *AuthRepositoryMock) DeleteSessionQuery(ctx context.Context, id string) error {
+func (m *AuthRepositoryMock) DeleteSessionQry(ctx context.Context, id string) error {
 	call := m.Called(ctx, id)
 	return call.Error(0)
 }
 
-func (m *AuthRepositoryMock) ReadDetailSessionQuery(ctx context.Context, id string) (model.Session, error) {
+func (m *AuthRepositoryMock) ReadDetailSessionQry(ctx context.Context, id string) (model.Session, error) {
 	call := m.Called(ctx, id)
 
 	var r0 model.Session
@@ -43,7 +43,7 @@ func (m *AuthRepositoryMock) ReadDetailSessionQuery(ctx context.Context, id stri
 	return r0, call.Error(1)
 }
 
-func (m *AuthRepositoryMock) ReadDetailUserByEmailQuery(ctx context.Context, email string) (model.User, error) {
+func (m *AuthRepositoryMock) ReadDetailUserByEmailQry(ctx context.Context, email string) (model.User, error) {
 	call := m.Called(ctx, email)
 
 	var r0 model.User
@@ -55,22 +55,22 @@ func (m *AuthRepositoryMock) ReadDetailUserByEmailQuery(ctx context.Context, ema
 	return r0, call.Error(1)
 }
 
-func (m *AuthRepositoryMock) CreateLoginAttemp(ctx context.Context, args dto.LoginAttempParams) error {
+func (m *AuthRepositoryMock) CreateLoginAttempQry(ctx context.Context, args repoParams.LoginAttempParams) error {
 	call := m.Called(ctx, args)
 	return call.Error(0)
 }
 
-func (m *AuthRepositoryMock) CreateLoginRecord(ctx context.Context, args dto.LoginRecord) error {
+func (m *AuthRepositoryMock) CreateLoginRecordQry(ctx context.Context, args repoParams.LoginRecord) error {
 	call := m.Called(ctx, args)
 	return call.Error(0)
 }
 
-func (m *AuthRepositoryMock) CheckPermissionQuery(ctx context.Context, menuURL constant.MenuKey, userID string, permissionCode []string) (bool, error) {
+func (m *AuthRepositoryMock) CheckPermissionQry(ctx context.Context, menuURL constant.MenuKey, userID string, permissionCode []string) (bool, error) {
 	call := m.Called(ctx, menuURL, userID, permissionCode)
 	return call.Bool(0), call.Error(1)
 }
 
-func (m *AuthRepositoryMock) ReadDetailUserByIdQuery(ctx context.Context, id string) (model.User, error) {
+func (m *AuthRepositoryMock) ReadDetailUserByIdQry(ctx context.Context, id string) (model.User, error) {
 	call := m.Called(ctx, id)
 
 	var r0 model.User

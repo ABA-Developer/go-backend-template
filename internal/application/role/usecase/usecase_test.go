@@ -1,12 +1,12 @@
-package role
+package usecase
 
 import (
 	"testing"
 
-	"be-dashboard-nba/internal/application/utils"
-	contractRepo "be-dashboard-nba/internal/domain/contract/repository"
-	db "be-dashboard-nba/internal/infrastructure/database"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/internal/application/utils"
+	contractRepo "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository"
+	db "github.com/ABA-Developer/go-backend-template/internal/infrastructure/database"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 )

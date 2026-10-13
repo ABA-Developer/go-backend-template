@@ -11,8 +11,8 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/infrastructure/runtime/env"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/runtime/env"
 )
 
 type Swagger struct {

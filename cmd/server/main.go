@@ -5,14 +5,14 @@ import (
 	"os"
 	"time"
 
-	"be-dashboard-nba/internal/infrastructure/api"
-	db "be-dashboard-nba/internal/infrastructure/database"
-	"be-dashboard-nba/internal/infrastructure/logger"
-	runtime "be-dashboard-nba/internal/infrastructure/runtime"
-	"be-dashboard-nba/internal/infrastructure/runtime/container"
-	"be-dashboard-nba/internal/infrastructure/validator"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/api"
+	db "github.com/ABA-Developer/go-backend-template/internal/infrastructure/database"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
+	runtime "github.com/ABA-Developer/go-backend-template/internal/infrastructure/runtime"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/runtime/container"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/validator"
 
-	_ "be-dashboard-nba/docs"
+	_ "github.com/ABA-Developer/go-backend-template/docs"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"

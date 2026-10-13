@@ -1,13 +1,13 @@
-package auth
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -25,14 +25,14 @@ func TestAuthMeUseCase(t *testing.T) {
 			name:   "positive/returns-user",
 			userID: "u1",
 			setup: func(authRepo *mockrepo.AuthRepositoryMock) {
-				authRepo.On("ReadDetailUserByIdQuery", testifymock.Anything, "u1").Return(model.User{ID: "u1"}, nil).Once()
+				authRepo.On("ReadDetailUserByIdQry", testifymock.Anything, "u1").Return(model.User{ID: "u1"}, nil).Once()
 			},
 		},
 		{
 			name:   "negative/not-found",
 			userID: "missing",
 			setup: func(authRepo *mockrepo.AuthRepositoryMock) {
-				authRepo.On("ReadDetailUserByIdQuery", testifymock.Anything, "missing").Return(model.User{}, sql.ErrNoRows).Once()
+				authRepo.On("ReadDetailUserByIdQry", testifymock.Anything, "missing").Return(model.User{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrUserIdNotFound,
 		},
@@ -40,7 +40,7 @@ func TestAuthMeUseCase(t *testing.T) {
 			name:   "negative/repo-error",
 			userID: "u1",
 			setup: func(authRepo *mockrepo.AuthRepositoryMock) {
-				authRepo.On("ReadDetailUserByIdQuery", testifymock.Anything, "u1").Return(model.User{}, errors.New("db down")).Once()
+				authRepo.On("ReadDetailUserByIdQry", testifymock.Anything, "u1").Return(model.User{}, errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

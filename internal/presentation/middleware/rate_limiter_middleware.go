@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"be-dashboard-nba/constant"
+	"github.com/ABA-Developer/go-backend-template/constant"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/limiter"

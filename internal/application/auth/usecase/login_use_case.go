@@ -1,12 +1,13 @@
-package auth
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/auth/dto"
-	"be-dashboard-nba/internal/application/auth/usecase/helper"
-	"be-dashboard-nba/internal/application/utils"
-	"be-dashboard-nba/internal/domain/model"
-	authPresenter "be-dashboard-nba/internal/presentation/auth/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/auth/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/auth/mapper"
+	"github.com/ABA-Developer/go-backend-template/internal/application/auth/usecase/helper"
+	"github.com/ABA-Developer/go-backend-template/internal/application/utils"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 	"context"
 	"database/sql"
 
@@ -15,7 +16,7 @@ import (
 
 func (s *useCase) LoginUseCase(
 	ctx context.Context,
-	request authPresenter.LoginRequest,
+	request dto.LoginPayload,
 	userAgent,
 	iPAddress string,
 ) (data model.Session, user model.User, err error) {
@@ -46,15 +47,15 @@ func (s *useCase) LoginUseCase(
 		}
 	}()
 
-	user, err = q.ReadDetailUserByEmailQuery(ctx, request.Email)
+	user, err = q.ReadDetailUserByEmailQry(ctx, request.Email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			logAttemptArgs := dto.LoginAttempParams{
+			logAttemptArgs := repoParams.LoginAttempParams{
 				Email:     request.Email,
 				IPAddress: iPAddress,
 				Password:  request.Password,
 			}
-			if logErr := logRepo.CreateLoginAttemp(ctx, logAttemptArgs); logErr != nil {
+			if logErr := logRepo.CreateLoginAttempQry(ctx, logAttemptArgs); logErr != nil {
 				log(ctx).Error().Err(logErr).Msg("failed to create login attempt log (wrong email)")
 			}
 			err = constant.ErrWrongEmailOrPassword
@@ -68,19 +69,19 @@ func (s *useCase) LoginUseCase(
 	}
 
 	if err = utils.CompareHashPassword(request.Password, user.Password); err != nil {
-		logAttemptArgs := dto.LoginAttempParams{
+		logAttemptArgs := repoParams.LoginAttempParams{
 			Email:     request.Email,
 			IPAddress: iPAddress,
 			Password:  request.Password,
 		}
-		if logErr := logRepo.CreateLoginAttemp(ctx, logAttemptArgs); logErr != nil {
+		if logErr := logRepo.CreateLoginAttempQry(ctx, logAttemptArgs); logErr != nil {
 			log(ctx).Error().Err(logErr).Msg("failed to create login attempt log (wrong password)")
 		}
 		err = constant.ErrWrongEmailOrPassword
 		return
 	}
 
-	sessionPayload := request.ToSessionPayload(user.ID, userAgent, iPAddress)
+	sessionPayload := mapper.ToSessionPayload(user.ID, userAgent, iPAddress)
 
 	data, err = helper.GenerateSessionModel(ctx, sessionPayload)
 	if err != nil {
@@ -89,7 +90,7 @@ func (s *useCase) LoginUseCase(
 		return
 	}
 
-	err = q.CreateSessionQuery(ctx, dto.SessionParams{
+	err = q.CreateSessionQry(ctx, repoParams.SessionParams{
 		ID:                    data.ID,
 		UserID:                data.UserID,
 		AccessToken:           data.AccessToken,
@@ -105,7 +106,7 @@ func (s *useCase) LoginUseCase(
 		return
 	}
 
-	logRecordArgs := dto.LoginRecord{
+	logRecordArgs := repoParams.LoginRecord{
 		UserID:      user.ID,
 		AccessToken: data.AccessToken,
 		Status:      "login",
@@ -113,7 +114,7 @@ func (s *useCase) LoginUseCase(
 		Type:        "web",
 	}
 
-	if logErr := q.CreateLoginRecord(ctx, logRecordArgs); logErr != nil {
+	if logErr := q.CreateLoginRecordQry(ctx, logRecordArgs); logErr != nil {
 		log(ctx).Error().Err(logErr).Msg("failed to create login record log")
 	}
 

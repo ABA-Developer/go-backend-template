@@ -1,13 +1,13 @@
-package menu_permission
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -25,14 +25,14 @@ func TestReadMenuPermissionDetailUseCase(t *testing.T) {
 			name:             "positive/returns-data",
 			menuPermissionID: 1,
 			setup: func(menuPermissionRepo *mockrepo.MenuPermissionRepositoryMock) {
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
 			},
 		},
 		{
 			name:             "negative/not-found",
 			menuPermissionID: 999,
 			setup: func(menuPermissionRepo *mockrepo.MenuPermissionRepositoryMock) {
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 999).Return(model.MenuPermission{}, sql.ErrNoRows).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 999).Return(model.MenuPermission{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrMenuPermissionIdNotFound,
 		},
@@ -40,7 +40,7 @@ func TestReadMenuPermissionDetailUseCase(t *testing.T) {
 			name:             "negative/repo-error",
 			menuPermissionID: 1,
 			setup: func(menuPermissionRepo *mockrepo.MenuPermissionRepositoryMock) {
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 1).Return(model.MenuPermission{}, errors.New("db down")).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 1).Return(model.MenuPermission{}, errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

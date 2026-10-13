@@ -1,11 +1,11 @@
-package menu_permission
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/menu-permission/mapper"
-	shareddto "be-dashboard-nba/internal/application/shared/dto"
-	"be-dashboard-nba/internal/domain/model"
-	menuPermissionPresenter "be-dashboard-nba/internal/presentation/menu/menu-permission/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/mapper"
+	shareddto "github.com/ABA-Developer/go-backend-template/internal/application/shared/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 	"context"
 	"database/sql"
 	"math"
@@ -15,14 +15,14 @@ import (
 
 func (s *useCase) ReadMenuPermissionUseCase(
 	ctx context.Context,
-	args menuPermissionPresenter.ReadMenuPermissionListRequest,
+	args appdto.ReadMenuPermissionListPayload,
 	MenuID int,
 ) (data model.MenuPermissionPaginationResponse, err error) {
 
 	mpr := s.newMenuPermissionRepo(s.db)
 	mr := s.newMenuRepo(s.db)
 
-	_, err = mr.ReadMenuByIDQuery(ctx, MenuID)
+	_, err = mr.ReadMenuByIDQry(ctx, MenuID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log(ctx).Warn().Int("id", MenuID).Msg("menu detail not found")
@@ -36,7 +36,7 @@ func (s *useCase) ReadMenuPermissionUseCase(
 
 	params := mapper.ToReadMenuPermissionParams(&args, MenuID)
 
-	totalItems, err := mpr.ReadMenuPermissionCount(ctx, params)
+	totalItems, err := mpr.ReadMenuPermissionCountQry(ctx, params)
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error query get menu permission count")
 		err = errors.WithStack(constant.ErrUnknownSource)
@@ -56,7 +56,7 @@ func (s *useCase) ReadMenuPermissionUseCase(
 		HasPrev:    hasPrev,
 	}
 
-	menuPermissionData, err := mpr.ReadMenuPermissionListQuery(ctx, params)
+	menuPermissionData, err := mpr.ReadMenuPermissionListQry(ctx, params)
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error query read list menu permission")
 		err = errors.WithStack(constant.ErrUnknownSource)

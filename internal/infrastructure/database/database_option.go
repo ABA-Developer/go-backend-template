@@ -7,7 +7,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"be-dashboard-nba/internal/infrastructure/runtime/env"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/runtime/env"
 )
 
 type databaseOption struct {

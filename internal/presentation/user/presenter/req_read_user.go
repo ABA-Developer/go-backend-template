@@ -1,7 +1,7 @@
 package presenter
 
 import (
-	"be-dashboard-nba/internal/application/utils"
+	"github.com/ABA-Developer/go-backend-template/internal/application/utils"
 )
 
 type ReadUserRequest struct {

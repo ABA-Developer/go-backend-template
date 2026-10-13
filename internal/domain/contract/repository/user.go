@@ -3,20 +3,20 @@ package repository
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/user/dto"
-	"be-dashboard-nba/internal/domain/model"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 )
 
 type UserRepository interface {
-	CreateUserQuery(ctx context.Context, args dto.CreateUserParams) (userID string, err error)
-	CreateUserRoleQuery(ctx context.Context, roleID int, userID string) (err error)
-	UpdateUserQuery(ctx context.Context, args dto.UpdateUserParams) (err error)
-	UpdateUserRoleQuery(ctx context.Context, roleID int, userID string) (err error)
-	DeleteUserQuery(ctx context.Context, id string) (err error)
-	ReadUsersQuery(ctx context.Context, args dto.ReadListUserParams) (data []model.User, err error)
-	ReadCountUserQuery(ctx context.Context, args dto.ReadListUserParams) (count int, err error)
-	ReadUserByIDQuery(ctx context.Context, id string) (data model.User, err error)
-	ReadUserProfileQuery(ctx context.Context, id string) (data model.User, err error)
-	IsUserEmailExistsQuery(ctx context.Context, email string) (exists bool, err error)
-	IsUpdateUserEmailExistsQuery(ctx context.Context, email, id string) (exists bool, err error)
+	CreateUserQry(ctx context.Context, args repoParams.CreateUserParams) (userID string, err error)
+	CreateUserRoleQry(ctx context.Context, roleID int, userID string) (err error)
+	UpdateUserQry(ctx context.Context, args repoParams.UpdateUserParams) (err error)
+	UpdateUserRoleQry(ctx context.Context, roleID int, userID string) (err error)
+	DeleteUserQry(ctx context.Context, id string) (err error)
+	ReadUsersQry(ctx context.Context, args repoParams.ReadListUserParams) (data []model.User, err error)
+	ReadCountUserQry(ctx context.Context, args repoParams.ReadListUserParams) (count int, err error)
+	ReadUserByIDQry(ctx context.Context, id string) (data model.User, err error)
+	ReadUserProfileQry(ctx context.Context, id string) (data model.User, err error)
+	IsUserEmailExistsQry(ctx context.Context, email string) (exists bool, err error)
+	IsUpdateUserEmailExistsQry(ctx context.Context, email, id string) (exists bool, err error)
 }

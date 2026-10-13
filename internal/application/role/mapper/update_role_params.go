@@ -3,12 +3,12 @@ package mapper
 import (
 	"database/sql"
 
-	"be-dashboard-nba/internal/application/role/dto"
-	rolePresenter "be-dashboard-nba/internal/presentation/role/presenter"
+	"github.com/ABA-Developer/go-backend-template/internal/application/role/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
 )
 
-func ToUpdateRoleParams(req *rolePresenter.UpdateRoleRequest, updatedBy string, roleID int) dto.UpdateRoleParams {
-	params := dto.UpdateRoleParams{
+func ToUpdateRoleParams(req *dto.UpdateRolePayload, updatedBy string, roleID int) repoParams.UpdateRoleParams {
+	params := repoParams.UpdateRoleParams{
 		RoleID:    roleID,
 		Name:      req.Name,
 		Code:      req.Code,

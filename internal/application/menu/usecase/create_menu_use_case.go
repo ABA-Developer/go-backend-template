@@ -1,10 +1,10 @@
-package menu
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/mapper"
-	"be-dashboard-nba/internal/infrastructure/logger"
-	menuPresenter "be-dashboard-nba/internal/presentation/menu/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/menu/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/mapper"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
 	"context"
 	"database/sql"
 
@@ -13,7 +13,7 @@ import (
 
 func (s *useCase) CreateMenuUseCase(
 	ctx context.Context,
-	request menuPresenter.CreateMenuRequest,
+	request appdto.CreateMenuPayload,
 	userID string,
 ) (err error) {
 
@@ -41,9 +41,9 @@ func (s *useCase) CreateMenuUseCase(
 	var nextSort int
 
 	if params.ParentID.Valid {
-		nextSort, err = q.ReadNextSortForParent(ctx, params.ParentID.Int32)
+		nextSort, err = q.ReadNextSortForParentQry(ctx, params.ParentID.Int32)
 	} else {
-		nextSort, err = q.ReadSortForGroup(ctx, params.Group)
+		nextSort, err = q.ReadSortForGroupQry(ctx, params.Group)
 	}
 
 	if err != nil {
@@ -54,7 +54,7 @@ func (s *useCase) CreateMenuUseCase(
 
 	params.Sort = nextSort
 
-	err = q.CreateMenuQuery(ctx, params)
+	err = q.CreateMenuQry(ctx, params)
 	if err != nil {
 		logger.WithContext(ctx).Error().Err(err).Interface("request_payload", params).Msg("error to create menu")
 		err = errors.WithStack(constant.ErrUnknownSource)

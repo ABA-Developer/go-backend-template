@@ -3,23 +3,23 @@ package repository
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/menu/dto"
-	"be-dashboard-nba/internal/domain/model"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 )
 
 type MenuRepository interface {
-	ReadSidebarMenuQuery(ctx context.Context, userID string) (data []model.Menu, err error)
-	ReadListMenuQuery(ctx context.Context, params dto.ReadListMenuParams) (data []model.Menu, err error)
-	ReadCountMenuQuery(ctx context.Context, params dto.ReadListMenuParams) (count int64, err error)
-	ReadParentMenuQuery(ctx context.Context) (data []model.Menu, err error)
-	CreateMenuQuery(ctx context.Context, params dto.CreateMenuParams) (err error)
-	UpdateMenuQuery(ctx context.Context, params dto.UpdateMenuParams) (err error)
-	DeleteMenuQuery(ctx context.Context, menuID int) (err error)
-	ReadMenuByIDQuery(ctx context.Context, menuID int) (data model.Menu, err error)
-	ReadSortForGroup(ctx context.Context, group string) (int, error)
-	ReadNextSortForParent(ctx context.Context, parentID int32) (int, error)
-	UpdateMenuSortQuery(ctx context.Context, params dto.UpdateMenuSortParams) (err error)
-	ReadNextSortForParentAndGroup(ctx context.Context, parentID int32, group string) (int, error)
-	CountMenuChildren(ctx context.Context, menuID int) (int, error)
-	UpdateChildrenGroup(ctx context.Context, parentID int, newGroup string) error
+	ReadSidebarMenuQry(ctx context.Context, userID string) (data []model.Menu, err error)
+	ReadListMenuQry(ctx context.Context, params repoParams.ReadListMenuParams) (data []model.Menu, err error)
+	ReadCountMenuQry(ctx context.Context, params repoParams.ReadListMenuParams) (count int64, err error)
+	ReadParentMenuQry(ctx context.Context) (data []model.Menu, err error)
+	CreateMenuQry(ctx context.Context, params repoParams.CreateMenuParams) (err error)
+	UpdateMenuQry(ctx context.Context, params repoParams.UpdateMenuParams) (err error)
+	DeleteMenuQry(ctx context.Context, menuID int) (err error)
+	ReadMenuByIDQry(ctx context.Context, menuID int) (data model.Menu, err error)
+	ReadSortForGroupQry(ctx context.Context, group string) (int, error)
+	ReadNextSortForParentQry(ctx context.Context, parentID int32) (int, error)
+	UpdateMenuSortQry(ctx context.Context, params repoParams.UpdateMenuSortParams) (err error)
+	ReadNextSortForParentAndGroupQry(ctx context.Context, parentID int32, group string) (int, error)
+	CountMenuChildrenQry(ctx context.Context, menuID int) (int, error)
+	UpdateChildrenGroupQry(ctx context.Context, parentID int, newGroup string) error
 }

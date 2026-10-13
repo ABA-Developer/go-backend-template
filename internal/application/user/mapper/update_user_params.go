@@ -3,13 +3,13 @@ package mapper
 import (
 	"database/sql"
 
-	"be-dashboard-nba/internal/application/user/dto"
-	"be-dashboard-nba/internal/domain/model"
-	userPresenter "be-dashboard-nba/internal/presentation/user/presenter"
+	"github.com/ABA-Developer/go-backend-template/internal/application/user/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 )
 
-func ToUpdateUserParams(req *userPresenter.UpdateUserRequest, userID, updatedBy string, existingUser model.User) dto.UpdateUserParams {
-	params := dto.UpdateUserParams{
+func ToUpdateUserParams(req *dto.UpdateUserPayload, userID, updatedBy string, existingUser model.User) repoParams.UpdateUserParams {
+	params := repoParams.UpdateUserParams{
 		ID:        userID,
 		Name:      req.Name,
 		FullName:  req.FullName,

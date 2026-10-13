@@ -1,15 +1,15 @@
-package role
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/role/dto"
-	"be-dashboard-nba/internal/domain/model"
-	rolePresenter "be-dashboard-nba/internal/presentation/role/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/role/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -21,14 +21,14 @@ func TestUpdateRoleUseCase(t *testing.T) {
 	tests := []struct {
 		name    string
 		roleID  int
-		req     rolePresenter.UpdateRoleRequest
+		req     dto.UpdateRolePayload
 		setup   func(m sqlmock.Sqlmock, roleRepo *mockrepo.RoleRepositoryMock)
 		wantErr error
 	}{
 		{
 			name:   "positive/update-role",
 			roleID: 10,
-			req: rolePresenter.UpdateRoleRequest{
+			req: dto.UpdateRolePayload{
 				Name: "Admin",
 				Code: "ADMIN",
 			},
@@ -36,11 +36,11 @@ func TestUpdateRoleUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
 				roleRepo.
-					On("UpdateRoleQuery", testifymock.Anything, testifymock.Anything).
+					On("UpdateRoleQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) {
-						params := args.Get(1).(dto.UpdateRoleParams)
+						params := args.Get(1).(repoParams.UpdateRoleParams)
 						assert.Equal(t, 10, params.RoleID)
 						assert.Equal(t, "user-1", params.UpdatedBy)
 					}).
@@ -51,7 +51,7 @@ func TestUpdateRoleUseCase(t *testing.T) {
 		{
 			name:   "negative/not-found",
 			roleID: 999,
-			req: rolePresenter.UpdateRoleRequest{
+			req: dto.UpdateRolePayload{
 				Name: "Admin",
 				Code: "ADMIN",
 			},
@@ -59,14 +59,14 @@ func TestUpdateRoleUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 999).Return(model.Role{}, sql.ErrNoRows).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 999).Return(model.Role{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrRoleIdNotFound,
 		},
 		{
 			name:   "negative/update-error",
 			roleID: 10,
-			req: rolePresenter.UpdateRoleRequest{
+			req: dto.UpdateRolePayload{
 				Name: "Admin",
 				Code: "ADMIN",
 			},
@@ -74,20 +74,20 @@ func TestUpdateRoleUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
-				roleRepo.On("UpdateRoleQuery", testifymock.Anything, testifymock.Anything).Return(errors.New("update failed")).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
+				roleRepo.On("UpdateRoleQry", testifymock.Anything, testifymock.Anything).Return(errors.New("update failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
 		{
 			name:   "edge/rollback-error",
 			roleID: 10,
-			req:    rolePresenter.UpdateRoleRequest{Name: "Admin", Code: "ADMIN"},
+			req:    dto.UpdateRolePayload{Name: "Admin", Code: "ADMIN"},
 			setup: func(m sqlmock.Sqlmock, roleRepo *mockrepo.RoleRepositoryMock) {
 				m.ExpectBegin()
 				m.ExpectRollback().WillReturnError(sql.ErrConnDone)
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 10).Return(model.Role{}, errors.New("read failed")).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 10).Return(model.Role{}, errors.New("read failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

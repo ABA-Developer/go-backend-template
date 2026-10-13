@@ -1,8 +1,8 @@
-package menu_permission
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 	"context"
 	"database/sql"
 
@@ -12,7 +12,7 @@ import (
 func (s *useCase) ReadMenuPermissionDetailUseCase(ctx context.Context, MenuPermissionID int) (data model.MenuPermission, err error) {
 	r := s.newMenuPermissionRepo(s.db)
 
-	data, err = r.ReadMenuPermissionByIdQuery(ctx, MenuPermissionID)
+	data, err = r.ReadMenuPermissionByIdQry(ctx, MenuPermissionID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log(ctx).Warn().Int("id", MenuPermissionID).Msg("menu permission detail not found")

@@ -4,12 +4,12 @@ import (
 	"database/sql"
 	"strings"
 
-	"be-dashboard-nba/internal/application/menu/dto"
-	menuPresenter "be-dashboard-nba/internal/presentation/menu/presenter"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
 )
 
-func ToUpdateMenuParams(req *menuPresenter.UpdateMenuRequest, updatedBy string, menuID int) dto.UpdateMenuParams {
-	params := dto.UpdateMenuParams{
+func ToUpdateMenuParams(req *dto.UpdateMenuPayload, updatedBy string, menuID int) repoParams.UpdateMenuParams {
+	params := repoParams.UpdateMenuParams{
 		ID:      menuID,
 		Name:    req.Name,
 		Group:   req.Group,

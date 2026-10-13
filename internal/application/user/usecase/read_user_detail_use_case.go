@@ -1,8 +1,8 @@
-package user
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 	"context"
 	"database/sql"
 
@@ -15,7 +15,7 @@ func (s *useCase) ReadDetailUserUseCase(
 ) (data model.User, err error) {
 	r := s.newUserRepo(s.db)
 
-	data, err = r.ReadUserByIDQuery(ctx, id)
+	data, err = r.ReadUserByIDQry(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log(ctx).Warn().Str("id", id).Msg("user detail not found")

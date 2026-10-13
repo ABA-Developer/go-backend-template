@@ -1,16 +1,16 @@
-package menu_permission
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/menu-permission/mapper"
-	menuPermissionPresenter "be-dashboard-nba/internal/presentation/menu/menu-permission/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/mapper"
 	"context"
 	"database/sql"
 
 	"github.com/pkg/errors"
 )
 
-func (s *useCase) CreateMenuPermissionUseCase(ctx context.Context, payload menuPermissionPresenter.CreateMenuPermissionRequest, userID string, menuID int) (err error) {
+func (s *useCase) CreateMenuPermissionUseCase(ctx context.Context, payload appdto.CreateMenuPermissionPayload, userID string, menuID int) (err error) {
 
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
@@ -32,7 +32,7 @@ func (s *useCase) CreateMenuPermissionUseCase(ctx context.Context, payload menuP
 	rmp := s.newMenuPermissionRepo(tx)
 	rm := s.newMenuRepo(tx)
 
-	_, err = rm.ReadMenuByIDQuery(ctx, menuID)
+	_, err = rm.ReadMenuByIDQry(ctx, menuID)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -45,7 +45,7 @@ func (s *useCase) CreateMenuPermissionUseCase(ctx context.Context, payload menuP
 		return
 	}
 
-	err = rmp.CreateMenuPermissionQuery(ctx, mapper.ToCreateMenuPermissionParams(&payload, userID, menuID))
+	err = rmp.CreateMenuPermissionQry(ctx, mapper.ToCreateMenuPermissionParams(&payload, userID, menuID))
 	if err != nil {
 		log(ctx).Error().Err(err).Interface("request_payload", payload).Msg("error to create menu permission")
 		err = errors.WithStack(constant.ErrUnknownSource)

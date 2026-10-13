@@ -1,13 +1,13 @@
-package role
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -25,14 +25,14 @@ func TestReadRoleDetailUseCase(t *testing.T) {
 			name:   "positive/returns-data",
 			roleID: 10,
 			setup: func(roleRepo *mockrepo.RoleRepositoryMock) {
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
 			},
 		},
 		{
 			name:   "negative/not-found",
 			roleID: 999,
 			setup: func(roleRepo *mockrepo.RoleRepositoryMock) {
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 999).Return(model.Role{}, sql.ErrNoRows).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 999).Return(model.Role{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrRoleIdNotFound,
 		},
@@ -40,7 +40,7 @@ func TestReadRoleDetailUseCase(t *testing.T) {
 			name:   "negative/repo-error",
 			roleID: 10,
 			setup: func(roleRepo *mockrepo.RoleRepositoryMock) {
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 10).Return(model.Role{}, errors.New("db down")).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 10).Return(model.Role{}, errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

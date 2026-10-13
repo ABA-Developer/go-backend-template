@@ -5,10 +5,10 @@ import (
 	"errors"
 	"net/http"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/presentation/validator"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/presentation/validator"
 
-	"be-dashboard-nba/internal/infrastructure/logger"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
 	"github.com/gofiber/fiber/v2"
 )
 

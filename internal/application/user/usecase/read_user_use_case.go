@@ -1,11 +1,11 @@
-package user
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	shareddto "be-dashboard-nba/internal/application/shared/dto"
-	"be-dashboard-nba/internal/application/user/mapper"
-	"be-dashboard-nba/internal/domain/model"
-	userPresenter "be-dashboard-nba/internal/presentation/user/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	shareddto "github.com/ABA-Developer/go-backend-template/internal/application/shared/dto"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/user/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/user/mapper"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 	"context"
 	"fmt"
 	"math"
@@ -13,10 +13,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (s *useCase) ReadUsersUseCase(ctx context.Context, req userPresenter.ReadUserRequest) (data model.UserPaginationResponse, err error) {
+func (s *useCase) ReadUsersUseCase(ctx context.Context, req appdto.ReadUserPayload) (data model.UserPaginationResponse, err error) {
 	r := s.newUserRepo(s.db)
 	params := mapper.ToReadListUserParams(&req)
-	totalItems, err := r.ReadCountUserQuery(ctx, params)
+	totalItems, err := r.ReadCountUserQry(ctx, params)
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error query get user count")
 		err = errors.WithStack(constant.ErrUnknownSource)
@@ -37,7 +37,7 @@ func (s *useCase) ReadUsersUseCase(ctx context.Context, req userPresenter.ReadUs
 		HasPrev:    hasPrev,
 	}
 
-	userData, err := r.ReadUsersQuery(ctx, params)
+	userData, err := r.ReadUsersQry(ctx, params)
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error query read roles")
 		err = errors.WithStack(constant.ErrUnknownSource)

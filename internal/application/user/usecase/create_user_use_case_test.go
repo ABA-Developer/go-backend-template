@@ -1,4 +1,4 @@
-package user
+package usecase
 
 import (
 	"context"
@@ -6,11 +6,11 @@ import (
 	"os"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/user/dto"
-	"be-dashboard-nba/internal/domain/model"
-	userPresenter "be-dashboard-nba/internal/presentation/user/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/user/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -22,7 +22,7 @@ func TestCreateUserUseCase(t *testing.T) {
 	tests := []struct {
 		name  string
 		env   string
-		req   userPresenter.CreateUserRequest
+		req   dto.CreateUserPayload
 		setup func(m sqlmock.Sqlmock, userRepo *mockrepo.UserRepositoryMock, roleRepo *mockrepo.RoleRepositoryMock)
 
 		wantErr error
@@ -30,7 +30,7 @@ func TestCreateUserUseCase(t *testing.T) {
 		{
 			name: "positive/create-user",
 			env:  "4",
-			req: userPresenter.CreateUserRequest{
+			req: dto.CreateUserPayload{
 				Name:     "A",
 				FullName: "A A",
 				Email:    "a@example.com",
@@ -42,24 +42,24 @@ func TestCreateUserUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 1).Return(model.Role{ID: 1}, nil).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 1).Return(model.Role{ID: 1}, nil).Once()
 				userRepo.
-					On("CreateUserQuery", testifymock.Anything, testifymock.Anything).
+					On("CreateUserQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) {
-						params := args.Get(1).(dto.CreateUserParams)
+						params := args.Get(1).(repoParams.CreateUserParams)
 						assert.Equal(t, "user-1", params.CreatedBy)
 						assert.Equal(t, 1, params.RoleID)
 						assert.NotEmpty(t, params.Password)
 					}).
 					Return("new-user", nil).
 					Once()
-				userRepo.On("CreateUserRoleQuery", testifymock.Anything, 1, "new-user").Return(nil).Once()
+				userRepo.On("CreateUserRoleQry", testifymock.Anything, 1, "new-user").Return(nil).Once()
 			},
 		},
 		{
 			name: "negative/role-not-found",
 			env:  "4",
-			req: userPresenter.CreateUserRequest{
+			req: dto.CreateUserPayload{
 				Name:     "A",
 				FullName: "A A",
 				Email:    "a@example.com",
@@ -71,14 +71,14 @@ func TestCreateUserUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 1).Return(model.Role{}, sql.ErrNoRows).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 1).Return(model.Role{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrRoleIdNotFound,
 		},
 		{
 			name: "negative/create-error",
 			env:  "4",
-			req: userPresenter.CreateUserRequest{
+			req: dto.CreateUserPayload{
 				Name:     "A",
 				FullName: "A A",
 				Email:    "a@example.com",
@@ -90,15 +90,15 @@ func TestCreateUserUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 1).Return(model.Role{ID: 1}, nil).Once()
-				userRepo.On("CreateUserQuery", testifymock.Anything, testifymock.Anything).Return("", errors.New("insert failed")).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 1).Return(model.Role{ID: 1}, nil).Once()
+				userRepo.On("CreateUserQry", testifymock.Anything, testifymock.Anything).Return("", errors.New("insert failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
 		{
 			name: "edge/invalid-bcrypt-cost-env",
 			env:  "x",
-			req: userPresenter.CreateUserRequest{
+			req: dto.CreateUserPayload{
 				Name:     "A",
 				FullName: "A A",
 				Email:    "a@example.com",

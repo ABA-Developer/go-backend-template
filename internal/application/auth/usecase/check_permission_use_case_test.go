@@ -1,11 +1,11 @@
-package auth
+package usecase
 
 import (
 	"context"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -28,7 +28,7 @@ func TestCheckPermissionUseCase(t *testing.T) {
 			userID:  "u1",
 			codes:   []string{"R"},
 			setup: func(authRepo *mockrepo.AuthRepositoryMock) {
-				authRepo.On("CheckPermissionQuery", testifymock.Anything, constant.MenuSettingsUser, "u1", []string{"R"}).Return(true, nil).Once()
+				authRepo.On("CheckPermissionQry", testifymock.Anything, constant.MenuSettingsUser, "u1", []string{"R"}).Return(true, nil).Once()
 			},
 			want: true,
 		},
@@ -38,7 +38,7 @@ func TestCheckPermissionUseCase(t *testing.T) {
 			userID:  "u1",
 			codes:   []string{"R"},
 			setup: func(authRepo *mockrepo.AuthRepositoryMock) {
-				authRepo.On("CheckPermissionQuery", testifymock.Anything, constant.MenuSettingsUser, "u1", []string{"R"}).Return(false, errors.New("db down")).Once()
+				authRepo.On("CheckPermissionQry", testifymock.Anything, constant.MenuSettingsUser, "u1", []string{"R"}).Return(false, errors.New("db down")).Once()
 			},
 			wantErr: true,
 		},

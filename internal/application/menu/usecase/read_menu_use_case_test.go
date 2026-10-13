@@ -1,12 +1,12 @@
-package menu
+package usecase
 
 import (
 	"context"
 	"testing"
 
-	"be-dashboard-nba/internal/domain/model"
-	menuPresenter "be-dashboard-nba/internal/presentation/menu/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/menu/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -23,21 +23,21 @@ func TestReadListMenuUseCase(t *testing.T) {
 		{
 			name: "positive/returns-data",
 			setup: func(menuRepo *mockrepo.MenuRepositoryMock) {
-				menuRepo.On("ReadListMenuQuery", testifymock.Anything, testifymock.Anything).Return([]model.Menu{{ID: 1}}, nil).Once()
+				menuRepo.On("ReadListMenuQry", testifymock.Anything, testifymock.Anything).Return([]model.Menu{{ID: 1}}, nil).Once()
 			},
 			wantLen: 1,
 		},
 		{
 			name: "edge/empty-list",
 			setup: func(menuRepo *mockrepo.MenuRepositoryMock) {
-				menuRepo.On("ReadListMenuQuery", testifymock.Anything, testifymock.Anything).Return([]model.Menu{}, nil).Once()
+				menuRepo.On("ReadListMenuQry", testifymock.Anything, testifymock.Anything).Return([]model.Menu{}, nil).Once()
 			},
 			wantLen: 0,
 		},
 		{
 			name: "negative/repo-error",
 			setup: func(menuRepo *mockrepo.MenuRepositoryMock) {
-				menuRepo.On("ReadListMenuQuery", testifymock.Anything, testifymock.Anything).Return(nil, errors.New("query failed")).Once()
+				menuRepo.On("ReadListMenuQry", testifymock.Anything, testifymock.Anything).Return(nil, errors.New("query failed")).Once()
 			},
 			wantErr: true,
 		},
@@ -51,7 +51,7 @@ func TestReadListMenuUseCase(t *testing.T) {
 
 			tt.setup(menuRepo)
 
-			data, err := uc.ReadListMenuUseCase(context.Background(), menuPresenter.ReadMenuListRequest{})
+			data, err := uc.ReadListMenuUseCase(context.Background(), appdto.ReadMenuListPayload{})
 			if tt.wantErr {
 				assert.Error(t, err)
 				return

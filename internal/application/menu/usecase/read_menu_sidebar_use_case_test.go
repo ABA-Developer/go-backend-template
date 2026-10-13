@@ -1,11 +1,11 @@
-package menu
+package usecase
 
 import (
 	"context"
 	"testing"
 
-	"be-dashboard-nba/internal/domain/model"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +24,7 @@ func TestReadSidebarMenuUseCase(t *testing.T) {
 			name:   "positive/returns-data",
 			userID: "u1",
 			setup: func(menuRepo *mockrepo.MenuRepositoryMock) {
-				menuRepo.On("ReadSidebarMenuQuery", testifymock.Anything, "u1").Return([]model.Menu{{ID: 1}}, nil).Once()
+				menuRepo.On("ReadSidebarMenuQry", testifymock.Anything, "u1").Return([]model.Menu{{ID: 1}}, nil).Once()
 			},
 			wantLen: 1,
 		},
@@ -32,7 +32,7 @@ func TestReadSidebarMenuUseCase(t *testing.T) {
 			name:   "edge/empty",
 			userID: "u1",
 			setup: func(menuRepo *mockrepo.MenuRepositoryMock) {
-				menuRepo.On("ReadSidebarMenuQuery", testifymock.Anything, "u1").Return([]model.Menu{}, nil).Once()
+				menuRepo.On("ReadSidebarMenuQry", testifymock.Anything, "u1").Return([]model.Menu{}, nil).Once()
 			},
 			wantLen: 0,
 		},
@@ -40,7 +40,7 @@ func TestReadSidebarMenuUseCase(t *testing.T) {
 			name:   "negative/repo-error",
 			userID: "u1",
 			setup: func(menuRepo *mockrepo.MenuRepositoryMock) {
-				menuRepo.On("ReadSidebarMenuQuery", testifymock.Anything, "u1").Return(nil, errors.New("db down")).Once()
+				menuRepo.On("ReadSidebarMenuQry", testifymock.Anything, "u1").Return(nil, errors.New("db down")).Once()
 			},
 			wantErr: true,
 		},

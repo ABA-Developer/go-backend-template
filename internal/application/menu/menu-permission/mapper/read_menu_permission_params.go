@@ -1,12 +1,12 @@
 package mapper
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/menu-permission/dto"
-	menuPermissionPresenter "be-dashboard-nba/internal/presentation/menu/menu-permission/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
 )
 
-func ToReadMenuPermissionParams(req *menuPermissionPresenter.ReadMenuPermissionListRequest, menuID int) dto.ReadMenuPermissionParams {
+func ToReadMenuPermissionParams(req *dto.ReadMenuPermissionListPayload, menuID int) repoParams.ReadMenuPermissionParams {
 	req.Init()
 
 	if req.Limit <= 0 {
@@ -17,7 +17,7 @@ func ToReadMenuPermissionParams(req *menuPermissionPresenter.ReadMenuPermissionL
 		req.Page = constant.DefaultPage
 	}
 
-	return dto.ReadMenuPermissionParams{
+	return repoParams.ReadMenuPermissionParams{
 		SetSearch: req.SetSearch,
 		Search:    req.Search,
 		Order:     req.Order,

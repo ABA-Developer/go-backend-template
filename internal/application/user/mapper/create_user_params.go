@@ -3,12 +3,12 @@ package mapper
 import (
 	"database/sql"
 
-	"be-dashboard-nba/internal/application/user/dto"
-	userPresenter "be-dashboard-nba/internal/presentation/user/presenter"
+	"github.com/ABA-Developer/go-backend-template/internal/application/user/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
 )
 
-func ToCreateUserParams(req *userPresenter.CreateUserRequest, createdBy, hashedPassword string) dto.CreateUserParams {
-	params := dto.CreateUserParams{
+func ToCreateUserParams(req *dto.CreateUserPayload, createdBy, hashedPassword string) repoParams.CreateUserParams {
+	params := repoParams.CreateUserParams{
 		Name:      req.Name,
 		FullName:  req.FullName,
 		Email:     req.Email,

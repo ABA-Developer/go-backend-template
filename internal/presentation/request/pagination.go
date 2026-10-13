@@ -3,7 +3,7 @@ package request
 import (
 	"fmt"
 
-	"be-dashboard-nba/constant"
+	"github.com/ABA-Developer/go-backend-template/constant"
 )
 
 type PaginationPayload struct {

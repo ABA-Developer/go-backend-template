@@ -3,12 +3,12 @@ package mapper
 import (
 	"database/sql"
 
-	"be-dashboard-nba/internal/application/menu/dto"
-	menuPresenter "be-dashboard-nba/internal/presentation/menu/presenter"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
 )
 
-func ToUpdateMenuSortParamsList(req *menuPresenter.UpdateMenuOrderRequest, updatedBy string) []dto.UpdateMenuSortParams {
-	paramsList := make([]dto.UpdateMenuSortParams, len(req.SortedIDs))
+func ToUpdateMenuSortParamsList(req *dto.UpdateMenuOrderPayload, updatedBy string) []repoParams.UpdateMenuSortParams {
+	paramsList := make([]repoParams.UpdateMenuSortParams, len(req.SortedIDs))
 
 	var parentID sql.NullInt32
 	if req.ParentID != nil {
@@ -18,7 +18,7 @@ func ToUpdateMenuSortParamsList(req *menuPresenter.UpdateMenuOrderRequest, updat
 	}
 
 	for index, menuID := range req.SortedIDs {
-		paramsList[index] = dto.UpdateMenuSortParams{
+		paramsList[index] = repoParams.UpdateMenuSortParams{
 			ID:        menuID,
 			Sort:      index,
 			UpdatedBy: updatedBy,

@@ -1,7 +1,7 @@
-package menu_permission
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
+	"github.com/ABA-Developer/go-backend-template/constant"
 	"context"
 	"database/sql"
 
@@ -29,7 +29,7 @@ func (s *useCase) DeleteMenuPermissionUseCase(ctx context.Context, menuPermissio
 
 	r := s.newMenuPermissionRepo(tx)
 
-	_, err = r.ReadMenuPermissionByIdQuery(ctx, menuPermissionID)
+	_, err = r.ReadMenuPermissionByIdQry(ctx, menuPermissionID)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -42,7 +42,7 @@ func (s *useCase) DeleteMenuPermissionUseCase(ctx context.Context, menuPermissio
 		return
 	}
 
-	err = r.DeleteMenuPermissionQuery(ctx, menuPermissionID)
+	err = r.DeleteMenuPermissionQry(ctx, menuPermissionID)
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error to delete menu permission")
 		err = errors.WithStack(constant.ErrUnknownSource)

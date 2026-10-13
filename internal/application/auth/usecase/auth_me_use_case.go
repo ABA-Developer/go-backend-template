@@ -1,8 +1,8 @@
-package auth
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 	"context"
 	"database/sql"
 
@@ -11,7 +11,7 @@ import (
 
 func (s *useCase) AuthMeUseCase(ctx context.Context, id string) (data model.User, err error) {
 	r := s.newAuthRepo(s.db)
-	data, err = r.ReadDetailUserByIdQuery(ctx, id)
+	data, err = r.ReadDetailUserByIdQry(ctx, id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log(ctx).Warn().Str("id", id).Msg("user detail not found")

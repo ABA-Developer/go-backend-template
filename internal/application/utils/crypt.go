@@ -4,7 +4,7 @@ import (
 	"os"
 	"strconv"
 
-	"be-dashboard-nba/internal/infrastructure/logger"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 	"golang.org/x/crypto/bcrypt"

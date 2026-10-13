@@ -1,14 +1,14 @@
-package role
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
-	rolePresenter "be-dashboard-nba/internal/presentation/role/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/role/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/stretchr/testify/assert"
@@ -19,7 +19,7 @@ func TestUpdateRoleAccessUseCase(t *testing.T) {
 	tests := []struct {
 		name    string
 		roleID  int
-		req     rolePresenter.UpdateRoleAccessRequest
+		req     appdto.UpdateRoleAccessPayload
 		setup   func(m sqlmock.Sqlmock, roleRepo *mockrepo.RoleRepositoryMock, menuPermissionRepo *mockrepo.MenuPermissionRepositoryMock, createCalls *int, deleteCalls *int)
 		wantErr error
 		assert  func(createCalls int, deleteCalls int)
@@ -27,8 +27,8 @@ func TestUpdateRoleAccessUseCase(t *testing.T) {
 		{
 			name:   "positive/create-and-delete",
 			roleID: 10,
-			req: rolePresenter.UpdateRoleAccessRequest{
-				AccessItem: []rolePresenter.UpdateRoleAccessItem{
+			req: appdto.UpdateRoleAccessPayload{
+				AccessItem: []appdto.UpdateRoleAccessPayloadItem{
 					{AccessID: 1, HasAccess: ptrBool(true)},
 					{AccessID: 2, HasAccess: ptrBool(false)},
 				},
@@ -37,17 +37,17 @@ func TestUpdateRoleAccessUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Twice()
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 2).Return(model.MenuPermission{ID: 2}, nil).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Twice()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 2).Return(model.MenuPermission{ID: 2}, nil).Once()
 
 				roleRepo.
-					On("CreateRoleAccess", testifymock.Anything, testifymock.Anything).
+					On("CreateRoleAccessQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) { *createCalls++ }).
 					Return(nil).
 					Once()
 				roleRepo.
-					On("DeleteRoleAccess", testifymock.Anything, testifymock.Anything).
+					On("DeleteRoleAccessQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) { *deleteCalls++ }).
 					Return(nil).
 					Once()
@@ -60,7 +60,7 @@ func TestUpdateRoleAccessUseCase(t *testing.T) {
 		{
 			name:   "edge/empty-access-item-commits",
 			roleID: 10,
-			req:    rolePresenter.UpdateRoleAccessRequest{AccessItem: []rolePresenter.UpdateRoleAccessItem{}},
+			req:    appdto.UpdateRoleAccessPayload{AccessItem: []appdto.UpdateRoleAccessPayloadItem{}},
 			setup: func(m sqlmock.Sqlmock, _ *mockrepo.RoleRepositoryMock, _ *mockrepo.MenuPermissionRepositoryMock, _ *int, _ *int) {
 				m.ExpectBegin()
 				m.ExpectCommit()
@@ -73,8 +73,8 @@ func TestUpdateRoleAccessUseCase(t *testing.T) {
 		{
 			name:   "negative/menu-permission-not-found",
 			roleID: 10,
-			req: rolePresenter.UpdateRoleAccessRequest{
-				AccessItem: []rolePresenter.UpdateRoleAccessItem{
+			req: appdto.UpdateRoleAccessPayload{
+				AccessItem: []appdto.UpdateRoleAccessPayloadItem{
 					{AccessID: 1, HasAccess: ptrBool(true)},
 				},
 			},
@@ -82,16 +82,16 @@ func TestUpdateRoleAccessUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 1).Return(model.MenuPermission{}, sql.ErrNoRows).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 10).Return(model.Role{ID: 10}, nil).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 1).Return(model.MenuPermission{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrMenuPermissionIdNotFound,
 		},
 		{
 			name:   "negative/role-not-found",
 			roleID: 10,
-			req: rolePresenter.UpdateRoleAccessRequest{
-				AccessItem: []rolePresenter.UpdateRoleAccessItem{
+			req: appdto.UpdateRoleAccessPayload{
+				AccessItem: []appdto.UpdateRoleAccessPayloadItem{
 					{AccessID: 1, HasAccess: ptrBool(true)},
 				},
 			},
@@ -99,7 +99,7 @@ func TestUpdateRoleAccessUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				roleRepo.On("ReadRoleByIDQuery", testifymock.Anything, 10).Return(model.Role{}, sql.ErrNoRows).Once()
+				roleRepo.On("ReadRoleByIDQry", testifymock.Anything, 10).Return(model.Role{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrRoleIdNotFound,
 		},

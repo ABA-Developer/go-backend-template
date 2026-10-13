@@ -1,13 +1,13 @@
-package user
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -31,8 +31,8 @@ func TestDeleteUserUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				userRepo.On("ReadUserByIDQuery", testifymock.Anything, "u1").Return(model.User{ID: "u1"}, nil).Once()
-				userRepo.On("DeleteUserQuery", testifymock.Anything, "u1").Return(nil).Once()
+				userRepo.On("ReadUserByIDQry", testifymock.Anything, "u1").Return(model.User{ID: "u1"}, nil).Once()
+				userRepo.On("DeleteUserQry", testifymock.Anything, "u1").Return(nil).Once()
 			},
 		},
 		{
@@ -43,7 +43,7 @@ func TestDeleteUserUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				userRepo.On("ReadUserByIDQuery", testifymock.Anything, "missing").Return(model.User{}, sql.ErrNoRows).Once()
+				userRepo.On("ReadUserByIDQry", testifymock.Anything, "missing").Return(model.User{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrUserIdNotFound,
 		},
@@ -55,8 +55,8 @@ func TestDeleteUserUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				userRepo.On("ReadUserByIDQuery", testifymock.Anything, "u1").Return(model.User{ID: "u1"}, nil).Once()
-				userRepo.On("DeleteUserQuery", testifymock.Anything, "u1").Return(errors.New("delete failed")).Once()
+				userRepo.On("ReadUserByIDQry", testifymock.Anything, "u1").Return(model.User{ID: "u1"}, nil).Once()
+				userRepo.On("DeleteUserQry", testifymock.Anything, "u1").Return(errors.New("delete failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
@@ -68,7 +68,7 @@ func TestDeleteUserUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				userRepo.On("ReadUserByIDQuery", testifymock.Anything, "same").Return(model.User{ID: "same"}, nil).Once()
+				userRepo.On("ReadUserByIDQry", testifymock.Anything, "same").Return(model.User{ID: "same"}, nil).Once()
 			},
 			wantErr: constant.ErrForbiddenSelfDelete,
 		},
@@ -80,7 +80,7 @@ func TestDeleteUserUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback().WillReturnError(sql.ErrConnDone)
 
-				userRepo.On("ReadUserByIDQuery", testifymock.Anything, "missing").Return(model.User{}, sql.ErrNoRows).Once()
+				userRepo.On("ReadUserByIDQry", testifymock.Anything, "missing").Return(model.User{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrUserIdNotFound,
 		},

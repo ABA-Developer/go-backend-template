@@ -1,7 +1,7 @@
 package jwt
 
 import (
-	"be-dashboard-nba/constant"
+	"github.com/ABA-Developer/go-backend-template/constant"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"

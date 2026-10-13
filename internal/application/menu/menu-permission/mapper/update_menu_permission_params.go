@@ -1,12 +1,12 @@
 package mapper
 
 import (
-	"be-dashboard-nba/internal/application/menu/menu-permission/dto"
-	menuPermissionPresenter "be-dashboard-nba/internal/presentation/menu/menu-permission/presenter"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
 )
 
-func ToUpdateMenuPermissionParams(req *menuPermissionPresenter.UpdateMenuPermissionRequest, updatedBy string, menuPermissionID int) dto.UpdateMenuPermissionParams {
-	return dto.UpdateMenuPermissionParams{
+func ToUpdateMenuPermissionParams(req *dto.UpdateMenuPermissionPayload, updatedBy string, menuPermissionID int) repoParams.UpdateMenuPermissionParams {
+	return repoParams.UpdateMenuPermissionParams{
 		Code:             req.Code,
 		ActionName:       req.ActionName,
 		UpdatedBy:        updatedBy,

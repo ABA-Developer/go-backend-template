@@ -1,6 +1,6 @@
 package validator
 
-import infra "be-dashboard-nba/internal/infrastructure/validator"
+import infra "github.com/ABA-Developer/go-backend-template/internal/infrastructure/validator"
 
 type Validator = infra.Validator
 

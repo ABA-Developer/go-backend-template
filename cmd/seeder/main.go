@@ -8,10 +8,10 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/kristijorgji/goseeder"
 
-	_ "be-dashboard-nba/database/seeders"
-	db "be-dashboard-nba/internal/infrastructure/database"
-	"be-dashboard-nba/internal/infrastructure/logger"
-	config "be-dashboard-nba/internal/infrastructure/runtime"
+	_ "github.com/ABA-Developer/go-backend-template/database/seeders"
+	db "github.com/ABA-Developer/go-backend-template/internal/infrastructure/database"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
+	config "github.com/ABA-Developer/go-backend-template/internal/infrastructure/runtime"
 )
 
 func main() {

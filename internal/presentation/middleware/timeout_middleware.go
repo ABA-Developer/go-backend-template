@@ -7,7 +7,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"be-dashboard-nba/constant"
+	"github.com/ABA-Developer/go-backend-template/constant"
 )
 
 func TimeoutMiddleware(app *fiber.App) {

@@ -1,6 +1,6 @@
 package presenter
 
-import "be-dashboard-nba/internal/domain/model"
+import "github.com/ABA-Developer/go-backend-template/internal/domain/model"
 
 type Access struct {
 	AccessID   int    `json:"access_id"`

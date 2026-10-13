@@ -1,14 +1,14 @@
-package user
+package usecase
 
 import (
 	"context"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/utils"
-	"be-dashboard-nba/internal/domain/model"
-	userPresenter "be-dashboard-nba/internal/presentation/user/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/user/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/utils"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -18,41 +18,41 @@ import (
 func TestReadUsersUseCase(t *testing.T) {
 	tests := []struct {
 		name    string
-		req     userPresenter.ReadUserRequest
+		req     appdto.ReadUserPayload
 		setup   func(userRepo *mockrepo.UserRepositoryMock)
 		wantErr error
 	}{
 		{
 			name: "positive/returns-pagination",
-			req:  userPresenter.ReadUserRequest{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
+			req:  appdto.ReadUserPayload{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
 			setup: func(userRepo *mockrepo.UserRepositoryMock) {
-				userRepo.On("ReadCountUserQuery", testifymock.Anything, testifymock.Anything).Return(3, nil).Once()
-				userRepo.On("ReadUsersQuery", testifymock.Anything, testifymock.Anything).Return([]model.User{{ID: "u1"}}, nil).Once()
+				userRepo.On("ReadCountUserQry", testifymock.Anything, testifymock.Anything).Return(3, nil).Once()
+				userRepo.On("ReadUsersQry", testifymock.Anything, testifymock.Anything).Return([]model.User{{ID: "u1"}}, nil).Once()
 			},
 		},
 		{
 			name: "negative/count-error",
-			req:  userPresenter.ReadUserRequest{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
+			req:  appdto.ReadUserPayload{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
 			setup: func(userRepo *mockrepo.UserRepositoryMock) {
-				userRepo.On("ReadCountUserQuery", testifymock.Anything, testifymock.Anything).Return(0, errors.New("db down")).Once()
+				userRepo.On("ReadCountUserQry", testifymock.Anything, testifymock.Anything).Return(0, errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
 		{
 			name: "negative/list-error",
-			req:  userPresenter.ReadUserRequest{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
+			req:  appdto.ReadUserPayload{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
 			setup: func(userRepo *mockrepo.UserRepositoryMock) {
-				userRepo.On("ReadCountUserQuery", testifymock.Anything, testifymock.Anything).Return(1, nil).Once()
-				userRepo.On("ReadUsersQuery", testifymock.Anything, testifymock.Anything).Return(nil, errors.New("db down")).Once()
+				userRepo.On("ReadCountUserQry", testifymock.Anything, testifymock.Anything).Return(1, nil).Once()
+				userRepo.On("ReadUsersQry", testifymock.Anything, testifymock.Anything).Return(nil, errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
 		{
 			name: "edge/default-limit-page",
-			req:  userPresenter.ReadUserRequest{},
+			req:  appdto.ReadUserPayload{},
 			setup: func(userRepo *mockrepo.UserRepositoryMock) {
-				userRepo.On("ReadCountUserQuery", testifymock.Anything, testifymock.Anything).Return(0, nil).Once()
-				userRepo.On("ReadUsersQuery", testifymock.Anything, testifymock.Anything).Return([]model.User{}, nil).Once()
+				userRepo.On("ReadCountUserQry", testifymock.Anything, testifymock.Anything).Return(0, nil).Once()
+				userRepo.On("ReadUsersQry", testifymock.Anything, testifymock.Anything).Return([]model.User{}, nil).Once()
 			},
 		},
 	}

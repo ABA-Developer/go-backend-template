@@ -1,13 +1,13 @@
-package menu_permission
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -29,8 +29,8 @@ func TestDeleteMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
-				menuPermissionRepo.On("DeleteMenuPermissionQuery", testifymock.Anything, 1).Return(nil).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
+				menuPermissionRepo.On("DeleteMenuPermissionQry", testifymock.Anything, 1).Return(nil).Once()
 			},
 		},
 		{
@@ -40,7 +40,7 @@ func TestDeleteMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 999).Return(model.MenuPermission{}, sql.ErrNoRows).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 999).Return(model.MenuPermission{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrMenuPermissionIdNotFound,
 		},
@@ -51,8 +51,8 @@ func TestDeleteMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
-				menuPermissionRepo.On("DeleteMenuPermissionQuery", testifymock.Anything, 1).Return(errors.New("delete failed")).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
+				menuPermissionRepo.On("DeleteMenuPermissionQry", testifymock.Anything, 1).Return(errors.New("delete failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
@@ -63,7 +63,7 @@ func TestDeleteMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback().WillReturnError(sql.ErrConnDone)
 
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 1).Return(model.MenuPermission{}, errors.New("read failed")).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 1).Return(model.MenuPermission{}, errors.New("read failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

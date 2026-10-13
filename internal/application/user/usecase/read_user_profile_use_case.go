@@ -1,8 +1,8 @@
-package user
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 	"context"
 	"database/sql"
 	"errors"
@@ -12,7 +12,7 @@ func (s *useCase) ReadUserProfileUseCase(ctx context.Context, userID string) (da
 
 	r := s.newUserRepo(s.db)
 
-	data, err = r.ReadUserProfileQuery(ctx, userID)
+	data, err = r.ReadUserProfileQry(ctx, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log(ctx).Warn().Str("id", userID).Msg("user profile not found")

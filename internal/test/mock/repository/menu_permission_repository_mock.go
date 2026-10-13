@@ -3,8 +3,8 @@ package mock
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/menu/menu-permission/dto"
-	"be-dashboard-nba/internal/domain/model"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -17,7 +17,7 @@ func NewMenuPermissionRepository() *MenuPermissionRepositoryMock {
 	return &MenuPermissionRepositoryMock{}
 }
 
-func (m *MenuPermissionRepositoryMock) ReadMenuPermissionListQuery(ctx context.Context, args dto.ReadMenuPermissionParams) ([]model.MenuPermission, error) {
+func (m *MenuPermissionRepositoryMock) ReadMenuPermissionListQry(ctx context.Context, args repoParams.ReadMenuPermissionParams) ([]model.MenuPermission, error) {
 	call := m.Called(ctx, args)
 
 	var r0 []model.MenuPermission
@@ -29,7 +29,7 @@ func (m *MenuPermissionRepositoryMock) ReadMenuPermissionListQuery(ctx context.C
 	return r0, call.Error(1)
 }
 
-func (m *MenuPermissionRepositoryMock) ReadMenuPermissionByIdQuery(ctx context.Context, id int) (model.MenuPermission, error) {
+func (m *MenuPermissionRepositoryMock) ReadMenuPermissionByIdQry(ctx context.Context, id int) (model.MenuPermission, error) {
 	call := m.Called(ctx, id)
 
 	var r0 model.MenuPermission
@@ -41,7 +41,7 @@ func (m *MenuPermissionRepositoryMock) ReadMenuPermissionByIdQuery(ctx context.C
 	return r0, call.Error(1)
 }
 
-func (m *MenuPermissionRepositoryMock) ReadMenuPermissionCount(ctx context.Context, args dto.ReadMenuPermissionParams) (int, error) {
+func (m *MenuPermissionRepositoryMock) ReadMenuPermissionCountQry(ctx context.Context, args repoParams.ReadMenuPermissionParams) (int, error) {
 	call := m.Called(ctx, args)
 
 	var r0 int
@@ -53,17 +53,17 @@ func (m *MenuPermissionRepositoryMock) ReadMenuPermissionCount(ctx context.Conte
 	return r0, call.Error(1)
 }
 
-func (m *MenuPermissionRepositoryMock) UpdateMenuPermissionQuery(ctx context.Context, params dto.UpdateMenuPermissionParams) error {
+func (m *MenuPermissionRepositoryMock) UpdateMenuPermissionQry(ctx context.Context, params repoParams.UpdateMenuPermissionParams) error {
 	call := m.Called(ctx, params)
 	return call.Error(0)
 }
 
-func (m *MenuPermissionRepositoryMock) CreateMenuPermissionQuery(ctx context.Context, params dto.CreateMenuPermissionParams) error {
+func (m *MenuPermissionRepositoryMock) CreateMenuPermissionQry(ctx context.Context, params repoParams.CreateMenuPermissionParams) error {
 	call := m.Called(ctx, params)
 	return call.Error(0)
 }
 
-func (m *MenuPermissionRepositoryMock) DeleteMenuPermissionQuery(ctx context.Context, id int) error {
+func (m *MenuPermissionRepositoryMock) DeleteMenuPermissionQry(ctx context.Context, id int) error {
 	call := m.Called(ctx, id)
 	return call.Error(0)
 }

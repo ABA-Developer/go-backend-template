@@ -1,11 +1,11 @@
-package role
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/role/mapper"
-	shareddto "be-dashboard-nba/internal/application/shared/dto"
-	"be-dashboard-nba/internal/domain/model"
-	rolePresenter "be-dashboard-nba/internal/presentation/role/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/role/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/role/mapper"
+	shareddto "github.com/ABA-Developer/go-backend-template/internal/application/shared/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 	"context"
 	"math"
 
@@ -14,13 +14,13 @@ import (
 
 func (s *useCase) ReadRolesUseCase(
 	ctx context.Context,
-	args rolePresenter.ReadRolesRequest,
+	args appdto.ReadRolesPayload,
 ) (data model.RolePaginationResponse, err error) {
 	r := s.newRoleRepo(s.db)
 
 	params := mapper.ToReadRolesParams(&args)
 
-	totalItems, err := r.ReadRolesCount(ctx, params)
+	totalItems, err := r.ReadRolesCountQry(ctx, params)
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error query get role count")
 		err = errors.WithStack(constant.ErrUnknownSource)
@@ -40,7 +40,7 @@ func (s *useCase) ReadRolesUseCase(
 		HasPrev:    hasPrev,
 	}
 
-	rolesData, err := r.ReadRolesQuery(ctx, params)
+	rolesData, err := r.ReadRolesQry(ctx, params)
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error query read roles")
 		err = errors.WithStack(constant.ErrUnknownSource)

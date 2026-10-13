@@ -1,14 +1,14 @@
-package role
+package usecase
 
 import (
 	"context"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/utils"
-	"be-dashboard-nba/internal/domain/model"
-	rolePresenter "be-dashboard-nba/internal/presentation/role/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/role/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/utils"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -18,41 +18,41 @@ import (
 func TestReadRolesUseCase(t *testing.T) {
 	tests := []struct {
 		name    string
-		req     rolePresenter.ReadRolesRequest
+		req     appdto.ReadRolesPayload
 		setup   func(roleRepo *mockrepo.RoleRepositoryMock)
 		wantErr error
 	}{
 		{
 			name: "positive/returns-pagination",
-			req:  rolePresenter.ReadRolesRequest{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
+			req:  appdto.ReadRolesPayload{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
 			setup: func(roleRepo *mockrepo.RoleRepositoryMock) {
-				roleRepo.On("ReadRolesCount", testifymock.Anything, testifymock.Anything).Return(3, nil).Once()
-				roleRepo.On("ReadRolesQuery", testifymock.Anything, testifymock.Anything).Return([]model.Role{{ID: 1}}, nil).Once()
+				roleRepo.On("ReadRolesCountQry", testifymock.Anything, testifymock.Anything).Return(3, nil).Once()
+				roleRepo.On("ReadRolesQry", testifymock.Anything, testifymock.Anything).Return([]model.Role{{ID: 1}}, nil).Once()
 			},
 		},
 		{
 			name: "negative/count-error",
-			req:  rolePresenter.ReadRolesRequest{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
+			req:  appdto.ReadRolesPayload{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
 			setup: func(roleRepo *mockrepo.RoleRepositoryMock) {
-				roleRepo.On("ReadRolesCount", testifymock.Anything, testifymock.Anything).Return(0, errors.New("db down")).Once()
+				roleRepo.On("ReadRolesCountQry", testifymock.Anything, testifymock.Anything).Return(0, errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
 		{
 			name: "negative/list-error",
-			req:  rolePresenter.ReadRolesRequest{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
+			req:  appdto.ReadRolesPayload{PaginationPayload: utils.PaginationPayload{Limit: 2, Page: 1}},
 			setup: func(roleRepo *mockrepo.RoleRepositoryMock) {
-				roleRepo.On("ReadRolesCount", testifymock.Anything, testifymock.Anything).Return(1, nil).Once()
-				roleRepo.On("ReadRolesQuery", testifymock.Anything, testifymock.Anything).Return(nil, errors.New("db down")).Once()
+				roleRepo.On("ReadRolesCountQry", testifymock.Anything, testifymock.Anything).Return(1, nil).Once()
+				roleRepo.On("ReadRolesQry", testifymock.Anything, testifymock.Anything).Return(nil, errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
 		{
 			name: "edge/default-limit-page",
-			req:  rolePresenter.ReadRolesRequest{},
+			req:  appdto.ReadRolesPayload{},
 			setup: func(roleRepo *mockrepo.RoleRepositoryMock) {
-				roleRepo.On("ReadRolesCount", testifymock.Anything, testifymock.Anything).Return(int64(0), nil).Once()
-				roleRepo.On("ReadRolesQuery", testifymock.Anything, testifymock.Anything).Return([]model.Role{}, nil).Once()
+				roleRepo.On("ReadRolesCountQry", testifymock.Anything, testifymock.Anything).Return(int64(0), nil).Once()
+				roleRepo.On("ReadRolesQry", testifymock.Anything, testifymock.Anything).Return([]model.Role{}, nil).Once()
 			},
 		},
 	}

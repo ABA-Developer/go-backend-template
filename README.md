@@ -1,6 +1,6 @@
 # Go Backend Template
 
-Backend template in Go with a clean architecture structure inspired by the NATA HR service pattern.
+Backend template in Go with the NATA HR transaction service layer structure and Fiber as the HTTP framework.
 
 ## Structure
 
@@ -13,20 +13,24 @@ database/
 docs/
 internal/
   application/
-    shared/dto/
     auth/
+      dto/
+      mapper/
+      usecase/
     menu/
+      menu-permission/
     role/
     user/
-    ...
+    shared/dto/
   domain/
     contract/
-      external/
       repository/
+        params/
       usecase/
     model/
   infrastructure/
     api/
+      routes/
     database/
     logger/
     repository/
@@ -35,16 +39,25 @@ internal/
       env/
     validator/
   presentation/
-    handler/
+    auth/
+      handler/
+      mapper/
+      presenter/
+    menu/
+    role/
+    user/
     middleware/
-    presenter/
+    request/
+    response/
   test/
     mock/
-      external/
       repository/
-      usecase/
 scripts/
 ```
+
+Handlers convert presenter requests to application DTOs through presentation mappers.
+Use cases convert application DTOs to repository parameters through application mappers.
+Repository contracts use types from `internal/domain/contract/repository/params`.
 
 ## Environment
 

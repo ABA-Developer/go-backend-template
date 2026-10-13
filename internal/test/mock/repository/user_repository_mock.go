@@ -3,8 +3,8 @@ package mock
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/user/dto"
-	"be-dashboard-nba/internal/domain/model"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -15,7 +15,7 @@ type UserRepositoryMock struct {
 
 func NewUserRepository() *UserRepositoryMock { return &UserRepositoryMock{} }
 
-func (m *UserRepositoryMock) CreateUserQuery(ctx context.Context, args dto.CreateUserParams) (string, error) {
+func (m *UserRepositoryMock) CreateUserQry(ctx context.Context, args repoParams.CreateUserParams) (string, error) {
 	call := m.Called(ctx, args)
 
 	var r0 string
@@ -27,27 +27,27 @@ func (m *UserRepositoryMock) CreateUserQuery(ctx context.Context, args dto.Creat
 	return r0, call.Error(1)
 }
 
-func (m *UserRepositoryMock) CreateUserRoleQuery(ctx context.Context, roleID int, userID string) error {
+func (m *UserRepositoryMock) CreateUserRoleQry(ctx context.Context, roleID int, userID string) error {
 	call := m.Called(ctx, roleID, userID)
 	return call.Error(0)
 }
 
-func (m *UserRepositoryMock) UpdateUserQuery(ctx context.Context, args dto.UpdateUserParams) error {
+func (m *UserRepositoryMock) UpdateUserQry(ctx context.Context, args repoParams.UpdateUserParams) error {
 	call := m.Called(ctx, args)
 	return call.Error(0)
 }
 
-func (m *UserRepositoryMock) UpdateUserRoleQuery(ctx context.Context, roleID int, userID string) error {
+func (m *UserRepositoryMock) UpdateUserRoleQry(ctx context.Context, roleID int, userID string) error {
 	call := m.Called(ctx, roleID, userID)
 	return call.Error(0)
 }
 
-func (m *UserRepositoryMock) DeleteUserQuery(ctx context.Context, id string) error {
+func (m *UserRepositoryMock) DeleteUserQry(ctx context.Context, id string) error {
 	call := m.Called(ctx, id)
 	return call.Error(0)
 }
 
-func (m *UserRepositoryMock) ReadUsersQuery(ctx context.Context, args dto.ReadListUserParams) ([]model.User, error) {
+func (m *UserRepositoryMock) ReadUsersQry(ctx context.Context, args repoParams.ReadListUserParams) ([]model.User, error) {
 	call := m.Called(ctx, args)
 
 	var r0 []model.User
@@ -59,7 +59,7 @@ func (m *UserRepositoryMock) ReadUsersQuery(ctx context.Context, args dto.ReadLi
 	return r0, call.Error(1)
 }
 
-func (m *UserRepositoryMock) ReadCountUserQuery(ctx context.Context, args dto.ReadListUserParams) (int, error) {
+func (m *UserRepositoryMock) ReadCountUserQry(ctx context.Context, args repoParams.ReadListUserParams) (int, error) {
 	call := m.Called(ctx, args)
 
 	var r0 int
@@ -71,7 +71,7 @@ func (m *UserRepositoryMock) ReadCountUserQuery(ctx context.Context, args dto.Re
 	return r0, call.Error(1)
 }
 
-func (m *UserRepositoryMock) ReadUserByIDQuery(ctx context.Context, id string) (model.User, error) {
+func (m *UserRepositoryMock) ReadUserByIDQry(ctx context.Context, id string) (model.User, error) {
 	call := m.Called(ctx, id)
 
 	var r0 model.User
@@ -83,7 +83,7 @@ func (m *UserRepositoryMock) ReadUserByIDQuery(ctx context.Context, id string) (
 	return r0, call.Error(1)
 }
 
-func (m *UserRepositoryMock) ReadUserProfileQuery(ctx context.Context, id string) (model.User, error) {
+func (m *UserRepositoryMock) ReadUserProfileQry(ctx context.Context, id string) (model.User, error) {
 	call := m.Called(ctx, id)
 
 	var r0 model.User
@@ -95,12 +95,12 @@ func (m *UserRepositoryMock) ReadUserProfileQuery(ctx context.Context, id string
 	return r0, call.Error(1)
 }
 
-func (m *UserRepositoryMock) IsUserEmailExistsQuery(ctx context.Context, email string) (bool, error) {
+func (m *UserRepositoryMock) IsUserEmailExistsQry(ctx context.Context, email string) (bool, error) {
 	call := m.Called(ctx, email)
 	return call.Bool(0), call.Error(1)
 }
 
-func (m *UserRepositoryMock) IsUpdateUserEmailExistsQuery(ctx context.Context, email, id string) (bool, error) {
+func (m *UserRepositoryMock) IsUpdateUserEmailExistsQry(ctx context.Context, email, id string) (bool, error) {
 	call := m.Called(ctx, email, id)
 	return call.Bool(0), call.Error(1)
 }

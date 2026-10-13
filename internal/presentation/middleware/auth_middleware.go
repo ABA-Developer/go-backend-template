@@ -7,14 +7,14 @@ import (
 	"net/http"
 	"strings"
 
-	"be-dashboard-nba/internal/infrastructure/logger"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
 	"github.com/gofiber/fiber/v2"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/jwt"
-	contract "be-dashboard-nba/internal/domain/contract/usecase"
-	db "be-dashboard-nba/internal/infrastructure/database"
-	auth "be-dashboard-nba/internal/presentation/auth"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/jwt"
+	contract "github.com/ABA-Developer/go-backend-template/internal/domain/contract/usecase"
+	db "github.com/ABA-Developer/go-backend-template/internal/infrastructure/database"
+	auth "github.com/ABA-Developer/go-backend-template/internal/presentation/auth"
 )
 
 type EnsureToken struct {

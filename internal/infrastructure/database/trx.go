@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"be-dashboard-nba/constant"
+	"github.com/ABA-Developer/go-backend-template/constant"
 
 	"github.com/pkg/errors"
 )

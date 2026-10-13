@@ -4,13 +4,13 @@ import (
 	"context"
 	"time"
 
-	"be-dashboard-nba/internal/infrastructure/logger"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
 	"github.com/gofiber/fiber/v2"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/jwt"
-	db "be-dashboard-nba/internal/infrastructure/database"
-	repository "be-dashboard-nba/internal/infrastructure/repository/auth"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/jwt"
+	db "github.com/ABA-Developer/go-backend-template/internal/infrastructure/database"
+	repository "github.com/ABA-Developer/go-backend-template/internal/infrastructure/repository/auth"
 )
 
 type Auth struct {
@@ -42,9 +42,9 @@ func (a *Auth) SetClaims(claims *jwt.AccessTokenPayload) {
 }
 
 func (a *Auth) ValidateSession(ctx context.Context) (err error) {
-	r := repository.NewRepo(a.db)
+	r := repository.NewQuery(a.db)
 
-	session, err := r.ReadDetailSessionQuery(ctx, a.claims.SessionID)
+	session, err := r.ReadDetailSessionQry(ctx, a.claims.SessionID)
 	if err != nil {
 		logger.WithContext(ctx).Error(err, "error read session by id : "+a.claims.SessionID)
 		return
@@ -57,4 +57,3 @@ func (a *Auth) ValidateSession(ctx context.Context) (err error) {
 
 	return
 }
-

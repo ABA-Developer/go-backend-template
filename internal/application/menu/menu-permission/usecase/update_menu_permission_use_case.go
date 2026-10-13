@@ -1,16 +1,16 @@
-package menu_permission
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/menu-permission/mapper"
-	menuPermissionPresenter "be-dashboard-nba/internal/presentation/menu/menu-permission/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/mapper"
 	"context"
 	"database/sql"
 
 	"github.com/pkg/errors"
 )
 
-func (s *useCase) UpdateMenuPermissionUseCase(ctx context.Context, payload menuPermissionPresenter.UpdateMenuPermissionRequest, userID string, menuPermissionID int) (err error) {
+func (s *useCase) UpdateMenuPermissionUseCase(ctx context.Context, payload appdto.UpdateMenuPermissionPayload, userID string, menuPermissionID int) (err error) {
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error to begin transaction")
@@ -30,7 +30,7 @@ func (s *useCase) UpdateMenuPermissionUseCase(ctx context.Context, payload menuP
 
 	r := s.newMenuPermissionRepo(tx)
 
-	_, err = r.ReadMenuPermissionByIdQuery(ctx, menuPermissionID)
+	_, err = r.ReadMenuPermissionByIdQry(ctx, menuPermissionID)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -43,7 +43,7 @@ func (s *useCase) UpdateMenuPermissionUseCase(ctx context.Context, payload menuP
 		return
 	}
 
-	err = r.UpdateMenuPermissionQuery(ctx, mapper.ToUpdateMenuPermissionParams(&payload, userID, menuPermissionID))
+	err = r.UpdateMenuPermissionQry(ctx, mapper.ToUpdateMenuPermissionParams(&payload, userID, menuPermissionID))
 	if err != nil {
 		log(ctx).Error().Err(err).Interface("request_payload", payload).Msg("error to update menu permission")
 		err = errors.WithStack(constant.ErrUnknownSource)

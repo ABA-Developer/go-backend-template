@@ -3,8 +3,8 @@ package mock
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/menu/dto"
-	"be-dashboard-nba/internal/domain/model"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 
 	"github.com/stretchr/testify/mock"
 )
@@ -15,7 +15,7 @@ type MenuRepositoryMock struct {
 
 func NewMenuRepository() *MenuRepositoryMock { return &MenuRepositoryMock{} }
 
-func (m *MenuRepositoryMock) ReadSidebarMenuQuery(ctx context.Context, userID string) ([]model.Menu, error) {
+func (m *MenuRepositoryMock) ReadSidebarMenuQry(ctx context.Context, userID string) ([]model.Menu, error) {
 	call := m.Called(ctx, userID)
 
 	var r0 []model.Menu
@@ -27,7 +27,7 @@ func (m *MenuRepositoryMock) ReadSidebarMenuQuery(ctx context.Context, userID st
 	return r0, call.Error(1)
 }
 
-func (m *MenuRepositoryMock) ReadListMenuQuery(ctx context.Context, params dto.ReadListMenuParams) ([]model.Menu, error) {
+func (m *MenuRepositoryMock) ReadListMenuQry(ctx context.Context, params repoParams.ReadListMenuParams) ([]model.Menu, error) {
 	call := m.Called(ctx, params)
 
 	var r0 []model.Menu
@@ -39,7 +39,7 @@ func (m *MenuRepositoryMock) ReadListMenuQuery(ctx context.Context, params dto.R
 	return r0, call.Error(1)
 }
 
-func (m *MenuRepositoryMock) ReadCountMenuQuery(ctx context.Context, params dto.ReadListMenuParams) (int64, error) {
+func (m *MenuRepositoryMock) ReadCountMenuQry(ctx context.Context, params repoParams.ReadListMenuParams) (int64, error) {
 	call := m.Called(ctx, params)
 
 	var r0 int64
@@ -51,7 +51,7 @@ func (m *MenuRepositoryMock) ReadCountMenuQuery(ctx context.Context, params dto.
 	return r0, call.Error(1)
 }
 
-func (m *MenuRepositoryMock) ReadParentMenuQuery(ctx context.Context) ([]model.Menu, error) {
+func (m *MenuRepositoryMock) ReadParentMenuQry(ctx context.Context) ([]model.Menu, error) {
 	call := m.Called(ctx)
 
 	var r0 []model.Menu
@@ -63,22 +63,22 @@ func (m *MenuRepositoryMock) ReadParentMenuQuery(ctx context.Context) ([]model.M
 	return r0, call.Error(1)
 }
 
-func (m *MenuRepositoryMock) CreateMenuQuery(ctx context.Context, params dto.CreateMenuParams) error {
+func (m *MenuRepositoryMock) CreateMenuQry(ctx context.Context, params repoParams.CreateMenuParams) error {
 	call := m.Called(ctx, params)
 	return call.Error(0)
 }
 
-func (m *MenuRepositoryMock) UpdateMenuQuery(ctx context.Context, params dto.UpdateMenuParams) error {
+func (m *MenuRepositoryMock) UpdateMenuQry(ctx context.Context, params repoParams.UpdateMenuParams) error {
 	call := m.Called(ctx, params)
 	return call.Error(0)
 }
 
-func (m *MenuRepositoryMock) DeleteMenuQuery(ctx context.Context, menuID int) error {
+func (m *MenuRepositoryMock) DeleteMenuQry(ctx context.Context, menuID int) error {
 	call := m.Called(ctx, menuID)
 	return call.Error(0)
 }
 
-func (m *MenuRepositoryMock) ReadMenuByIDQuery(ctx context.Context, menuID int) (model.Menu, error) {
+func (m *MenuRepositoryMock) ReadMenuByIDQry(ctx context.Context, menuID int) (model.Menu, error) {
 	call := m.Called(ctx, menuID)
 
 	var r0 model.Menu
@@ -90,7 +90,7 @@ func (m *MenuRepositoryMock) ReadMenuByIDQuery(ctx context.Context, menuID int) 
 	return r0, call.Error(1)
 }
 
-func (m *MenuRepositoryMock) ReadSortForGroup(ctx context.Context, group string) (int, error) {
+func (m *MenuRepositoryMock) ReadSortForGroupQry(ctx context.Context, group string) (int, error) {
 	call := m.Called(ctx, group)
 
 	var r0 int
@@ -102,7 +102,7 @@ func (m *MenuRepositoryMock) ReadSortForGroup(ctx context.Context, group string)
 	return r0, call.Error(1)
 }
 
-func (m *MenuRepositoryMock) ReadNextSortForParent(ctx context.Context, parentID int32) (int, error) {
+func (m *MenuRepositoryMock) ReadNextSortForParentQry(ctx context.Context, parentID int32) (int, error) {
 	call := m.Called(ctx, parentID)
 
 	var r0 int
@@ -114,12 +114,12 @@ func (m *MenuRepositoryMock) ReadNextSortForParent(ctx context.Context, parentID
 	return r0, call.Error(1)
 }
 
-func (m *MenuRepositoryMock) UpdateMenuSortQuery(ctx context.Context, params dto.UpdateMenuSortParams) error {
+func (m *MenuRepositoryMock) UpdateMenuSortQry(ctx context.Context, params repoParams.UpdateMenuSortParams) error {
 	call := m.Called(ctx, params)
 	return call.Error(0)
 }
 
-func (m *MenuRepositoryMock) ReadNextSortForParentAndGroup(ctx context.Context, parentID int32, group string) (int, error) {
+func (m *MenuRepositoryMock) ReadNextSortForParentAndGroupQry(ctx context.Context, parentID int32, group string) (int, error) {
 	call := m.Called(ctx, parentID, group)
 
 	var r0 int
@@ -131,7 +131,7 @@ func (m *MenuRepositoryMock) ReadNextSortForParentAndGroup(ctx context.Context, 
 	return r0, call.Error(1)
 }
 
-func (m *MenuRepositoryMock) CountMenuChildren(ctx context.Context, menuID int) (int, error) {
+func (m *MenuRepositoryMock) CountMenuChildrenQry(ctx context.Context, menuID int) (int, error) {
 	call := m.Called(ctx, menuID)
 
 	var r0 int
@@ -143,7 +143,7 @@ func (m *MenuRepositoryMock) CountMenuChildren(ctx context.Context, menuID int) 
 	return r0, call.Error(1)
 }
 
-func (m *MenuRepositoryMock) UpdateChildrenGroup(ctx context.Context, parentID int, newGroup string) error {
+func (m *MenuRepositoryMock) UpdateChildrenGroupQry(ctx context.Context, parentID int, newGroup string) error {
 	call := m.Called(ctx, parentID, newGroup)
 	return call.Error(0)
 }

@@ -1,12 +1,12 @@
-package auth
+package usecase
 
 import (
 	"context"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/jwt"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/jwt"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -29,8 +29,8 @@ func TestLogoutUseCase(t *testing.T) {
 			},
 			ip: "127.0.0.1",
 			setup: func(authRepo *mockrepo.AuthRepositoryMock) {
-				authRepo.On("DeleteSessionQuery", testifymock.Anything, "s1").Return(nil).Once()
-				authRepo.On("CreateLoginRecord", testifymock.Anything, testifymock.Anything).Return(nil).Once()
+				authRepo.On("DeleteSessionQry", testifymock.Anything, "s1").Return(nil).Once()
+				authRepo.On("CreateLoginRecordQry", testifymock.Anything, testifymock.Anything).Return(nil).Once()
 			},
 		},
 		{
@@ -41,7 +41,7 @@ func TestLogoutUseCase(t *testing.T) {
 			},
 			ip: "127.0.0.1",
 			setup: func(authRepo *mockrepo.AuthRepositoryMock) {
-				authRepo.On("DeleteSessionQuery", testifymock.Anything, "s1").Return(errors.New("db down")).Once()
+				authRepo.On("DeleteSessionQry", testifymock.Anything, "s1").Return(errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
@@ -53,8 +53,8 @@ func TestLogoutUseCase(t *testing.T) {
 			},
 			ip: "127.0.0.1",
 			setup: func(authRepo *mockrepo.AuthRepositoryMock) {
-				authRepo.On("DeleteSessionQuery", testifymock.Anything, "s1").Return(nil).Once()
-				authRepo.On("CreateLoginRecord", testifymock.Anything, testifymock.Anything).Return(errors.New("log down")).Once()
+				authRepo.On("DeleteSessionQry", testifymock.Anything, "s1").Return(nil).Once()
+				authRepo.On("CreateLoginRecordQry", testifymock.Anything, testifymock.Anything).Return(errors.New("log down")).Once()
 			},
 		},
 	}

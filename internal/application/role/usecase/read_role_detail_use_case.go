@@ -1,8 +1,8 @@
-package role
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 	"context"
 	"database/sql"
 
@@ -12,7 +12,7 @@ import (
 func (s *useCase) ReadRoleDetailUseCase(ctx context.Context, roleID int) (data model.Role, err error) {
 	r := s.newRoleRepo(s.db)
 
-	data, err = r.ReadRoleByIDQuery(ctx, roleID)
+	data, err = r.ReadRoleByIDQry(ctx, roleID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log(ctx).Warn().Int("Id", roleID).Msg("role detail not found")

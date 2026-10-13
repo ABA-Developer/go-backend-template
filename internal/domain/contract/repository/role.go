@@ -3,19 +3,19 @@ package repository
 import (
 	"context"
 
-	"be-dashboard-nba/internal/application/role/dto"
-	"be-dashboard-nba/internal/domain/model"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 )
 
 type RoleRepository interface {
-	ReadRolesQuery(ctx context.Context, args dto.ReadRolesParams) (data []model.Role, err error)
-	ReadRolesCount(ctx context.Context, args dto.ReadRolesParams) (count int, err error)
-	ReadRoleByIDQuery(ctx context.Context, roleID int) (data model.Role, err error)
-	CreateRoleQuery(ctx context.Context, params dto.CreateRoleParams) (err error)
-	UpdateRoleQuery(ctx context.Context, params dto.UpdateRoleParams) (err error)
-	DeleteRoleQuery(ctx context.Context, roleID int) (err error)
-	ReadRoleAccessQuery(ctx context.Context, args dto.ReadRoleAccessParams) (data []model.RoleAccessResponse, err error)
-	ReadRoleAccessCount(ctx context.Context, args dto.ReadRoleAccessParams) (count int, err error)
-	DeleteRoleAccess(ctx context.Context, payload dto.UpdateRoleMenuPermission) (err error)
-	CreateRoleAccess(ctx context.Context, payload dto.UpdateRoleMenuPermission) (err error)
+	ReadRolesQry(ctx context.Context, args repoParams.ReadRolesParams) (data []model.Role, err error)
+	ReadRolesCountQry(ctx context.Context, args repoParams.ReadRolesParams) (count int, err error)
+	ReadRoleByIDQry(ctx context.Context, roleID int) (data model.Role, err error)
+	CreateRoleQry(ctx context.Context, params repoParams.CreateRoleParams) (err error)
+	UpdateRoleQry(ctx context.Context, params repoParams.UpdateRoleParams) (err error)
+	DeleteRoleQry(ctx context.Context, roleID int) (err error)
+	ReadRoleAccessQry(ctx context.Context, args repoParams.ReadRoleAccessParams) (data []model.RoleAccessResponse, err error)
+	ReadRoleAccessCountQry(ctx context.Context, args repoParams.ReadRoleAccessParams) (count int, err error)
+	DeleteRoleAccessQry(ctx context.Context, payload repoParams.UpdateRoleMenuPermission) (err error)
+	CreateRoleAccessQry(ctx context.Context, payload repoParams.UpdateRoleMenuPermission) (err error)
 }

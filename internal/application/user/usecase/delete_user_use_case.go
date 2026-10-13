@@ -1,7 +1,7 @@
-package user
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
+	"github.com/ABA-Developer/go-backend-template/constant"
 	"context"
 	"database/sql"
 	"fmt"
@@ -34,7 +34,7 @@ func (s *useCase) DeleteUserUseCase(ctx context.Context, userID string, deltedBy
 	}()
 	r := s.newUserRepo(tx)
 
-	existingUser, err := r.ReadUserByIDQuery(ctx, userID)
+	existingUser, err := r.ReadUserByIDQry(ctx, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log(ctx).Warn().Str("id", userID).Msg("user detail not found")
@@ -51,7 +51,7 @@ func (s *useCase) DeleteUserUseCase(ctx context.Context, userID string, deltedBy
 		return
 	}
 
-	err = r.DeleteUserQuery(ctx, userID)
+	err = r.DeleteUserQry(ctx, userID)
 	if err != nil {
 		log(ctx).Error().Err(err).Str("id", userID).Msg("error to delete user")
 		err = errors.WithStack(constant.ErrUnknownSource)

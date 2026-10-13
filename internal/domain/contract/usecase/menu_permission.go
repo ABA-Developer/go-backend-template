@@ -3,14 +3,14 @@ package usecase
 import (
 	"context"
 
-	"be-dashboard-nba/internal/domain/model"
-	menuPermissionPresenter "be-dashboard-nba/internal/presentation/menu/menu-permission/presenter"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 )
 
 type MenuPermissionUseCase interface {
-	ReadMenuPermissionUseCase(ctx context.Context, args menuPermissionPresenter.ReadMenuPermissionListRequest, MenuID int) (data model.MenuPermissionPaginationResponse, err error)
-	CreateMenuPermissionUseCase(ctx context.Context, payload menuPermissionPresenter.CreateMenuPermissionRequest, userID string, menuID int) (err error)
-	UpdateMenuPermissionUseCase(ctx context.Context, payload menuPermissionPresenter.UpdateMenuPermissionRequest, userID string, menuPermissionID int) (err error)
+	ReadMenuPermissionUseCase(ctx context.Context, args appdto.ReadMenuPermissionListPayload, MenuID int) (data model.MenuPermissionPaginationResponse, err error)
+	CreateMenuPermissionUseCase(ctx context.Context, payload appdto.CreateMenuPermissionPayload, userID string, menuID int) (err error)
+	UpdateMenuPermissionUseCase(ctx context.Context, payload appdto.UpdateMenuPermissionPayload, userID string, menuPermissionID int) (err error)
 	ReadMenuPermissionDetailUseCase(ctx context.Context, MenuPermissionID int) (data model.MenuPermission, err error)
 	DeleteMenuPermissionUseCase(ctx context.Context, menuPermissionID int) (err error)
 }

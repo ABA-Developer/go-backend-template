@@ -1,12 +1,12 @@
 package mapper
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/role/dto"
-	rolePresenter "be-dashboard-nba/internal/presentation/role/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/role/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
 )
 
-func ToReadRolesParams(req *rolePresenter.ReadRolesRequest) dto.ReadRolesParams {
+func ToReadRolesParams(req *dto.ReadRolesPayload) repoParams.ReadRolesParams {
 	req.Init()
 	if req.Limit <= 0 {
 		req.Limit = constant.DefaultLimit
@@ -16,7 +16,7 @@ func ToReadRolesParams(req *rolePresenter.ReadRolesRequest) dto.ReadRolesParams 
 		req.Page = constant.DefaultPage
 	}
 
-	return dto.ReadRolesParams{
+	return repoParams.ReadRolesParams{
 		SetSearch: req.SetSearch,
 		Search:    req.Search,
 		Order:     req.Order,

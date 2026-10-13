@@ -1,7 +1,7 @@
-package role
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
+	"github.com/ABA-Developer/go-backend-template/constant"
 	"context"
 	"database/sql"
 
@@ -29,7 +29,7 @@ func (s *useCase) DeleteRoleUseCase(ctx context.Context, roleID int) (err error)
 
 	r := s.newRoleRepo(tx)
 
-	_, err = r.ReadRoleByIDQuery(ctx, roleID)
+	_, err = r.ReadRoleByIDQry(ctx, roleID)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -42,7 +42,7 @@ func (s *useCase) DeleteRoleUseCase(ctx context.Context, roleID int) (err error)
 		return
 	}
 
-	err = r.DeleteRoleQuery(ctx, roleID)
+	err = r.DeleteRoleQry(ctx, roleID)
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error to delete role")
 		err = errors.WithStack(constant.ErrUnknownSource)

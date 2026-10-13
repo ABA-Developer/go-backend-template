@@ -1,7 +1,7 @@
 package presenter
 
 import (
-	"be-dashboard-nba/internal/domain/model"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 )
 
 type ReadUserProfileUseCaseResponse struct {

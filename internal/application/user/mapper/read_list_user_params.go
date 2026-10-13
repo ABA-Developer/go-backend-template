@@ -1,12 +1,12 @@
 package mapper
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/user/dto"
-	userPresenter "be-dashboard-nba/internal/presentation/user/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/user/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
 )
 
-func ToReadListUserParams(req *userPresenter.ReadUserRequest) dto.ReadListUserParams {
+func ToReadListUserParams(req *dto.ReadUserPayload) repoParams.ReadListUserParams {
 	req.Init()
 
 	if req.Limit <= 0 {
@@ -18,7 +18,7 @@ func ToReadListUserParams(req *userPresenter.ReadUserRequest) dto.ReadListUserPa
 	}
 
 	// Preserve existing behavior: Offset comes from PaginationPayload.Init().
-	return dto.ReadListUserParams{
+	return repoParams.ReadListUserParams{
 		SetSearch: req.SetSearch,
 		Search:    req.Search,
 		Order:     req.Order,

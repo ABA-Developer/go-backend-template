@@ -1,15 +1,15 @@
-package menu_permission
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/menu-permission/dto"
-	"be-dashboard-nba/internal/domain/model"
-	menuPermissionPresenter "be-dashboard-nba/internal/presentation/menu/menu-permission/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -21,14 +21,14 @@ func TestCreateMenuPermissionUseCase(t *testing.T) {
 	tests := []struct {
 		name    string
 		menuID  int
-		req     menuPermissionPresenter.CreateMenuPermissionRequest
+		req     dto.CreateMenuPermissionPayload
 		setup   func(m sqlmock.Sqlmock, menuRepo *mockrepo.MenuRepositoryMock, menuPermissionRepo *mockrepo.MenuPermissionRepositoryMock)
 		wantErr error
 	}{
 		{
 			name:   "positive/create-menu-permission",
 			menuID: 1,
-			req: menuPermissionPresenter.CreateMenuPermissionRequest{
+			req: dto.CreateMenuPermissionPayload{
 				Code:       "R",
 				ActionName: "read",
 			},
@@ -36,11 +36,11 @@ func TestCreateMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 1).Return(model.Menu{ID: 1}, nil).Once()
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 1).Return(model.Menu{ID: 1}, nil).Once()
 				menuPermissionRepo.
-					On("CreateMenuPermissionQuery", testifymock.Anything, testifymock.Anything).
+					On("CreateMenuPermissionQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) {
-						params := args.Get(1).(dto.CreateMenuPermissionParams)
+						params := args.Get(1).(repoParams.CreateMenuPermissionParams)
 						assert.Equal(t, "R", params.Code)
 						assert.Equal(t, "read", params.ActionName)
 						assert.Equal(t, 1, params.MenuID)
@@ -57,7 +57,7 @@ func TestCreateMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 999).Return(model.Menu{}, sql.ErrNoRows).Once()
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 999).Return(model.Menu{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrMenuIdNotFound,
 		},
@@ -68,8 +68,8 @@ func TestCreateMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 1).Return(model.Menu{ID: 1}, nil).Once()
-				menuPermissionRepo.On("CreateMenuPermissionQuery", testifymock.Anything, testifymock.Anything).Return(errors.New("insert failed")).Once()
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 1).Return(model.Menu{ID: 1}, nil).Once()
+				menuPermissionRepo.On("CreateMenuPermissionQry", testifymock.Anything, testifymock.Anything).Return(errors.New("insert failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
@@ -80,7 +80,7 @@ func TestCreateMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback().WillReturnError(sql.ErrConnDone)
 
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 1).Return(model.Menu{}, errors.New("read failed")).Once()
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 1).Return(model.Menu{}, errors.New("read failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

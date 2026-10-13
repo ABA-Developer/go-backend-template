@@ -1,8 +1,8 @@
-package menu
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/infrastructure/logger"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
 	"context"
 	"database/sql"
 
@@ -29,7 +29,7 @@ func (s *useCase) DeleteMenuUseCase(ctx context.Context, menuID int) (err error)
 
 	r := s.newMenuRepo(tx)
 
-	_, err = r.ReadMenuByIDQuery(ctx, menuID)
+	_, err = r.ReadMenuByIDQry(ctx, menuID)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -42,7 +42,7 @@ func (s *useCase) DeleteMenuUseCase(ctx context.Context, menuID int) (err error)
 		return
 	}
 
-	err = r.DeleteMenuQuery(ctx, menuID)
+	err = r.DeleteMenuQry(ctx, menuID)
 
 	if err != nil {
 		logger.WithContext(ctx).Error().Err(err).Msg("error delete menu")

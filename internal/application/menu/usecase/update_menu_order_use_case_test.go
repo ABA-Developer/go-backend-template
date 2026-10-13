@@ -1,13 +1,13 @@
-package menu
+package usecase
 
 import (
 	"context"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/dto"
-	menuPresenter "be-dashboard-nba/internal/presentation/menu/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -18,14 +18,14 @@ import (
 func TestUpdateMenuOrderUseCase(t *testing.T) {
 	tests := []struct {
 		name    string
-		req     menuPresenter.UpdateMenuOrderRequest
+		req     dto.UpdateMenuOrderPayload
 		setup   func(m sqlmock.Sqlmock, menuRepo *mockrepo.MenuRepositoryMock, updateSortCalls *int, updateChildCalls *int)
 		wantErr error
 		assert  func(menuRepo *mockrepo.MenuRepositoryMock, updateSortCalls int, updateChildCalls int)
 	}{
 		{
 			name: "positive/update-multiple",
-			req: menuPresenter.UpdateMenuOrderRequest{
+			req: dto.UpdateMenuOrderPayload{
 				Group:     "main",
 				SortedIDs: []int{3, 7},
 			},
@@ -34,16 +34,16 @@ func TestUpdateMenuOrderUseCase(t *testing.T) {
 				m.ExpectCommit()
 
 				menuRepo.
-					On("UpdateMenuSortQuery", testifymock.Anything, testifymock.Anything).
+					On("UpdateMenuSortQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) {
 						*updateSortCalls++
-						params := args.Get(1).(dto.UpdateMenuSortParams)
+						params := args.Get(1).(repoParams.UpdateMenuSortParams)
 						assert.Equal(t, "main", params.Group)
 					}).
 					Return(nil).
 					Twice()
 				menuRepo.
-					On("UpdateChildrenGroup", testifymock.Anything, testifymock.Anything, "main").
+					On("UpdateChildrenGroupQry", testifymock.Anything, testifymock.Anything, "main").
 					Run(func(args testifymock.Arguments) { *updateChildCalls++ }).
 					Return(nil).
 					Twice()
@@ -55,7 +55,7 @@ func TestUpdateMenuOrderUseCase(t *testing.T) {
 		},
 		{
 			name: "edge/empty-sorted-ids-commits-without-repo-calls",
-			req: menuPresenter.UpdateMenuOrderRequest{
+			req: dto.UpdateMenuOrderPayload{
 				Group:     "main",
 				SortedIDs: []int{},
 			},
@@ -66,13 +66,13 @@ func TestUpdateMenuOrderUseCase(t *testing.T) {
 			assert: func(menuRepo *mockrepo.MenuRepositoryMock, updateSortCalls int, updateChildCalls int) {
 				assert.Equal(t, 0, updateSortCalls)
 				assert.Equal(t, 0, updateChildCalls)
-				menuRepo.AssertNumberOfCalls(t, "UpdateMenuSortQuery", 0)
-				menuRepo.AssertNumberOfCalls(t, "UpdateChildrenGroup", 0)
+				menuRepo.AssertNumberOfCalls(t, "UpdateMenuSortQry", 0)
+				menuRepo.AssertNumberOfCalls(t, "UpdateChildrenGroupQry", 0)
 			},
 		},
 		{
 			name: "negative/update-sort-error",
-			req: menuPresenter.UpdateMenuOrderRequest{
+			req: dto.UpdateMenuOrderPayload{
 				Group:     "main",
 				SortedIDs: []int{3},
 			},
@@ -80,7 +80,7 @@ func TestUpdateMenuOrderUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				menuRepo.On("UpdateMenuSortQuery", testifymock.Anything, testifymock.Anything).Return(errors.New("update sort failed")).Once()
+				menuRepo.On("UpdateMenuSortQry", testifymock.Anything, testifymock.Anything).Return(errors.New("update sort failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

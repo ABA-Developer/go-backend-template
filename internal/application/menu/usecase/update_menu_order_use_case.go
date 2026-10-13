@@ -1,17 +1,17 @@
-package menu
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/mapper"
-	"be-dashboard-nba/internal/infrastructure/logger"
-	menuPresenter "be-dashboard-nba/internal/presentation/menu/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/menu/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/mapper"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
 	"context"
 	"database/sql"
 
 	"github.com/pkg/errors"
 )
 
-func (s *useCase) UpdateMenuOrderUseCase(ctx context.Context, request menuPresenter.UpdateMenuOrderRequest, userID string) (err error) {
+func (s *useCase) UpdateMenuOrderUseCase(ctx context.Context, request appdto.UpdateMenuOrderPayload, userID string) (err error) {
 	tx, err := s.db.BeginTx(ctx, &sql.TxOptions{})
 	if err != nil {
 		logger.WithContext(ctx).Error().Err(err).Msg("error to begin transaction")
@@ -35,13 +35,13 @@ func (s *useCase) UpdateMenuOrderUseCase(ctx context.Context, request menuPresen
 
 	for _, params := range paramsList {
 
-		err = q.UpdateMenuSortQuery(ctx, params)
+		err = q.UpdateMenuSortQry(ctx, params)
 		if err != nil {
 			logger.WithContext(ctx).Error().Err(err).Int("menu_id", params.ID).Msg("Failed to update menu sort")
 			err = errors.WithStack(constant.ErrUnknownSource)
 			return
 		}
-		err = q.UpdateChildrenGroup(ctx, params.ID, params.Group)
+		err = q.UpdateChildrenGroupQry(ctx, params.ID, params.Group)
 		if err != nil {
 			logger.WithContext(ctx).Error().Err(err).Int("menu_id", params.ID).Msg("Failed to update children group on update sort")
 			err = errors.WithStack(constant.ErrUnknownSource)

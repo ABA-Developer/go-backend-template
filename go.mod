@@ -1,4 +1,4 @@
-module be-dashboard-nba
+module github.com/ABA-Developer/go-backend-template
 
 go 1.24.2
 

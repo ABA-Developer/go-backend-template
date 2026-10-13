@@ -1,4 +1,4 @@
-package auth
+package usecase
 
 import (
 	"context"
@@ -6,10 +6,10 @@ import (
 	"os"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
-	authPresenter "be-dashboard-nba/internal/presentation/auth/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/auth/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -29,14 +29,14 @@ func TestLoginUseCase(t *testing.T) {
 
 	tests := []struct {
 		name  string
-		req   authPresenter.LoginRequest
+		req   dto.LoginPayload
 		setup func(m sqlmock.Sqlmock, authRepo *mockrepo.AuthRepositoryMock)
 
 		wantErr error
 	}{
 		{
 			name: "positive/login",
-			req: authPresenter.LoginRequest{
+			req: dto.LoginPayload{
 				Email:    "a@example.com",
 				Password: "password123",
 			},
@@ -44,45 +44,45 @@ func TestLoginUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				authRepo.On("ReadDetailUserByEmailQuery", testifymock.Anything, "a@example.com").
+				authRepo.On("ReadDetailUserByEmailQry", testifymock.Anything, "a@example.com").
 					Return(model.User{ID: "u1", Password: string(hashed)}, nil).Once()
-				authRepo.On("CreateSessionQuery", testifymock.Anything, testifymock.Anything).Return(nil).Once()
-				authRepo.On("CreateLoginRecord", testifymock.Anything, testifymock.Anything).Return(nil).Once()
+				authRepo.On("CreateSessionQry", testifymock.Anything, testifymock.Anything).Return(nil).Once()
+				authRepo.On("CreateLoginRecordQry", testifymock.Anything, testifymock.Anything).Return(nil).Once()
 			},
 		},
 		{
 			name: "negative/wrong-email",
-			req: authPresenter.LoginRequest{
+			req: dto.LoginPayload{
 				Email:    "missing@example.com",
 				Password: "password123",
 			},
 			setup: func(m sqlmock.Sqlmock, authRepo *mockrepo.AuthRepositoryMock) {
 				m.ExpectBegin()
 
-				authRepo.On("ReadDetailUserByEmailQuery", testifymock.Anything, "missing@example.com").
+				authRepo.On("ReadDetailUserByEmailQry", testifymock.Anything, "missing@example.com").
 					Return(model.User{}, sql.ErrNoRows).Once()
-				authRepo.On("CreateLoginAttemp", testifymock.Anything, testifymock.Anything).Return(nil).Once()
+				authRepo.On("CreateLoginAttempQry", testifymock.Anything, testifymock.Anything).Return(nil).Once()
 			},
 			wantErr: constant.ErrWrongEmailOrPassword,
 		},
 		{
 			name: "negative/wrong-password",
-			req: authPresenter.LoginRequest{
+			req: dto.LoginPayload{
 				Email:    "a@example.com",
 				Password: "wrong",
 			},
 			setup: func(m sqlmock.Sqlmock, authRepo *mockrepo.AuthRepositoryMock) {
 				m.ExpectBegin()
 
-				authRepo.On("ReadDetailUserByEmailQuery", testifymock.Anything, "a@example.com").
+				authRepo.On("ReadDetailUserByEmailQry", testifymock.Anything, "a@example.com").
 					Return(model.User{ID: "u1", Password: string(hashed)}, nil).Once()
-				authRepo.On("CreateLoginAttemp", testifymock.Anything, testifymock.Anything).Return(nil).Once()
+				authRepo.On("CreateLoginAttempQry", testifymock.Anything, testifymock.Anything).Return(nil).Once()
 			},
 			wantErr: constant.ErrWrongEmailOrPassword,
 		},
 		{
 			name: "negative/create-session-error",
-			req: authPresenter.LoginRequest{
+			req: dto.LoginPayload{
 				Email:    "a@example.com",
 				Password: "password123",
 			},
@@ -90,9 +90,9 @@ func TestLoginUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				authRepo.On("ReadDetailUserByEmailQuery", testifymock.Anything, "a@example.com").
+				authRepo.On("ReadDetailUserByEmailQry", testifymock.Anything, "a@example.com").
 					Return(model.User{ID: "u1", Password: string(hashed)}, nil).Once()
-				authRepo.On("CreateSessionQuery", testifymock.Anything, testifymock.Anything).Return(errors.New("insert failed")).Once()
+				authRepo.On("CreateSessionQry", testifymock.Anything, testifymock.Anything).Return(errors.New("insert failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

@@ -4,7 +4,7 @@ import (
 	"database/sql"
 	"time"
 
-	shareddto "be-dashboard-nba/internal/application/shared/dto"
+	shareddto "github.com/ABA-Developer/go-backend-template/internal/application/shared/dto"
 )
 
 type MenuPermission struct {

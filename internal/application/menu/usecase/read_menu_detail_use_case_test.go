@@ -1,13 +1,13 @@
-package menu
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/domain/model"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
@@ -25,14 +25,14 @@ func TestReadMenuDetailUseCase(t *testing.T) {
 			name:   "positive/returns-menu",
 			menuID: 1,
 			setup: func(menuRepo *mockrepo.MenuRepositoryMock) {
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 1).Return(model.Menu{ID: 1}, nil).Once()
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 1).Return(model.Menu{ID: 1}, nil).Once()
 			},
 		},
 		{
 			name:   "negative/not-found",
 			menuID: 999,
 			setup: func(menuRepo *mockrepo.MenuRepositoryMock) {
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 999).Return(model.Menu{}, sql.ErrNoRows).Once()
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 999).Return(model.Menu{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrMenuIdNotFound,
 		},
@@ -40,7 +40,7 @@ func TestReadMenuDetailUseCase(t *testing.T) {
 			name:   "negative/repo-error",
 			menuID: 1,
 			setup: func(menuRepo *mockrepo.MenuRepositoryMock) {
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 1).Return(model.Menu{}, errors.New("db down")).Once()
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 1).Return(model.Menu{}, errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

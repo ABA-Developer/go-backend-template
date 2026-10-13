@@ -1,9 +1,9 @@
-package handlers
+package handler
 
 import (
-	"be-dashboard-nba/constant"
-	contract "be-dashboard-nba/internal/domain/contract/usecase"
-	response "be-dashboard-nba/internal/presentation/response"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	contract "github.com/ABA-Developer/go-backend-template/internal/domain/contract/usecase"
+	response "github.com/ABA-Developer/go-backend-template/internal/presentation/response"
 	"errors"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
@@ -53,4 +53,3 @@ func DeleteMenu(svc contract.MenuUseCase) fiber.Handler {
 
 	}
 }
-

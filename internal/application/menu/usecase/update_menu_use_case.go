@@ -1,10 +1,10 @@
-package menu
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/mapper"
-	"be-dashboard-nba/internal/infrastructure/logger"
-	menuPresenter "be-dashboard-nba/internal/presentation/menu/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/menu/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/mapper"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
 	"context"
 	"database/sql"
 
@@ -13,7 +13,7 @@ import (
 
 func (s *useCase) UpdateMenuUseCase(
 	ctx context.Context,
-	request menuPresenter.UpdateMenuRequest,
+	request appdto.UpdateMenuPayload,
 	userID string,
 	menuID int,
 ) (err error) {
@@ -35,7 +35,7 @@ func (s *useCase) UpdateMenuUseCase(
 
 	q := s.newMenuRepo(tx)
 
-	existingMenu, err := q.ReadMenuByIDQuery(ctx, menuID)
+	existingMenu, err := q.ReadMenuByIDQry(ctx, menuID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			logger.WithContext(ctx).Warn().Int("id", menuID).Msg("menu detail not found for update")
@@ -48,7 +48,7 @@ func (s *useCase) UpdateMenuUseCase(
 	params := mapper.ToUpdateMenuParams(&request, userID, menuID)
 
 	// PROTEKSI: Cek apakah menu memiliki child
-	childCount, err := q.CountMenuChildren(ctx, menuID)
+	childCount, err := q.CountMenuChildrenQry(ctx, menuID)
 	if err != nil {
 		logger.WithContext(ctx).Error().Err(err).Int("menu_id", menuID).Msg("error counting menu children")
 		return errors.WithStack(constant.ErrUnknownSource)
@@ -85,7 +85,7 @@ func (s *useCase) UpdateMenuUseCase(
 	}
 
 	if params.ParentID.Valid {
-		parentMenu, err := q.ReadMenuByIDQuery(ctx, int(params.ParentID.Int32))
+		parentMenu, err := q.ReadMenuByIDQry(ctx, int(params.ParentID.Int32))
 		if err != nil {
 			logger.WithContext(ctx).Error().Err(err).Int32("parent_id", params.ParentID.Int32).Msg("error reading parent menu")
 			return errors.WithStack(constant.ErrUnknownSource)
@@ -98,13 +98,13 @@ func (s *useCase) UpdateMenuUseCase(
 		var newSort int
 
 		if params.ParentID.Valid {
-			newSort, err = q.ReadNextSortForParentAndGroup(ctx, params.ParentID.Int32, params.Group)
+			newSort, err = q.ReadNextSortForParentAndGroupQry(ctx, params.ParentID.Int32, params.Group)
 			if err != nil {
 				logger.WithContext(ctx).Error().Err(err).Msg("error getting new sort value for new parent")
 				return errors.WithStack(constant.ErrUnknownSource)
 			}
 		} else {
-			newSort, err = q.ReadSortForGroup(ctx, params.Group)
+			newSort, err = q.ReadSortForGroupQry(ctx, params.Group)
 			if err != nil {
 				logger.WithContext(ctx).Error().Err(err).Msg("error getting new sort value for root")
 				return errors.WithStack(constant.ErrUnknownSource)
@@ -115,7 +115,7 @@ func (s *useCase) UpdateMenuUseCase(
 
 	} else if groupChanged && !params.ParentID.Valid {
 		// Hanya group yang berubah dan menu adalah root
-		newSort, err := q.ReadSortForGroup(ctx, params.Group)
+		newSort, err := q.ReadSortForGroupQry(ctx, params.Group)
 		if err != nil {
 			logger.WithContext(ctx).Error().Err(err).Msg("error getting new sort value for group change")
 			return errors.WithStack(constant.ErrUnknownSource)
@@ -127,14 +127,14 @@ func (s *useCase) UpdateMenuUseCase(
 	}
 
 	// Update menu utama
-	err = q.UpdateMenuQuery(ctx, params)
+	err = q.UpdateMenuQry(ctx, params)
 	if err != nil {
 		logger.WithContext(ctx).Error().Err(err).Interface("request_payload", request).Msg("error to update menu")
 		return errors.WithStack(constant.ErrUnknownSource)
 	}
 
 	if childCount > 0 && groupChanged && !parentChanged {
-		err = q.UpdateChildrenGroup(ctx, menuID, params.Group)
+		err = q.UpdateChildrenGroupQry(ctx, menuID, params.Group)
 		if err != nil {
 			logger.WithContext(ctx).Error().Err(err).
 				Int("parent_id", menuID).

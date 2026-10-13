@@ -5,7 +5,7 @@ import (
 
 	"github.com/rs/zerolog"
 
-	"be-dashboard-nba/internal/infrastructure/validator"
+	"github.com/ABA-Developer/go-backend-template/internal/infrastructure/validator"
 )
 
 type Container struct {

@@ -1,14 +1,14 @@
-package role
+package usecase
 
 import (
 	"context"
 	"errors"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/role/dto"
-	rolePresenter "be-dashboard-nba/internal/presentation/role/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/role/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/stretchr/testify/assert"
 	testifymock "github.com/stretchr/testify/mock"
@@ -17,21 +17,21 @@ import (
 func TestCreateRoleUseCase(t *testing.T) {
 	tests := []struct {
 		name    string
-		req     rolePresenter.CreateRoleRequest
+		req     dto.CreateRolePayload
 		setup   func(roleRepo *mockrepo.RoleRepositoryMock)
 		wantErr error
 	}{
 		{
 			name: "positive/create-role",
-			req: rolePresenter.CreateRoleRequest{
+			req: dto.CreateRolePayload{
 				Name: "Admin",
 				Code: "ADMIN",
 			},
 			setup: func(roleRepo *mockrepo.RoleRepositoryMock) {
 				roleRepo.
-					On("CreateRoleQuery", testifymock.Anything, testifymock.Anything).
+					On("CreateRoleQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) {
-						params := args.Get(1).(dto.CreateRoleParams)
+						params := args.Get(1).(repoParams.CreateRoleParams)
 						assert.Equal(t, "ADMIN", params.Code)
 						assert.Equal(t, "Admin", params.Name)
 						assert.Equal(t, "user-1", params.CreatedBy)
@@ -42,23 +42,23 @@ func TestCreateRoleUseCase(t *testing.T) {
 		},
 		{
 			name: "negative/repo-error",
-			req: rolePresenter.CreateRoleRequest{
+			req: dto.CreateRolePayload{
 				Name: "Admin",
 				Code: "ADMIN",
 			},
 			setup: func(roleRepo *mockrepo.RoleRepositoryMock) {
-				roleRepo.On("CreateRoleQuery", testifymock.Anything, testifymock.Anything).Return(errors.New("insert failed")).Once()
+				roleRepo.On("CreateRoleQry", testifymock.Anything, testifymock.Anything).Return(errors.New("insert failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
 		{
 			name: "edge/empty-fields-still-maps-created-by",
-			req:  rolePresenter.CreateRoleRequest{},
+			req:  dto.CreateRolePayload{},
 			setup: func(roleRepo *mockrepo.RoleRepositoryMock) {
 				roleRepo.
-					On("CreateRoleQuery", testifymock.Anything, testifymock.Anything).
+					On("CreateRoleQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) {
-						params := args.Get(1).(dto.CreateRoleParams)
+						params := args.Get(1).(repoParams.CreateRoleParams)
 						assert.Equal(t, "user-1", params.CreatedBy)
 					}).
 					Return(nil).

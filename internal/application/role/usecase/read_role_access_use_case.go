@@ -1,11 +1,11 @@
-package role
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/role/mapper"
-	shareddto "be-dashboard-nba/internal/application/shared/dto"
-	"be-dashboard-nba/internal/domain/model"
-	rolePresenter "be-dashboard-nba/internal/presentation/role/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/role/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/role/mapper"
+	shareddto "github.com/ABA-Developer/go-backend-template/internal/application/shared/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
 	"context"
 	"database/sql"
 	"math"
@@ -13,11 +13,11 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (s *useCase) ReadRoleAccessUseCase(ctx context.Context, args rolePresenter.ReadRoleAccessesRequest, roleID int) (data model.RoleAccessPaginationResponse, err error) {
+func (s *useCase) ReadRoleAccessUseCase(ctx context.Context, args appdto.ReadRoleAccessesPayload, roleID int) (data model.RoleAccessPaginationResponse, err error) {
 	r := s.newRoleRepo(s.db)
 	params := mapper.ToReadRoleAccessParams(&args, roleID)
 
-	totalItems, err := r.ReadRoleAccessCount(ctx, params)
+	totalItems, err := r.ReadRoleAccessCountQry(ctx, params)
 	if err != nil {
 		log(ctx).Error().Err(err).Msg("error query get menu permission count")
 		err = errors.WithStack(constant.ErrUnknownSource)
@@ -37,7 +37,7 @@ func (s *useCase) ReadRoleAccessUseCase(ctx context.Context, args rolePresenter.
 		HasPrev:    hasPrev,
 	}
 
-	_, err = r.ReadRoleByIDQuery(ctx, roleID)
+	_, err = r.ReadRoleByIDQry(ctx, roleID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log(ctx).Warn().Int("Id", roleID).Msg("role detail not found")
@@ -49,7 +49,7 @@ func (s *useCase) ReadRoleAccessUseCase(ctx context.Context, args rolePresenter.
 		return
 	}
 
-	roleAccessData, err := r.ReadRoleAccessQuery(ctx, params)
+	roleAccessData, err := r.ReadRoleAccessQry(ctx, params)
 	if err != nil {
 		log(ctx).Error().Err(err).Int("id", roleID).Msg("error reading role detail query")
 		err = errors.WithStack(constant.ErrUnknownSource)

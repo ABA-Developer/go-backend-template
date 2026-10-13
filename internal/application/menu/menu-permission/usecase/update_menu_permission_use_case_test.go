@@ -1,15 +1,15 @@
-package menu_permission
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/menu-permission/dto"
-	"be-dashboard-nba/internal/domain/model"
-	menuPermissionPresenter "be-dashboard-nba/internal/presentation/menu/menu-permission/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/menu-permission/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -21,14 +21,14 @@ func TestUpdateMenuPermissionUseCase(t *testing.T) {
 	tests := []struct {
 		name             string
 		menuPermissionID int
-		req              menuPermissionPresenter.UpdateMenuPermissionRequest
+		req              dto.UpdateMenuPermissionPayload
 		setup            func(m sqlmock.Sqlmock, menuPermissionRepo *mockrepo.MenuPermissionRepositoryMock)
 		wantErr          error
 	}{
 		{
 			name:             "positive/update-menu-permission",
 			menuPermissionID: 1,
-			req: menuPermissionPresenter.UpdateMenuPermissionRequest{
+			req: dto.UpdateMenuPermissionPayload{
 				Code:       "U",
 				ActionName: "update",
 			},
@@ -36,11 +36,11 @@ func TestUpdateMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
 				menuPermissionRepo.
-					On("UpdateMenuPermissionQuery", testifymock.Anything, testifymock.Anything).
+					On("UpdateMenuPermissionQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) {
-						params := args.Get(1).(dto.UpdateMenuPermissionParams)
+						params := args.Get(1).(repoParams.UpdateMenuPermissionParams)
 						assert.Equal(t, 1, params.MenuPermissionID)
 						assert.Equal(t, "U", params.Code)
 						assert.Equal(t, "update", params.ActionName)
@@ -57,7 +57,7 @@ func TestUpdateMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 999).Return(model.MenuPermission{}, sql.ErrNoRows).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 999).Return(model.MenuPermission{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrMenuPermissionIdNotFound,
 		},
@@ -68,8 +68,8 @@ func TestUpdateMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
-				menuPermissionRepo.On("UpdateMenuPermissionQuery", testifymock.Anything, testifymock.Anything).Return(errors.New("update failed")).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 1).Return(model.MenuPermission{ID: 1}, nil).Once()
+				menuPermissionRepo.On("UpdateMenuPermissionQry", testifymock.Anything, testifymock.Anything).Return(errors.New("update failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
@@ -80,7 +80,7 @@ func TestUpdateMenuPermissionUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback().WillReturnError(sql.ErrConnDone)
 
-				menuPermissionRepo.On("ReadMenuPermissionByIdQuery", testifymock.Anything, 1).Return(model.MenuPermission{}, errors.New("read failed")).Once()
+				menuPermissionRepo.On("ReadMenuPermissionByIdQry", testifymock.Anything, 1).Return(model.MenuPermission{}, errors.New("read failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

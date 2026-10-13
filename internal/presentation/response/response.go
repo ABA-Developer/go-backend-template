@@ -5,7 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 
-	"be-dashboard-nba/internal/presentation/request"
+	"github.com/ABA-Developer/go-backend-template/internal/presentation/request"
 )
 
 type DataPayload struct {

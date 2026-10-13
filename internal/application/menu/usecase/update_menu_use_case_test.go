@@ -1,15 +1,15 @@
-package menu
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/dto"
-	"be-dashboard-nba/internal/domain/model"
-	menuPresenter "be-dashboard-nba/internal/presentation/menu/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	"github.com/ABA-Developer/go-backend-template/internal/domain/model"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -25,14 +25,14 @@ func TestUpdateMenuUseCase(t *testing.T) {
 	tests := []struct {
 		name    string
 		menuID  int
-		req     menuPresenter.UpdateMenuRequest
+		req     dto.UpdateMenuPayload
 		setup   func(m sqlmock.Sqlmock, menuRepo *mockrepo.MenuRepositoryMock)
 		wantErr error
 	}{
 		{
 			name:   "negative/not-found",
 			menuID: 999,
-			req: menuPresenter.UpdateMenuRequest{
+			req: dto.UpdateMenuPayload{
 				Name:    "X",
 				Group:   "main",
 				Active:  &active,
@@ -41,14 +41,14 @@ func TestUpdateMenuUseCase(t *testing.T) {
 			setup: func(m sqlmock.Sqlmock, menuRepo *mockrepo.MenuRepositoryMock) {
 				m.ExpectBegin()
 				m.ExpectRollback()
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 999).Return(model.Menu{}, sql.ErrNoRows).Once()
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 999).Return(model.Menu{}, sql.ErrNoRows).Once()
 			},
 			wantErr: constant.ErrMenuIdNotFound,
 		},
 		{
 			name:   "negative/count-children-error",
 			menuID: 1,
-			req: menuPresenter.UpdateMenuRequest{
+			req: dto.UpdateMenuPayload{
 				Name:    "X",
 				Group:   "main",
 				Active:  &active,
@@ -57,15 +57,15 @@ func TestUpdateMenuUseCase(t *testing.T) {
 			setup: func(m sqlmock.Sqlmock, menuRepo *mockrepo.MenuRepositoryMock) {
 				m.ExpectBegin()
 				m.ExpectRollback()
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 1).Return(model.Menu{ID: 1}, nil).Once()
-				menuRepo.On("CountMenuChildren", testifymock.Anything, 1).Return(0, errors.New("db down")).Once()
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 1).Return(model.Menu{ID: 1}, nil).Once()
+				menuRepo.On("CountMenuChildrenQry", testifymock.Anything, 1).Return(0, errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
 		{
 			name:   "edge/has-children-parent-changed-forbidden",
 			menuID: 1,
-			req: menuPresenter.UpdateMenuRequest{
+			req: dto.UpdateMenuPayload{
 				ParentID: &parentID,
 				Name:     "X",
 				Group:    "main",
@@ -76,15 +76,15 @@ func TestUpdateMenuUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 1).Return(model.Menu{ID: 1}, nil).Once()
-				menuRepo.On("CountMenuChildren", testifymock.Anything, 1).Return(1, nil).Once()
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 1).Return(model.Menu{ID: 1}, nil).Once()
+				menuRepo.On("CountMenuChildrenQry", testifymock.Anything, 1).Return(1, nil).Once()
 			},
 			wantErr: constant.ErrMenuHasChildren,
 		},
 		{
 			name:   "positive/move-to-parent-recomputes-sort-and-inherits-group",
 			menuID: 1,
-			req: menuPresenter.UpdateMenuRequest{
+			req: dto.UpdateMenuPayload{
 				ParentID: &parentID,
 				Name:     "X",
 				Group:    "main",
@@ -95,7 +95,7 @@ func TestUpdateMenuUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, 1).Return(model.Menu{
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, 1).Return(model.Menu{
 					ID:       1,
 					Group:    "main",
 					ParentID: sql.NullInt32{Valid: false},
@@ -103,19 +103,19 @@ func TestUpdateMenuUseCase(t *testing.T) {
 					Active:   true,
 					Display:  true,
 				}, nil).Once()
-				menuRepo.On("CountMenuChildren", testifymock.Anything, 1).Return(0, nil).Once()
+				menuRepo.On("CountMenuChildrenQry", testifymock.Anything, 1).Return(0, nil).Once()
 
-				menuRepo.On("ReadMenuByIDQuery", testifymock.Anything, parentID).Return(model.Menu{
+				menuRepo.On("ReadMenuByIDQry", testifymock.Anything, parentID).Return(model.Menu{
 					ID:    parentID,
 					Group: "settings",
 				}, nil).Once()
 
-				menuRepo.On("ReadNextSortForParentAndGroup", testifymock.Anything, int32(parentID), "settings").Return(7, nil).Once()
+				menuRepo.On("ReadNextSortForParentAndGroupQry", testifymock.Anything, int32(parentID), "settings").Return(7, nil).Once()
 
 				menuRepo.
-					On("UpdateMenuQuery", testifymock.Anything, testifymock.Anything).
+					On("UpdateMenuQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) {
-						params := args.Get(1).(dto.UpdateMenuParams)
+						params := args.Get(1).(repoParams.UpdateMenuParams)
 						assert.Equal(t, "settings", params.Group)
 						assert.Equal(t, 7, params.Sort)
 						assert.True(t, params.ParentID.Valid)

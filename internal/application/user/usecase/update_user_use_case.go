@@ -1,9 +1,9 @@
-package user
+package usecase
 
 import (
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/user/mapper"
-	presenter "be-dashboard-nba/internal/presentation/user/presenter"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	appdto "github.com/ABA-Developer/go-backend-template/internal/application/user/dto"
+	"github.com/ABA-Developer/go-backend-template/internal/application/user/mapper"
 	"context"
 	"database/sql"
 
@@ -12,7 +12,7 @@ import (
 
 func (s *useCase) UpdateUserUseCase(
 	ctx context.Context,
-	request presenter.UpdateUserRequest,
+	request appdto.UpdateUserPayload,
 	updatedBy string,
 	userID string,
 ) (err error) {
@@ -36,7 +36,7 @@ func (s *useCase) UpdateUserUseCase(
 	ru := s.newUserRepo(tx)
 	rr := s.newRoleRepo(tx)
 
-	existingUser, err := ru.ReadUserByIDQuery(ctx, userID)
+	existingUser, err := ru.ReadUserByIDQry(ctx, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log(ctx).Warn().Str("id", userID).Msg("user detail not found")
@@ -48,7 +48,7 @@ func (s *useCase) UpdateUserUseCase(
 		return
 	}
 
-	existingRoleUser, err := rr.ReadRoleByIDQuery(ctx, request.RoleID)
+	existingRoleUser, err := rr.ReadRoleByIDQry(ctx, request.RoleID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log(ctx).Warn().Int("id", request.RoleID).Msg("role detail not found")
@@ -63,7 +63,7 @@ func (s *useCase) UpdateUserUseCase(
 	params := mapper.ToUpdateUserParams(&request, userID, updatedBy, existingUser)
 
 	if existingUser.Role != existingRoleUser.Name {
-		err = ru.UpdateUserRoleQuery(ctx, params.RoleID, params.ID)
+		err = ru.UpdateUserRoleQry(ctx, params.RoleID, params.ID)
 		if err != nil {
 			log(ctx).Error().Err(err).Interface("request_payload", request).Msg("error to update user role")
 			err = errors.WithStack(constant.ErrUnknownSource)
@@ -71,7 +71,7 @@ func (s *useCase) UpdateUserUseCase(
 		}
 	}
 
-	err = ru.UpdateUserQuery(ctx, params)
+	err = ru.UpdateUserQry(ctx, params)
 	if err != nil {
 		log(ctx).Error().Err(err).Interface("request_payload", request).Msg("error to update user")
 		err = errors.WithStack(constant.ErrUnknownSource)

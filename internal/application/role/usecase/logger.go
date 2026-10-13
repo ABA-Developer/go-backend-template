@@ -1,9 +1,9 @@
-package role
+package usecase
 
 import (
 	"context"
 
-	appLogger "be-dashboard-nba/internal/infrastructure/logger"
+	appLogger "github.com/ABA-Developer/go-backend-template/internal/infrastructure/logger"
 )
 
 func log(ctx context.Context) *appLogger.Logger {

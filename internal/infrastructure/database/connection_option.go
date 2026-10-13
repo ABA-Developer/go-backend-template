@@ -3,7 +3,7 @@ package db
 import (
 	"time"
 
-	"be-dashboard-nba/constant"
+	"github.com/ABA-Developer/go-backend-template/constant"
 )
 
 type connectionOption struct {

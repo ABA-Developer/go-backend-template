@@ -1,14 +1,14 @@
-package menu
+package usecase
 
 import (
 	"context"
 	"database/sql"
 	"testing"
 
-	"be-dashboard-nba/constant"
-	"be-dashboard-nba/internal/application/menu/dto"
-	menuPresenter "be-dashboard-nba/internal/presentation/menu/presenter"
-	mockrepo "be-dashboard-nba/internal/test/mock/repository"
+	"github.com/ABA-Developer/go-backend-template/constant"
+	"github.com/ABA-Developer/go-backend-template/internal/application/menu/dto"
+	repoParams "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository/params"
+	mockrepo "github.com/ABA-Developer/go-backend-template/internal/test/mock/repository"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/pkg/errors"
@@ -21,13 +21,13 @@ func TestCreateMenuUseCase(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		req     menuPresenter.CreateMenuRequest
+		req     dto.CreateMenuPayload
 		setup   func(m sqlmock.Sqlmock, menuRepo *mockrepo.MenuRepositoryMock)
 		wantErr error
 	}{
 		{
 			name: "positive/with-parent",
-			req: menuPresenter.CreateMenuRequest{
+			req: dto.CreateMenuPayload{
 				Name:     "Dashboard",
 				Group:    "main",
 				ParentID: &parentID,
@@ -38,11 +38,11 @@ func TestCreateMenuUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				menuRepo.On("ReadNextSortForParent", testifymock.Anything, int32(parentID)).Return(5, nil).Once()
+				menuRepo.On("ReadNextSortForParentQry", testifymock.Anything, int32(parentID)).Return(5, nil).Once()
 				menuRepo.
-					On("CreateMenuQuery", testifymock.Anything, testifymock.Anything).
+					On("CreateMenuQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) {
-						params := args.Get(1).(dto.CreateMenuParams)
+						params := args.Get(1).(repoParams.CreateMenuParams)
 						assert.Equal(t, 5, params.Sort)
 						assert.True(t, params.ParentID.Valid)
 						assert.Equal(t, int32(parentID), params.ParentID.Int32)
@@ -54,7 +54,7 @@ func TestCreateMenuUseCase(t *testing.T) {
 		},
 		{
 			name: "edge/without-parent-uses-group-sort",
-			req: menuPresenter.CreateMenuRequest{
+			req: dto.CreateMenuPayload{
 				Name:    "Home",
 				Group:   "main",
 				Active:  ptrBool(true),
@@ -64,11 +64,11 @@ func TestCreateMenuUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectCommit()
 
-				menuRepo.On("ReadSortForGroup", testifymock.Anything, "main").Return(2, nil).Once()
+				menuRepo.On("ReadSortForGroupQry", testifymock.Anything, "main").Return(2, nil).Once()
 				menuRepo.
-					On("CreateMenuQuery", testifymock.Anything, testifymock.Anything).
+					On("CreateMenuQry", testifymock.Anything, testifymock.Anything).
 					Run(func(args testifymock.Arguments) {
-						params := args.Get(1).(dto.CreateMenuParams)
+						params := args.Get(1).(repoParams.CreateMenuParams)
 						assert.Equal(t, 2, params.Sort)
 						assert.False(t, params.ParentID.Valid)
 						assert.Equal(t, "main", params.Group)
@@ -79,7 +79,7 @@ func TestCreateMenuUseCase(t *testing.T) {
 		},
 		{
 			name: "negative/sort-query-error",
-			req: menuPresenter.CreateMenuRequest{
+			req: dto.CreateMenuPayload{
 				Name:    "Home",
 				Group:   "main",
 				Active:  ptrBool(true),
@@ -89,13 +89,13 @@ func TestCreateMenuUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				menuRepo.On("ReadSortForGroup", testifymock.Anything, "main").Return(0, errors.New("db down")).Once()
+				menuRepo.On("ReadSortForGroupQry", testifymock.Anything, "main").Return(0, errors.New("db down")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
 		{
 			name: "negative/create-error",
-			req: menuPresenter.CreateMenuRequest{
+			req: dto.CreateMenuPayload{
 				Name:    "Home",
 				Group:   "main",
 				Active:  ptrBool(true),
@@ -105,14 +105,14 @@ func TestCreateMenuUseCase(t *testing.T) {
 				m.ExpectBegin()
 				m.ExpectRollback()
 
-				menuRepo.On("ReadSortForGroup", testifymock.Anything, "main").Return(2, nil).Once()
-				menuRepo.On("CreateMenuQuery", testifymock.Anything, testifymock.Anything).Return(errors.New("insert failed")).Once()
+				menuRepo.On("ReadSortForGroupQry", testifymock.Anything, "main").Return(2, nil).Once()
+				menuRepo.On("CreateMenuQry", testifymock.Anything, testifymock.Anything).Return(errors.New("insert failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},
 		{
 			name: "negative/begin-tx-error",
-			req:  menuPresenter.CreateMenuRequest{Name: "X", Group: "main"},
+			req:  dto.CreateMenuPayload{Name: "X", Group: "main"},
 			setup: func(m sqlmock.Sqlmock, _ *mockrepo.MenuRepositoryMock) {
 				m.ExpectBegin().WillReturnError(errors.New("begin failed"))
 			},
@@ -120,12 +120,12 @@ func TestCreateMenuUseCase(t *testing.T) {
 		},
 		{
 			name: "edge/rollback-error",
-			req:  menuPresenter.CreateMenuRequest{Name: "X", Group: "main"},
+			req:  dto.CreateMenuPayload{Name: "X", Group: "main"},
 			setup: func(m sqlmock.Sqlmock, menuRepo *mockrepo.MenuRepositoryMock) {
 				m.ExpectBegin()
 				m.ExpectRollback().WillReturnError(sql.ErrConnDone)
 
-				menuRepo.On("ReadSortForGroup", testifymock.Anything, "main").Return(0, errors.New("sort failed")).Once()
+				menuRepo.On("ReadSortForGroupQry", testifymock.Anything, "main").Return(0, errors.New("sort failed")).Once()
 			},
 			wantErr: constant.ErrUnknownSource,
 		},

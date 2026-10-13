@@ -1,11 +1,11 @@
-package user
+package usecase
 
 import (
-	contractRepo "be-dashboard-nba/internal/domain/contract/repository"
-	contract "be-dashboard-nba/internal/domain/contract/usecase"
-	db "be-dashboard-nba/internal/infrastructure/database"
-	roleRepo "be-dashboard-nba/internal/infrastructure/repository/role"
-	userRepo "be-dashboard-nba/internal/infrastructure/repository/user"
+	contractRepo "github.com/ABA-Developer/go-backend-template/internal/domain/contract/repository"
+	contract "github.com/ABA-Developer/go-backend-template/internal/domain/contract/usecase"
+	db "github.com/ABA-Developer/go-backend-template/internal/infrastructure/database"
+	roleRepo "github.com/ABA-Developer/go-backend-template/internal/infrastructure/repository/role"
+	userRepo "github.com/ABA-Developer/go-backend-template/internal/infrastructure/repository/user"
 )
 
 type useCase struct {
@@ -18,7 +18,7 @@ type useCase struct {
 func NewUseCase(db db.DB) contract.UserUseCase {
 	return &useCase{
 		db:          db,
-		newUserRepo: userRepo.NewRepository,
-		newRoleRepo: roleRepo.NewRepository,
+		newUserRepo: userRepo.NewQuery,
+		newRoleRepo: roleRepo.NewQuery,
 	}
 }
